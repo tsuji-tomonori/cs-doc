@@ -1,5 +1,7 @@
 # 情報工学の基礎
 
+[![PDFをビルドしてPagesへ公開](https://github.com/tsuji-tomonori/cs-doc/actions/workflows/build-pdf.yml/badge.svg)](https://github.com/tsuji-tomonori/cs-doc/actions/workflows/build-pdf.yml)
+
 新卒アプリケーションエンジニア向けの社内研修教材です。
 電気信号と論理回路から始め、CPU、プログラミング言語、OS、データ構造、ソフトウェア工学、ネットワーク、機械学習、LLMまでを一つの流れで扱います。
 
