@@ -1,1 +1,410 @@
-% 第2章本文は次のコミットで追加します。
+\chapterframe{第2章　機械語からプログラミング言語へ}{文字列をCPU命令へ変換する}{命令セットを出発点に、コンパイラ、字句解析、構文解析、ASTを扱います。木構造をたどるDFSとBFSを、式の評価へ接続します。}
+
+\begin{frame}[t]{命令セットは、ソフトウェアとCPUの間の契約です}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{命令セットアーキテクチャ}
+        命令セットアーキテクチャ（ISA）は、利用できる命令、レジスタ、データ型、アドレス指定、例外などを定めます。
+        CPUはISAの動作を実装します。
+      \end{block}
+      \begin{block}{命令形式}
+        命令を表すビット列には、演算を示すオペコードと、レジスタ番号や即値などのオペランドを配置します。
+      \end{block}
+    \column{0.48\textwidth}
+      \centering
+    \begin{tikzpicture}[x=0.8mm,y=0.8mm]
+        \draw[draw=MutedBlue,fill=PaleBlue] (0,0) rectangle (22,12);
+        \draw[draw=RuleGray,fill=CardWhite] (22,0) rectangle (40,12);
+        \draw[draw=RuleGray,fill=CardWhite] (40,0) rectangle (58,12);
+        \draw[draw=RuleGray,fill=CardWhite] (58,0) rectangle (76,12);
+        \node[font=\scriptsize] at (11,6) {opcode};
+        \node[font=\scriptsize] at (31,6) {$R_d$};
+        \node[font=\scriptsize] at (49,6) {$R_s$};
+        \node[font=\scriptsize] at (67,6) {即値};
+      \end{tikzpicture}
+      \vspace{4mm}
+      \begin{block}{同じISAでも実装は異なります}
+        同じ命令セットを実行するCPUでも、パイプライン、キャッシュ、並列実行の方式は異なり得ます。
+        プログラムはISAが保証する動作へ依存します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{機械語とアセンブリ言語は、同じ命令を異なる表記で示します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{機械語}
+        CPUが命令として解釈するビット列です。
+        人が直接読むには、命令境界や各フィールドの意味をISA仕様と照合する必要があります。
+      \end{block}
+      \begin{block}{アセンブリ言語}
+        ビット列へニーモニックと記号名を対応させます。
+        アセンブラが機械語へ変換します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{代表的な命令の役割}
+        \begin{itemize}
+          \item \term{ロード}：メモリからレジスタへ読みます。
+          \item \term{ストア}：レジスタからメモリへ書きます。
+          \item \term{演算}：レジスタ値をALUで処理します。
+          \item \term{分岐}：条件に応じて次のPCを変えます。
+        \end{itemize}
+      \end{block}
+      \begin{block}{ロード／ストア型の例}
+        \code{LOAD R1, [R2]}、\code{ADD R3, R1, R4}、\code{STORE [R2], R3} のように、メモリ操作と演算を分けます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{高級言語は、命令列より問題領域に近い表現を提供します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{名前と型}
+        アドレスやレジスタ番号の代わりに、変数、関数、構造体、型で意図を表します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{制御構造}
+        条件分岐、反復、例外処理を構造化された構文として記述します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{移植性}
+        言語処理系が対象CPUやOSごとの差を吸収できる範囲では、同じソースコードを複数環境へ移せます。
+      \end{block}
+  \end{columns}
+  \vspace{4mm}
+  \begin{block}{抽象化の対価}
+    実行される命令、メモリ確保、境界検査、動的ディスパッチなどがソースコードから見えにくくなります。
+    性能や障害を調べるときは、処理系が抽象化をどう実装するかを確認します。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{コンパイラは、意味を保ちながら表現を段階的に変換します}
+  \centering
+  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
+    \node[accentbox] (src) {ソース};
+    \node[box,right=of src] (lex) {トークン};
+    \node[box,right=of lex] (ast) {AST};
+    \node[box,right=of ast] (ir) {中間表現};
+    \node[box,right=of ir] (obj) {機械語};
+    \draw[flow] (src) -- (lex);
+    \draw[flow] (lex) -- (ast);
+    \draw[flow] (ast) -- (ir);
+    \draw[flow] (ir) -- (obj);
+  \end{tikzpicture}
+  \vspace{5mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{コンパイル}
+        プログラムを実行前に別の表現へ変換します。
+        ネイティブ機械語だけでなく、仮想機械向けのバイトコードを生成する方式もあります。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{リンクとロード}
+        リンカはオブジェクトファイルとライブラリの参照を解決します。
+        OSのローダーは実行可能形式をプロセスのアドレス空間へ配置します。
+      \end{block}
+  \end{columns}
+  \source{Cornell CS4120, “Introduction to Compilers”}
+\end{frame}
+
+\begin{frame}[t]{コンパイルと解釈実行は、排他的な二方式ではありません}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{インタプリタ}
+        ソースや中間表現を読みながら処理を実行します。
+        対話的な実行や動的な機能を実装しやすい一方、毎回の解釈に処理時間を使います。
+      \end{block}
+      \begin{block}{仮想機械}
+        コンパイラがバイトコードへ変換し、仮想機械が解釈または実行時コンパイルします。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{JITコンパイル}
+        実行時に頻繁に通るコードを検出し、機械語へ変換します。
+        実行時情報を最適化へ利用できます。
+      \end{block}
+      \begin{block}{分類より変換経路を見る}
+        「この言語はコンパイル型か」という分類だけでは、実際の実行方法を説明できません。
+        どの表現を、いつ、何へ変換するかを確認します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{字句解析は、文字列を意味のある最小単位へ分けます}
+  \framesubtitle{入力例：\code{total = price * 110 / 100}}
+  \centering
+  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\small}]
+    \node[accentbox] (t1) {識別子\\total};
+    \node[box,right=of t1] (t2) {演算子\\=};
+    \node[box,right=of t2] (t3) {識別子\\price};
+    \node[box,right=of t3] (t4) {演算子\\*};
+    \node[box,right=of t4] (t5) {整数\\110};
+    \node[box,right=of t5] (t6) {演算子\\/};
+    \node[box,right=of t6] (t7) {整数\\100};
+  \end{tikzpicture}
+  \vspace{6mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{トークン}
+        種別と値の組で表します。
+        空白やコメントは、構文上不要なら除外しますが、位置情報はエラー表示のために保持できます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{字句エラー}
+        言語の規則に合うトークンを作れない文字列を検出します。
+        未閉鎖の文字列リテラルなどが例です。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{構文解析は、トークン列が文法から生成できるかを調べます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \begin{block}{文法の例}
+        \[
+        \begin{aligned}
+          \mathit{expr} &\rightarrow \mathit{expr}+\mathit{term}\mid\mathit{term}\\
+          \mathit{term} &\rightarrow \mathit{term}*\mathit{factor}\mid\mathit{factor}\\
+          \mathit{factor} &\rightarrow \mathrm{INT}\mid(\mathit{expr})
+        \end{aligned}
+        \]
+        規則は演算子の優先順位と括弧の対応を表します。
+      \end{block}
+    \column{0.49\textwidth}
+      \begin{block}{パーサーの出力}
+        トークン列を文法規則へ対応づけ、構文木またはASTを構築します。
+      \end{block}
+      \begin{block}{構文エラー}
+        期待するトークンと実際のトークンが一致せず、文法に沿った構造を作れない位置で発生します。
+        例えば、\code{1 + * 2} は右辺の項が欠けています。
+      \end{block}
+  \end{columns}
+  \source{Stanford CS143, “Abstract Syntax Trees”}
+\end{frame}
+
+\begin{frame}[t]{ASTは、評価に不要な構文上の詳細を省いた木です}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.44\textwidth}
+      \begin{block}{構文木との違い}
+        構文木は文法規則の展開を詳しく表します。
+        抽象構文木（AST）は括弧や中間非終端記号を省き、演算とオペランドの関係を残します。
+      \end{block}
+      \begin{block}{用途}
+        型検査、最適化、コード生成、静的解析では、ASTのノードを処理します。
+      \end{block}
+    \column{0.52\textwidth}
+      \centering
+      \begin{tikzpicture}[level distance=11mm,sibling distance=25mm,every node/.append style={font=\small}]
+        \node[node] {$+$}
+          child {node[node] {1}}
+          child {node[node] {$*$}
+            child {node[node] {2}}
+            child {node[node] {3}}
+          };
+      \end{tikzpicture}
+      \vspace{4mm}
+      \begin{block}{式の構造}
+        \code{1 + 2 * 3} では乗算ノードが加算ノードの子になるため、乗算を先に評価します。
+      \end{block}
+  \end{columns}
+  \source{Stanford CS143, “Abstract Syntax Trees”}
+\end{frame}
+
+\begin{frame}[t]{木は、部分木も木になる再帰的なデータ構造です}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.45\textwidth}
+      \begin{block}{構成要素}
+        \begin{itemize}
+          \item \term{根}：親を持たない始点です。
+          \item \term{節}：値と子への辺を持つ要素です。
+          \item \term{葉}：子を持たない節です。
+          \item \term{辺}：親子関係を表します。
+        \end{itemize}
+      \end{block}
+      \begin{block}{再帰的な定義}
+        木は、一つの根と0個以上の部分木から構成されます。
+        この定義に沿う処理は再帰で表しやすくなります。
+      \end{block}
+    \column{0.51\textwidth}
+      \centering
+      \begin{tikzpicture}[level distance=10mm,sibling distance=18mm,every node/.append style={font=\scriptsize}]
+        \node[accentbox] {根}
+          child {node[box] {節}
+            child {node[box] {葉}}
+            child {node[box] {葉}}
+          }
+          child {node[box] {部分木}
+            child {node[box] {葉}}
+          };
+      \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{再帰呼び出しは、未完了の処理をコールスタックへ積みます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+      \begin{block}{二つの構成要素}
+        \term{基底条件}は再帰を止めます。
+        \term{再帰ステップ}は問題を小さくして同じ関数を呼びます。
+        どちらかが欠けると停止や正しさを説明できません。
+      \end{block}
+      \begin{block}{コールスタック}
+        各呼び出しの引数、局所変数、戻り先をフレームとして保持します。
+        深すぎる再帰は利用可能なスタック領域を超える可能性があります。
+      \end{block}
+    \column{0.46\textwidth}
+      \centering
+      \begin{tikzpicture}[node distance=1.5mm,every node/.append style={minimum width=38mm,font=\small}]
+        \node[accentbox] (f1) {eval(1)};
+        \node[box,above=of f1] (f2) {eval(2 * 3)};
+        \node[box,above=of f2] (f3) {eval(2)};
+        \node[box,above=of f3] (f4) {eval(3)};
+        \node[font=\scriptsize,below=of f1] {呼び出し順に積み、完了順に戻ります};
+      \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{DFSは一つの枝を深くたどり、戻りながら別の枝へ進みます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{三つの走査順}
+        \begin{itemize}
+          \item \term{前順}：節、左部分木、右部分木
+          \item \term{間順}：左部分木、節、右部分木
+          \item \term{後順}：左部分木、右部分木、節
+        \end{itemize}
+      \end{block}
+      \begin{block}{再帰による実装}
+        関数呼び出しのスタックが、訪問途中の節を保持します。
+        木の定義と同じ構造で記述できます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{明示的なスタック}
+        再帰を使わず、次に訪問する節をデータ構造のスタックへ積めます。
+        訪問順を保つには、子を積む順序に注意します。
+      \end{block}
+      \begin{block}{必要な記憶量}
+        木の深さに比例する途中状態を保持します。
+        グラフでは循環を避けるため、訪問済み集合も必要です。
+      \end{block}
+  \end{columns}
+  \source{Stanford CS106B, DFS / Backtracking lecture}
+\end{frame}
+
+\begin{frame}[t]{ASTの評価は、子の値を得てから親を処理する後順走査です}
+  \centering
+  \begin{tikzpicture}[level distance=12mm,sibling distance=27mm,every node/.append style={font=\small}]
+    \node[accentbox] {$+=7$}
+      child {node[box] {$1$} edge from parent node[left,font=\scriptsize] {1}}
+      child {node[box] {$*=6$}
+        child {node[box] {$2$} edge from parent node[left,font=\scriptsize] {2}}
+        child {node[box] {$3$} edge from parent node[right,font=\scriptsize] {3}}
+        edge from parent node[right,font=\scriptsize] {4}
+      };
+  \end{tikzpicture}
+  \vspace{4mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{評価順}
+        葉の1、2、3を読み、2と3を乗算して6を得ます。
+        最後に1と6を加えて7を得ます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{コード生成との関係}
+        子の結果を先に用意してから親の演算を生成する処理も、後順走査に近い構造になります。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{BFSは根からの距離が小さい節を先に訪問します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{キューによる探索}
+        始点をキューへ入れます。
+        先頭を取り出して未訪問の隣接節を末尾へ入れる操作を、キューが空になるまで繰り返します。
+      \end{block}
+      \begin{block}{性質}
+        辺の重みが同じグラフでは、始点からの辺数が最小の経路を求められます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{DFSとの使い分け}
+        \begin{tabularx}{\linewidth}{@{}lYY@{}}
+          \toprule
+          & DFS & BFS\\
+          \midrule
+          保持 & スタック & キュー\\
+          順序 & 深さ優先 & 距離順\\
+          例 & AST評価 & 最短辺数\\
+          \bottomrule
+        \end{tabularx}
+      \end{block}
+      \begin{block}{ASTではどう使うか}
+        式の評価は依存関係に合うDFSが自然です。
+        BFSは、深さ別の表示や最浅の条件探索などに使えます。
+      \end{block}
+  \end{columns}
+  \source{Stanford CS106B, Graphs / BFS lecture}
+\end{frame}
+
+\begin{frame}[t,fragile]{ミニ実習：四則演算ASTを再帰で評価します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.59\textwidth}
+      \begin{lstlisting}[language=Go]
+type Node struct {
+    Op          string
+    Value       int
+    Left, Right *Node
+}
+
+func Eval(n *Node) int {
+    if n.Op == "" { return n.Value }
+    l, r := Eval(n.Left), Eval(n.Right)
+    switch n.Op {
+    case "+": return l + r
+    case "-": return l - r
+    case "*": return l * r
+    case "/": return l / r
+    }
+    panic("unknown operator")
+}
+      \end{lstlisting}
+    \column{0.37\textwidth}
+      \begin{block}{作るAST}
+        \code{(8 - 2) * (3 + 1)} を表す節を組み立てます。
+        \code{Eval}の結果が24になることを確認します。
+      \end{block}
+      \begin{block}{追加課題}
+        0除算の検査と、未知の演算子を返り値で報告する設計を追加してください。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第2章の要点は、表現の変換と木の走査です}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{命令}
+        ISAがCPUの操作を定め、機械語とアセンブリ言語が同じ命令を別表記で示します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{言語処理}
+        字句解析、構文解析、AST、意味解析、コード生成が表現を段階的に変換します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{探索}
+        DFSは依存関係をたどる処理、BFSは距離順の探索に適します。
+      \end{block}
+  \end{columns}
+  \vspace{4mm}
+  \takeaway{構文エラーは文字列の見た目ではなく、トークン列を文法構造へ対応づけられないときに発生します。}
+\end{frame}
+
+\begin{frame}[t]{確認問題では、変換前後の表現を対応づけます}
+  \begin{enumerate}
+    \item ISAとCPUのマイクロアーキテクチャは、何をそれぞれ定めますか。
+    \item ロード、ストア、分岐は、レジスタ、メモリ、PCをどう変更しますか。
+    \item コンパイラとインタプリタを単純な二分類にできない例を示してください。
+    \item \code{x = 12 + y} をトークンへ分け、各トークンの種別を示してください。
+    \item 構文木とASTで保持する情報は、どのように異なりますか。
+    \item AST評価に後順走査が適する理由を説明してください。
+    \item 重みなしグラフの最短経路にBFSを使える理由を説明してください。
+  \end{enumerate}
+\end{frame}
