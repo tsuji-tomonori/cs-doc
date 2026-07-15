@@ -1,1 +1,139 @@
-% 参考資料は本文完成後に追加します。
+\providecommand{\materialref}[3]{%
+  \textbf{\href{#1}{#2}}\par
+  #3\par\vspace{1.4mm}%
+}
+
+\chapterframe{参考文献}{一次資料から、さらに深く学ぶ}{大学の公開教材、公式仕様、標準規格、原著論文を章ごとに示します。本文の図と説明は本教材用に再構成し、外部資料はリンクで参照します。}
+
+\begin{frame}[t]{参考文献は、目的と難易度を分けて使います}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{講義資料・教科書}
+        初学者向けの説明順序と例を補います。MIT、Stanford、Cornell、CMUなどの公開講義を、章の理解を深める入口にします。
+      \end{block}
+      \begin{block}{公式仕様・標準規格}
+        言語やプロトコルが保証する範囲を確認します。実装依存の挙動と、仕様で定めた挙動を区別するときに使います。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{原著論文・歴史資料}
+        概念が提案された背景と、原文での主張を確認します。本文より難しいため、読了後の発展資料として位置付けます。
+      \end{block}
+      \begin{block}{利用上の注意}
+        リンク先の利用条件は提供者ごとに異なります。本教材は外部PDFを同梱せず、要約、独自図解、参照リンクで構成します。
+      \end{block}
+  \end{columns}
+  \vspace{4mm}
+  \takeaway{すべてのWeb資料の最終参照日は、2026年7月15日です。リンク切れ時は資料名と著者名で公式サイトを検索してください。}
+\end{frame}
+
+\begin{frame}[t]{第1章・第2章：回路、CPU、言語処理、木構造}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{第1章　コンピュータ}
+        \materialref{https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/pages/c2/}{MIT 6.004: The Digital Abstraction}{電圧を離散値として扱う抽象化、ノイズ余裕、組み合わせ回路。}
+        \materialref{https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/pages/lecture-notes/}{MIT 6.004: Computation Structures}{論理回路、状態、メモリ、命令セット、CPUをつなぐ講義ノート。}
+        \materialref{https://web.mit.edu/6.111/www/f2017/handouts/L12_4.pdf}{MIT 6.111: Memory Devices}{SRAM、DRAM、アドレス指定、読み書きの仕組み。}
+        \materialref{https://www.mtl.t.u-tokyo.ac.jp/~sakai/hard/}{東京大学「コンピュータハードウェア」}{2進表現、加算器、フリップフロップ、CPUを扱う日本語資料。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{第2章　言語と探索}
+        \materialref{https://www.cs.cornell.edu/courses/cs4120/2016sp/lectures/01intro/lec01-sp16.pdf}{Cornell CS4120: Introduction to Compilers}{字句解析からコード生成までのコンパイラ全体像。}
+        \materialref{https://web.stanford.edu/class/cs143/lectures/lecture06.pdf}{Stanford CS143: Abstract Syntax Trees}{構文木、AST、構文主導の変換。}
+        \materialref{https://web.stanford.edu/class/cs106b-8/lectures/backtracking-optimization/Lecture13.pdf}{Stanford CS106B: DFS / Backtracking}{再帰、深さ優先探索、バックトラッキング。}
+        \materialref{https://web.stanford.edu/class/cs106b-8/lectures/graphs/Lecture28.pdf}{Stanford CS106B: Graphs / BFS}{キュー、幅優先探索、最短段数の探索。}
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第3章：OS、メモリ、型、データ構造、計算量}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{実行環境とメモリ}
+        \materialref{https://pages.cs.wisc.edu/~remzi/OSTEP/}{Arpaci-Dusseau: OSTEP, version 1.10}{プロセス、仮想メモリ、並行性、永続化を体系化した公開教科書。}
+        \materialref{https://web.stanford.edu/class/archive/cs/cs107/cs107.1222/lectures/07/Lecture07.pdf}{Stanford CS107: Stack and Heap}{スタックフレーム、ポインタ、ヒープ割り当て。}
+        \materialref{https://docs.python.org/3/reference/datamodel.html}{Python: Data model}{オブジェクト、型、同一性、値、参照の公式定義。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{配列、スライス、マップ}
+        \materialref{https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/851ae1c98f7a73382b76732f977bb92f_CHhwJjR0mZA.pdf}{MIT 6.006: Dynamic Arrays}{動的配列の拡張と償却計算量。}
+        \materialref{https://www.cs.cmu.edu/~15122/handouts/lectures/12-hashing.pdf}{CMU 15-122: Hash Tables}{ハッシュ関数、衝突、負荷率、リサイズ。}
+        \materialref{https://go.dev/ref/spec}{The Go Programming Language Specification}{配列、スライス、マップ、型、値の公式仕様。}
+        \materialref{https://go.dev/blog/slices-intro}{Go Slices: usage and internals}{スライス記述子、長さ、容量、元配列共有の公式解説。}
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第4章：複雑さ、モジュール、構造化、モデリング}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{歴史的な一次資料}
+        \materialref{https://homepages.cs.ncl.ac.uk/brian.randell/NATO/}{NATO Software Engineering Conferences}{1968年・1969年会議の報告書とソフトウェア危機の背景。}
+        \materialref{https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf}{Dijkstra: Go To Statement Considered Harmful}{制御の流れを理解可能な構造へ制限する議論。}
+        \materialref{https://wstomv.win.tue.nl/edu/2ip30/references/criteria_for_modularization.pdf}{Parnas: Criteria for Modularization}{変更され得る設計判断を隠すモジュール分割の原典。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{設計とモデル}
+        \materialref{https://www.cs.cmu.edu/~charlie/courses/15-214/2013-spring/slides/01_intro.pdf}{CMU 15-214: Software Construction}{複雑さ、モジュール性、変更容易性を扱う導入講義。}
+        \materialref{https://www.cis.upenn.edu/~cis120/current/files/1200notes.pdf}{UPenn CIS1200: Programming Techniques}{抽象化、インターフェース、関数型・命令型・OOPの考え方。}
+        \materialref{https://www.omg.org/spec/UML/2.5.1/About-UML}{OMG: UML 2.5.1 Specification}{クラス図、シーケンス図などの正式なメタモデルと記法。}
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第5章：ネットワークの講義資料と基礎規格}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{講義資料}
+        \materialref{https://web.stanford.edu/class/archive/cs/cs45/cs45.1234/lectures/7-intro-to-computer-networking.pdf}{Stanford CS45: Computer Networking}{パケット交換、Ethernet、IP、TCP、DNS、NATの導入。}
+        \materialref{https://www.scs.stanford.edu/10au-cs144/notes/l1.pdf}{Stanford CS144: Networking Introduction}{階層化、IP、トランスポート、アプリケーションの俯瞰。}
+        \materialref{https://www.scs.stanford.edu/10au-cs144/notes/l3-print.pdf}{Stanford CS144: TCP / UDP}{接続、再送、順序制御、ウィンドウ、UDP。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{名前とインターネット層}
+        \materialref{https://www.rfc-editor.org/rfc/rfc1034.html}{RFC 1034 / RFC 1035: DNS}{\href{https://www.rfc-editor.org/rfc/rfc1035.html}{DNSの概念、実装、メッセージ形式。}}
+        \materialref{https://www.rfc-editor.org/rfc/rfc8200.html}{RFC 8200: IPv6}{IPv6データグラムと拡張ヘッダー。}
+      \end{block}
+      \begin{block}{読み方}
+        講義資料で階層間の関係をつかみ、曖昧な挙動は対応するRFCの規範的な記述へ戻ります。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第5章：トランスポート、TLS、HTTPの標準規格}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{トランスポートと安全な通信}
+        \materialref{https://www.rfc-editor.org/rfc/rfc9293.html}{RFC 9293: TCP}{TCPの現在の基本仕様。}
+        \materialref{https://www.rfc-editor.org/rfc/rfc768.html}{RFC 768: UDP}{最小限のデータグラム型トランスポート。}
+        \materialref{https://www.rfc-editor.org/rfc/rfc9000.html}{RFC 9000: QUIC}{UDP上の安全な多重化トランスポート。}
+        \materialref{https://www.rfc-editor.org/rfc/rfc8446.html}{RFC 8446: TLS 1.3}{ハンドシェイク、暗号化、完全性、認証。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{HTTP}
+        \materialref{https://www.rfc-editor.org/rfc/rfc9110.html}{RFC 9110: HTTP Semantics}{全HTTP版で共有するメソッド、ステータス、表現の意味。}
+        \materialref{https://www.rfc-editor.org/rfc/rfc9112.html}{RFC 9112 / 9113 / 9114}{\href{https://www.rfc-editor.org/rfc/rfc9113.html}{HTTP/1.1、HTTP/2、}\href{https://www.rfc-editor.org/rfc/rfc9114.html}{HTTP/3のメッセージ形式。}}
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第6章：機械学習、ニューラルネット、Transformer}
+  \scriptsize
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{学習、回帰、分類}
+        \materialref{https://introml.mit.edu/notes/}{MIT 6.390: Introduction to Machine Learning}{予測と意思決定、損失、最適化、評価、ニューラルネットの講義ノート。}
+        \materialref{https://cs229.stanford.edu/lectures-spring2022/main_notes.pdf}{Stanford CS229: Machine Learning Notes}{線形モデル、正則化、分類、ニューラルネット、逆伝播。}
+        \materialref{https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf}{Bishop: Pattern Recognition and Machine Learning}{曲線フィッティング、過学習、決定理論、線形分類の発展資料。}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{AttentionとTransformer}
+        \materialref{https://papers.neurips.cc/paper/7181-attention-is-all-you-need.pdf}{Vaswani et al.: Attention Is All You Need}{Transformer、Multi-Head Attention、位置エンコーディングの原論文。}
+        \materialref{https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1244/slides/cs224n-2024-lecture08-transformers.pdf}{Stanford CS224N: Transformers}{Self-Attention、Query・Key・Value、Encoder・Decoderの講義資料。}
+      \end{block}
+  \end{columns}
+\end{frame}
