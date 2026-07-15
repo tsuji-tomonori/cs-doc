@@ -1,3 +1,7 @@
+% LuaHBTeX 1.14 の圧縮オブジェクトを一部の Poppler が誤描画するため、
+% 目次リンクを保ったまま互換性の高い PDF オブジェクト形式で出力する。
+\pdfvariable objcompresslevel=0
+
 \usepackage{luatexja-fontspec}
 \usepackage{fontspec}
 \usepackage{amsmath,amssymb,mathtools}
@@ -7,8 +11,8 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,automata,calc,fit,matrix,positioning,shapes.geometric}
 
-\setmainfont{Noto Sans CJK JP}
-\setsansfont{Noto Sans CJK JP}
+\setmainfont{Noto Sans CJK JP}[AutoFakeSlant=0.2]
+\setsansfont{Noto Sans CJK JP}[AutoFakeSlant=0.2]
 \setmonofont{DejaVu Sans Mono}[Scale=0.82]
 \setmainjfont{Noto Sans CJK JP}
 \setsansjfont{Noto Sans CJK JP}
@@ -52,19 +56,25 @@
 \setbeamertemplate{enumerate item}{\color{MutedBlue}\insertenumlabel.}
 
 \setbeamertemplate{headline}{%
-  \leavevmode%
-  \hbox{%
-    \begin{beamercolorbox}[wd=\paperwidth,ht=5.5mm,dp=1.5mm]{page number in head}%
-      \hbox to \paperwidth{%
-        \hskip10mm%
-        \usebeamerfont{section in head}\usebeamercolor[fg]{section in head}\insertsectionhead%
-        \hfil%
-        \usebeamerfont{page number in head}\usebeamercolor[fg]{page number in head}%
-        \insertframenumber\ / \inserttotalframenumber%
-        \hskip10mm%
-      }%
-    \end{beamercolorbox}%
-  }%
+  \begingroup%
+    \leftskip=0pt%
+    \rightskip=0pt%
+    \parfillskip=0pt%
+    \parindent=0pt%
+    \leavevmode%
+    \hbox{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=5.5mm,dp=1.5mm]{page number in head}%
+        \hbox to \paperwidth{%
+          \hskip10mm%
+          {\normalfont\sffamily\scriptsize\bfseries\color{MutedBlue}\insertsectionhead}%
+          \hfil%
+          {\normalfont\sffamily\scriptsize\color{PaleGray}%
+            \insertframenumber\ / \inserttotalframenumber}%
+          \hskip10mm%
+        }%
+      \end{beamercolorbox}%
+    }%
+  \endgroup%
 }
 
 \setbeamertemplate{frametitle}{%
