@@ -1,1 +1,432 @@
-% 終章本文は次のコミットで追加します。
+\chapterframe{終章　学んだ知識を実務につなげる}{一つの現象を、複数の階層から説明する}{Webアプリケーションの要求処理を端から端までたどります。遅延、メモリ、通信、変更容易性、AIの不安定さを、観測可能な事実と基礎知識へ対応づけます。}
+
+\begin{frame}[t]{一つのリクエストは、すべての階層を通ります}
+  \centering
+  \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\tiny,minimum width=17mm,inner sep=1mm}]
+    \node[accentbox] (user) {利用者の操作\\URL・API};
+    \node[box,right=of user] (net) {通信\\DNS・HTTP};
+    \node[box,right=of net] (app) {アプリ\\解析・業務処理};
+    \node[box,right=of app] (runtime) {実行環境\\プロセス・OS};
+    \node[box,right=of runtime] (machine) {機械\\CPU・メモリ};
+    \node[accentbox,right=of machine] (signal) {物理的実体\\電圧・ビット};
+    \draw[flow] (user)--(net); \draw[flow] (net)--(app); \draw[flow] (app)--(runtime);
+    \draw[flow] (runtime)--(machine); \draw[flow] (machine)--(signal);
+  \end{tikzpicture}
+  \vspace{3mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{上位層の役割}
+        利用者の目的に近い意味を扱います。下位層の詳細を抽象化し、要求、データ、業務規則として表現します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{下位層の役割}
+        上位層が使う計算、記憶、配送を実現します。障害時には抽象化の下へ一段ずつ降りて観測します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{ソースコードは、命令列と実行時資源へ変換されます}
+  \centering
+  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (src) {ソースコード};
+    \node[box,right=of src] (front) {字句・構文解析\\AST};
+    \node[box,right=of front] (code) {コード生成\\機械語};
+    \node[box,right=of code] (exe) {実行可能形式};
+    \draw[flow] (src)--(front); \draw[flow] (front)--(code); \draw[flow] (code)--(exe);
+    \node[box,below=8mm of src] (loader) {OSのローダー};
+    \node[box,right=of loader] (proc) {プロセス\\仮想アドレス空間};
+    \node[box,right=of proc] (cpu) {CPUが命令を\\フェッチ・実行};
+    \node[accentbox,right=of cpu] (sys) {システムコール\\入出力};
+    \draw[flow] (exe.south) to[bend right=18] (loader.north);
+    \draw[flow] (loader)--(proc); \draw[flow] (proc)--(cpu); \draw[flow] (cpu)--(sys);
+  \end{tikzpicture}
+  \vspace{5mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{ビルド時}
+        文法、型、依存関係を検査し、対象の命令セットで実行できる形式を作ります。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{起動時}
+        OSがコードとデータを仮想メモリへ対応づけ、実行コンテキストを作ります。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{実行時}
+        CPUは命令を処理し、ファイルや通信などの保護された機能をOSへ依頼します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{要求は、通信の各層で包まれてサーバーへ届きます}
+  \centering
+  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox,minimum width=23mm] (browser) {クライアント};
+    \node[box,minimum width=23mm,right=of browser] (dns) {DNS};
+    \node[box,minimum width=23mm,right=of dns] (transport) {TCP／QUIC};
+    \node[box,minimum width=23mm,right=of transport] (tls) {TLS};
+    \node[accentbox,minimum width=23mm,right=of tls] (server) {サーバー};
+    \draw[flow] (browser)--node[above]{名前}(dns);
+    \draw[flow] (dns)--node[above]{IP}(transport);
+    \draw[flow] (transport)--node[above]{接続}(tls);
+    \draw[flow] (tls)--node[above]{HTTP}(server);
+    \draw[softflow] (server.south) to[bend left=18] node[below]{応答は逆向きに戻る} (browser.south);
+  \end{tikzpicture}
+  \vspace{-0.5mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{サーバーへ届くまで}
+        DNSで宛先を求め、トランスポート接続を作り、TLSで相手と通信路を検証してからHTTP要求を送ります。再利用やキャッシュで一部を省く場合があります。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{アプリへ渡るまで}
+        ネットワークインターフェースからカーネルへ届いたバイト列を、OSがソケットを介して待機中のプロセスへ渡します。
+      \end{block}
+  \end{columns}
+  \takeaway{「サーバーへ届かない」を一つの現象にまとめず、名前、経路、接続、TLS、HTTP、プロセスへ分解します。}
+\end{frame}
+
+\begin{frame}[t]{アプリケーションは、入力を内部表現へ変えて処理します}
+  \centering
+  \begin{tikzpicture}[node distance=2.4mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (bytes) {HTTPのバイト列};
+    \node[box,right=of bytes] (parse) {解析\\構造化};
+    \node[box,right=of parse] (validate) {検証\\境界で拒否};
+    \node[box,right=of validate] (usecase) {ユースケース\\業務規則};
+    \node[box,right=of usecase] (output) {応答へ変換};
+    \draw[flow] (bytes)--(parse); \draw[flow] (parse)--(validate);
+    \draw[flow] (validate)--(usecase); \draw[flow] (usecase)--(output);
+  \end{tikzpicture}
+  \vspace{5mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{表現}
+        JSONなどを型、配列、スライス、マップ、オブジェクトへ変換します。表現ごとに容量と探索コストが異なります。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{処理}
+        分岐、探索、並べ替え、集約を組み合わせます。入力サイズと計算量から増え方を予測します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{設計}
+        通信形式、業務規則、外部依存を別の責務に分け、変更理由が同じ処理をまとめます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{処理中のデータには、置き場所と生存期間があります}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{スタックとヒープ}
+        \textbf{スタック}は関数呼び出しに対応する局所状態を保持します。
+        \textbf{ヒープ}は呼び出しを越えて共有するオブジェクトを保持し、参照が残れば回収できません。
+      \end{block}
+      \begin{block}{キャッシュとバッファ}
+        再計算や入出力回数を減らせますが、上限、失効、解放の方針がなければ増え続けます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{一件当たりから見積もります}
+        \centering
+        $
+          M_{\mathrm{total}} \approx
+          M_{\mathrm{base}} + N_{\mathrm{concurrent}}M_{\mathrm{request}}
+          + M_{\mathrm{cache}}
+        $\par
+        要素本体だけでなく、参照、型情報、容量の余り、一時コピーも含めます。
+      \end{block}
+      \begin{block}{観測する量}
+        常駐メモリ、ヒープ内訳、割り当て速度、GC時間、同時処理数、キャッシュ件数を時系列で比べます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{機械学習モデルは、境界を決めて呼び出します}
+  \centering
+  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (case) {業務処理};
+    \node[box,right=of case] (input) {入力整形\\機密情報を制御};
+    \node[box,right=of input] (model) {モデル推論\\確率的な出力};
+    \node[box,right=of model] (check) {形式・根拠・\\禁止事項を検査};
+    \node[accentbox,right=of check] (decision) {採用／再試行／\\人へ引き継ぐ};
+    \draw[flow] (case)--(input); \draw[flow] (input)--(model);
+    \draw[flow] (model)--(check); \draw[flow] (check)--(decision);
+  \end{tikzpicture}
+  \vspace{6mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{通常の関数と異なる点}
+        同じ目的でも出力が変わり、流暢さと正しさは一致しません。タイムアウト、費用、モデル更新、分布変化も依存条件です。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{アプリ側の責任}
+        入力・出力の契約、評価集合、失敗時の代替、権限、監査、人の確認点を、モデルの外側で実装します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{観測結果を階層へ対応づけると、仮説を絞れます}
+  \scriptsize
+  \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{19mm}YY@{}}
+    \toprule
+    階層 & 代表的な観測 & 読み取れること \\
+    \midrule
+    HTTP & ステータス、ヘッダー、本文、要求時間 & 要求の意味、応答の成否、待ち時間の位置 \\
+    通信 & DNS時間、接続時間、再送、RTT、TLS失敗 & 名前解決、経路、混雑、証明書、版の不一致 \\
+    アプリ & ログ、トレース、処理件数、キュー長 & どの処理・依存先・入力で遅れたか \\
+    OS & CPU、メモリ、GC、スレッド、I/O待ち & 計算、割り当て、競合、外部待ちのどれか \\
+    コード & プロファイル、計算量、割り当て箇所 & 時間と空間を消費する関数・データ構造 \\
+    AI & 入力群別の指標、根拠、費用、再現条件 & 確率的な失敗、偏り、分布変化、運用上の影響 \\
+    \bottomrule
+  \end{tabularx}
+  \vspace{1mm}
+  \takeaway{単一のログだけで結論を出さず、同じ時刻・同じ要求ID・同じ入力条件の観測をつなぎます。}
+\end{frame}
+
+\begin{frame}[t]{処理が遅いときは、時間を分解して増え方を調べます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{端から端までの時間}
+        \[
+          T_{\mathrm{total}}=
+          T_{\mathrm{queue}}+T_{\mathrm{network}}+
+          T_{\mathrm{compute}}+T_{\mathrm{I/O}}
+        \]
+        平均だけでなく、中央値、上位百分位、入力サイズ、同時実行数ごとに分けます。
+      \end{block}
+      \begin{block}{アルゴリズム}
+        入力を2倍にしたときの変化を測ります。二重ループ、不要な全件走査、連結配列の再確保を疑います。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{メモリとCPU}
+        キャッシュミス、過剰な割り当て、コピー、GC、競合はCPU時間を増やします。プロファイルで上位箇所を確認します。
+      \end{block}
+      \begin{block}{ネットワークと外部待ち}
+        DNS、接続、TLS、最初の応答バイト、転送を別々に測ります。再試行は遅延と負荷をさらに増やし得ます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{メモリを使いすぎるときは、量と生存期間を分けます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{大きい}
+        一件の配列、画像、応答、モデル入力が大きい場合です。ストリーミング、上限、より小さい表現を検討します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{多い}
+        同時要求、オブジェクト数、一時コピーが多い場合です。並行数、バッファ再利用、データ構造を見直します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{長く残る}
+        キャッシュ、グローバル参照、コールバック、元配列の共有で回収できない場合です。参照経路を調べます。
+      \end{block}
+  \end{columns}
+  \vspace{5mm}
+  \begin{block}{切り分けの順序}
+    基準時点と高負荷時点のヒープを比較し、増えた型と確保元を特定します。その後、所有者、生存期間、上限、解放条件をコード上で確認します。
+  \end{block}
+  \takeaway{GCがあることは、不要になった時点で自動的に解放されることを意味しません。到達可能な参照が残れば回収されません。}
+\end{frame}
+
+\begin{frame}[t]{通信失敗は、最初に失敗した段階を探します}
+  \centering
+  \begin{tikzpicture}[node distance=2.6mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (dns) {名前をIPへ解決できたか};
+    \node[box,right=of dns] (connect) {ポートへ接続できたか};
+    \node[box,right=of connect] (tls) {TLS検証が通ったか};
+    \node[box,right=of tls] (http) {HTTP応答を得たか};
+    \draw[flow] (dns)--node[above]{はい}(connect);
+    \draw[flow] (connect)--node[above]{はい}(tls);
+    \draw[flow] (tls)--node[above]{はい}(http);
+    \node[below=5mm of dns,align=center] (df) {NXDOMAIN、タイムアウト、\\古いキャッシュ};
+    \node[below=5mm of connect,align=center] (cf) {拒否、経路なし、\\再送、ポート違い};
+    \node[below=5mm of tls,align=center] (tf) {期限、名前、信頼、\\版、時計};
+    \node[below=5mm of http,align=center] (hf) {4xx／5xx、形式、\\リダイレクト、容量};
+    \draw[softflow] (dns)--node[left]{いいえ}(df);
+    \draw[softflow] (connect)--node[left]{いいえ}(cf);
+    \draw[softflow] (tls)--node[left]{いいえ}(tf);
+    \draw[softflow] (http)--node[left]{いいえ}(hf);
+  \end{tikzpicture}
+  \vspace{5mm}
+  \begin{block}{確認条件をそろえます}
+    発生時刻、接続元、対象名、IP、ポート、プロトコル版、証明書、HTTP要求を記録します。別の端末で成功しても、DNSキャッシュや経路が同じとは限りません。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{変更が難しいときは、変更理由と依存方向を見直します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{兆候}
+        一つの仕様変更で多数の場所を直す、テストに外部サービスが必須、条件分岐が各所に重複する、データ表現が境界を越えて漏れます。
+      \end{block}
+      \begin{block}{原因を構造で捉えます}
+        責務の混在、共有状態、暗黙の契約、循環依存、実装詳細への直接依存を、モジュール図と変更履歴で確認します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{小さく改善します}
+        まず現在の振る舞いをテストで固定し、境界を一つ選びます。インターフェースを狭め、依存を注入し、移動ごとに検証します。
+      \end{block}
+      \begin{block}{評価します}
+        変更箇所数、テスト時間、障害範囲、理解に必要なモジュール数が減ったかを確認します。パターン導入自体を目的にしません。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{AIの回答が安定しないときは、再現条件と評価集合を作ります}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{条件を固定します}
+        モデル版、プロンプト、システム指示、参照資料、温度、最大長、ツール結果、実行日時を残します。
+      \end{block}
+      \begin{block}{失敗を分類します}
+        指示不遵守、形式違反、根拠不足、事実誤り、検索漏れ、拒否、遅延、費用超過を別の指標にします。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{入力群ごとに測ります}
+        通常例だけでなく、境界例、曖昧な入力、長文、攻撃的入力、重要な利用者群を固定評価集合へ含めます。
+      \end{block}
+      \begin{block}{利用境界を調整します}
+        出力検査、根拠提示、再試行、代替処理、人の確認を加えます。改善が不十分なら自動化範囲を狭めます。
+      \end{block}
+  \end{columns}
+  \takeaway{一つの成功例や失敗例ではなく、版管理した入力集合に対する分布として品質を比較します。}
+\end{frame}
+
+\begin{frame}[t]{障害調査は、仮説を反証できる形で進めます}
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (fact) {1. 現象を事実で記述};
+    \node[box,right=of fact] (scope) {2. 範囲と時刻を限定};
+    \node[box,right=of scope] (hypo) {3. 階層別に仮説化};
+    \node[box,right=of hypo] (test) {4. 一変数ずつ検証};
+    \node[accentbox,right=of test] (record) {5. 結果と次手を記録};
+    \draw[flow] (fact)--(scope); \draw[flow] (scope)--(hypo);
+    \draw[flow] (hypo)--(test); \draw[flow] (test)--(record);
+    \draw[softflow] (record.south) to[bend left=18] node[below]{未解決なら更新} (hypo.south);
+  \end{tikzpicture}%
+  }
+  \vspace{6mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{事実}
+        「遅い」ではなく、対象、時刻、入力、期待値、実測値、頻度、影響を書くと比較できます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{仮説}
+        正しければ何が観測され、誤りなら何が観測されないかを先に決めます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{変更}
+        緊急回避と恒久対策を分けます。対策後も同じ指標を測り、副作用を確認します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{次に学ぶ分野は、担当する問題から選びます}
+  \scriptsize
+  \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{30mm}YY@{}}
+    \toprule
+    分野 & 次の主題 & 実務で答えられる問い \\
+    \midrule
+    アーキテクチャ & パイプライン、キャッシュ、並列性、性能測定 & 同じコードでもCPUや配置で性能が変わるのはなぜか \\
+    OS・並行処理 & スケジューリング、同期、I/O、ファイル、コンテナ & 待ち、競合、デッドロック、資源上限をどう調べるか \\
+    アルゴリズム & グラフ、動的計画法、索引、確率的手法 & 入力規模に対して処理時間とメモリをどう抑えるか \\
+    設計・テスト & アーキテクチャ、契約、テスト戦略、継続的改善 & 変更を安全に小さく届ける境界をどう作るか \\
+    通信・安全性 & ルーティング、分散、認証・認可、脅威分析 & 信頼境界を越えるデータと権限をどう守るか \\
+    機械学習・AI & 統計、最適化、評価、MLOps、安全な運用 & 予測品質をどう測り、変化と失敗をどう管理するか \\
+    \bottomrule
+  \end{tabularx}
+  \vspace{1mm}
+  \takeaway{用語の暗記ではなく、自分の担当システムで再現できる小さな観測・実装・説明を学習単位にします。}
+\end{frame}
+
+\begin{frame}[t]{総合演習では、注文APIを端から端まで説明します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+      \begin{block}{シナリオ}
+        利用者がブラウザから注文を確定すると、Web APIが商品ごとの小計と合計を計算します。任意機能として、商品説明を要約する生成AIを呼び出し、応答を返します。
+      \end{block}
+      \begin{block}{発生している現象}
+        通常は300msですが、明細が多い注文では上位1\%が5秒を超えます。メモリは負荷試験中に増え続け、まれにTLSエラーが発生します。AI要約には存在しない注意事項が混じります。
+      \end{block}
+    \column{0.42\textwidth}
+      \begin{block}{前提としてよいこと}
+        入力はHTTPSのJSONです。アプリはコンパイル済みプロセスとして動作し、注文を配列、商品索引をマップで保持します。
+      \end{block}
+      \begin{block}{演習の目的}
+        すぐに原因を断定するのではなく、各階層の処理、失敗点、必要な観測、検証順序を説明します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{演習A：正常系の動作を、因果関係で図示します}
+  \footnotesize
+  \begin{enumerate}
+    \setlength{\itemsep}{1mm}
+    \item ソースコードからプロセス起動までを、コンパイラ、機械語、OS、仮想メモリ、CPUを使って説明してください。
+    \item ブラウザからAPIへ要求が届くまでを、DNS、IP、TCPまたはQUIC、TLS、HTTPの順で図示してください。
+    \item JSONが型付きの注文へ変換され、配列とマップを使って合計を求め、JSON応答になる流れを書いてください。
+    \item 処理中の主要データを、スタック、ヒープ、共有キャッシュのどこへ置くか仮定し、生存期間を添えてください。
+    \item AI要約を任意機能として分離し、入力制御、タイムアウト、出力検査、失敗時の代替を境界へ書いてください。
+  \end{enumerate}
+  \vspace{1mm}
+  \begin{block}{提出物}
+    A3用紙一枚相当のシーケンス図または階層図と、各矢印を説明する800〜1,200字の文章を作ります。図中の矢印には、渡すデータと提供する保証を書きます。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{演習B：四つの現象に、検証可能な調査計画を作ります}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{22mm}YY@{}}
+    \toprule
+    現象 & 少なくとも立てる仮説 & 必ず含める観測 \\
+    \midrule
+    遅延 & 計算量、割り当て、外部待ち、キューの各観点 & 入力サイズ別時間、プロファイル、依存先時間、上位百分位 \\
+    メモリ増加 & 一件が大きい、多数存在する、参照が残るの各観点 & 型別ヒープ差分、確保元、同時数、GC、キャッシュ件数 \\
+    TLS失敗 & 名前、経路、時刻、証明書、プロトコル版の各観点 & 発生元、IP、証明書鎖、有効期限、時計、エラー全文 \\
+    AI誤り & 入力、検索、モデル出力、検査、運用境界の各観点 & 固定評価集合、根拠一致率、条件、モデル版、失敗時の扱い \\
+    \bottomrule
+  \end{tabularx}
+  \vspace{4mm}
+  \begin{block}{計画の書式}
+    各現象について「事実 → 仮説 → 仮説を支持する観測 → 反証する観測 → 最初の安全な検証 → 対策後の確認指標」を一組にします。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{演習は、説明のつながりと検証可能性で評価します}
+  \scriptsize
+  \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{25mm}p{14mm}Y@{}}
+    \toprule
+    評価観点 & 配点 & 達成基準 \\
+    \midrule
+    階層の網羅 & 20 & 言語、OS、メモリ、CPU、通信、アプリ、AIの役割を区別しています。 \\
+    因果関係 & 25 & データと制御の流れを矢印で示し、前段の出力が次段でどう使われるか説明しています。 \\
+    技術的正確さ & 20 & 各層が保証することと保証しないこと、平均と最悪、学習と推論を混同していません。 \\
+    調査計画 & 25 & 仮説を観測で支持・反証でき、条件、比較対象、安全な検証順序が明確です。 \\
+    伝達品質 & 10 & 用語を定義し、事実・仮定・推測を分け、第三者が同じ調査を再現できます。 \\
+    \bottomrule
+  \end{tabularx}
+  \vspace{1mm}
+  \begin{block}{相互レビュー}
+    ペアで説明を交換し、矢印を一つ選んで「誰が、何を、どの表現で、どの保証の下に渡すか」を質問します。答えられない境界を追加調査の候補にします。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{終章の要点は、階層を越えて証拠をつなぐことです}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{説明}
+        上位の目的を、下位が提供する計算、記憶、通信へ分解します。境界ではデータ表現と保証を確認します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{調査}
+        現象を測定可能にし、階層別の仮説を作り、反証できる観測を一つずつ集めます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{改善}
+        回避策と恒久策を分け、変更前後を同じ指標で比べます。新しい抽象化にも利用境界を設けます。
+      \end{block}
+  \end{columns}
+  \vspace{5mm}
+  \takeaway{情報工学の基礎は、すべてを自分で実装するためではなく、見えない層を含むシステムを根拠とともに説明し、改善するための共通言語です。}
+\end{frame}
