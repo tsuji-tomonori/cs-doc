@@ -1,1 +1,515 @@
-% 第4章本文は次のコミットで追加します。
+\chapterframe{第4章　ソフトウェア工学}{複雑さを境界の内側へ閉じ込める}{ソフトウェア危機を出発点に、分割統治、構造化、抽象化、モデリング、オブジェクト指向、関数型の考え方を扱います。設計と品質維持を、変更の影響範囲から捉えます。}
+
+\begin{frame}[t]{「ソフトウェア危機」は、開発を工学として扱う契機になりました}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.52\textwidth}
+      \begin{block}{1968年NATO会議}
+        大規模ソフトウェアの開発、配布、保守に共通する問題を議論するため、NATO科学委員会が会議を開催しました。
+        翌年の報告書は、議論を「Software Engineering」の題で記録しています。
+      \end{block}
+      \begin{block}{問題の構図}
+        要求や環境が変わる一方、規模が増すほど全体の理解、見積もり、統合、検証、保守が難しくなります。
+      \end{block}
+    \column{0.44\textwidth}
+      \begin{block}{個人技だけでは解けません}
+        言語やアルゴリズムだけでなく、設計、工程、検証、協働、運用を含む仕組みが必要です。
+      \end{block}
+      \begin{block}{現在への読み替え}
+        危機は一度で解消した事件ではありません。依存関係と変更速度を管理する課題として、現代の開発にも残ります。
+      \end{block}
+  \end{columns}
+  \source{NATO Science Committee, \textit{Software Engineering: Report on a Conference}, 1969}
+\end{frame}
+
+\begin{frame}[t]{規模が増えると、相互作用は要素数より速く増え得ます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+      \centering
+      \begin{tikzpicture}[every node/.append style={font=\scriptsize}]
+        \foreach \a in {90,162,234,306,378}{
+          \node[node] (n\a) at (\a:15mm) {};
+        }
+        \foreach \a/\b in {90/162,90/234,90/306,90/378,162/234,162/306,162/378,234/306,234/378,306/378}{
+          \draw[draw=RuleGray] (n\a)--(n\b);
+        }
+        \node[font=\small,align=center] at (0,-23mm) {5要素を全結合すると\\関係は10本};
+      \end{tikzpicture}
+    \column{0.42\textwidth}
+      \begin{block}{本質的な複雑さ}
+        問題領域に元からある規則、例外、状態、同時実行、外部連携です。単純化しても消せない部分があります。
+      \end{block}
+      \begin{block}{偶発的な複雑さ}
+        重複、曖昧な責務、循環依存、過剰な抽象化など、実装や開発方法が持ち込む難しさです。
+      \end{block}
+  \end{columns}
+  \vspace{3mm}
+  \takeaway{変更コストは行数だけでなく、理解して確認すべき依存関係の広さで増えます。}
+\end{frame}
+
+\begin{frame}[t]{分割統治は、大きな問題を独立して扱える部分へ分けます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{分解}
+        入力、計算、保存、表示などの責務を見分け、名前を付けます。単にファイル数を増やすことではありません。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{関心の分離}
+        ある判断をするとき、無関係な詳細を同時に考えずに済む境界を作ります。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{再統合}
+        各部分の契約を定め、組み合わせたときのデータと制御の流れを検証します。
+      \end{block}
+  \end{columns}
+  \vspace{5mm}
+  \begin{block}{良い分割を評価する問い}
+    一つの要求変更はどの部分へ届くか、部分を単独で理解・検証できるか、境界を越える情報は必要最小限かを確認します。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{高い凝集と低い結合は、変更の波及を抑えます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{凝集度}
+        一つのモジュール内の要素が、まとまった責務へどれだけ集中しているかを表す観点です。
+        「なぜ一緒にあるか」を一文で説明できる状態を目指します。
+      \end{block}
+      \begin{block}{低凝集の兆候}
+        「共通」「便利」という理由だけで無関係な処理を集めると、利用者も変更理由も増えます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{結合度}
+        モジュール間の依存の強さを表す観点です。共有する可変状態、内部構造への依存、呼び出し順の暗黙条件は結合を強めます。
+      \end{block}
+      \begin{block}{低結合の手段}
+        小さなインタフェース、不変なデータ、明示した契約、依存方向の統一で、境界越しの知識を減らします。
+      \end{block}
+  \end{columns}
+  \takeaway{凝集度と結合度は数値だけで決めず、想定する変更に対して評価します。}
+\end{frame}
+
+\begin{frame}[t]{情報隠蔽は、変わりやすい設計判断をモジュール内へ置きます}
+  \centering
+  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
+    \node[box] (client1) {利用者A};
+    \node[box,below=of client1] (client2) {利用者B};
+    \node[accentbox,right=15mm of $(client1)!0.5!(client2)$] (api) {安定した\\インタフェース};
+    \node[box,right=12mm of api] (detail) {変更し得る詳細\\保存形式・アルゴリズム};
+    \draw[flow] (client1)--(api);
+    \draw[flow] (client2)--(api);
+    \draw[flow] (api)--(detail);
+  \end{tikzpicture}
+  \vspace{3mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{隠す対象}
+        データ表現、選択したアルゴリズム、外部サービス、キャッシュ方針など、将来変わり得る判断です。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{得られる効果}
+        判断を変更しても、公開契約を守る限り利用側の修正を減らせます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{分解基準}
+        処理段階だけでなく、同時に変わる設計判断のまとまりでも境界を検討します。
+      \end{block}
+  \end{columns}
+  \source{D. L. Parnas, “On the Criteria To Be Used in Decomposing Systems into Modules”, 1972}
+\end{frame}
+
+\begin{frame}[t]{構造化は、制御の入口と出口を追いやすくします}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.43\textwidth}
+      \begin{block}{goto依存の問題}
+        任意の位置への分岐が増えると、現在地点へ至る経路と、成立している状態を局所的に説明しにくくなります。
+      \end{block}
+      \begin{block}{禁止が目的ではありません}
+        問題は命令名ではなく、制御フローと状態変化を人が対応づけられるかです。例外処理や早期returnも同じ観点で読みます。
+      \end{block}
+    \column{0.53\textwidth}
+      \centering
+      \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
+        \node[accentbox] (seq) {逐次\\Aの後にB};
+        \node[accentbox,right=of seq] (sel) {選択\\条件で分岐};
+        \node[accentbox,right=of sel] (loop) {反復\\条件まで繰返し};
+        \draw[flow] (seq)--(sel);
+        \draw[flow] (sel)--(loop);
+      \end{tikzpicture}
+      \vspace{5mm}
+      \begin{block}{基本となる制御構造}
+        逐次、選択、反復を明示的に組み合わせ、まとまりごとに事前条件・事後条件を考えます。
+      \end{block}
+  \end{columns}
+  \source{E. W. Dijkstra, “Go To Statement Considered Harmful”, 1968}
+\end{frame}
+
+\begin{frame}[t]{抽象化は、本質を残し、目的に不要な詳細を省きます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{データ抽象}
+        「残高」を整数の置き場所ではなく、入金・出金・参照という許された操作で捉えます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{手続き抽象}
+        処理の実装手順を関数名と入出力の背後へ隠し、呼び出し側は目的を記述します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{制御抽象}
+        イテレータや高階関数で、走査順や反復の詳細を再利用可能な形へまとめます。
+      \end{block}
+  \end{columns}
+  \vspace{5mm}
+  \begin{block}{抽象化の粒度}
+    詳細を隠し過ぎると性能や失敗条件が見えず、隠さな過ぎると利用側へ変更理由が漏れます。利用者が正しく判断するための情報は契約に残します。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{インタフェースは、境界を越える約束を明示します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{事前条件}
+        呼び出し側が満たす入力範囲、状態、権限などです。例：金額は0より大きい。
+      \end{block}
+      \begin{block}{事後条件}
+        正常終了時に提供側が保証する結果と状態変化です。例：保存成功なら注文IDを返す。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{不変条件}
+        操作の前後で保つべき性質です。例：在庫数は負にならない。
+      \end{block}
+      \begin{block}{失敗の契約}
+        タイムアウト、重複、入力不正、部分失敗を、戻り値・例外・再試行可能性として区別します。
+      \end{block}
+  \end{columns}
+  \vspace{4mm}
+  \takeaway{型シグネチャだけでは、順序、単位、境界値、副作用、失敗時の状態まで表せない場合があります。}
+\end{frame}
+
+\begin{frame}[t]{モデルは、目的に合わせて現実の一部を強調します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{静的構造}
+        構成要素、属性、関連、依存など、時間を止めたときの関係を表します。クラス図やコンポーネント図が使えます。
+      \end{block}
+      \begin{block}{答えたい問い}
+        誰がどの情報を所有するか、どの方向へ依存するか、交換可能な境界はどこかを確認します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{動的な振る舞い}
+        時間に沿うメッセージ、状態遷移、分岐、並行処理を表します。シーケンス図や状態機械図が使えます。
+      \end{block}
+      \begin{block}{モデルの限界}
+        図は実装そのものではありません。図の目的、対象範囲、抽象度、更新責任を明記し、コードやテストと矛盾させません。
+      \end{block}
+  \end{columns}
+  \source{Object Management Group, \textit{UML 2.5.1 Specification}}
+\end{frame}
+
+\begin{frame}[t]{クラス図は、型の責務と静的な関係を表します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.62\textwidth}
+      \centering
+      \begin{tikzpicture}[every node/.append style={font=\scriptsize},node distance=13mm]
+        \node[box,align=left] (order) {\textbf{Order}\\\rule{24mm}{.3pt}\\id: OrderID\\items: []Item\\\rule{24mm}{.3pt}\\Total(): Money};
+        \node[box,align=left,right=of order] (item) {\textbf{Item}\\\rule{23mm}{.3pt}\\qty: int\\price: Money\\\rule{23mm}{.3pt}\\Subtotal(): Money};
+        \node[box,align=left,below=10mm of order] (repo) {\textbf{\textless\textless interface\textgreater\textgreater}\\OrderRepository\\\rule{29mm}{.3pt}\\Save(Order): error};
+        \draw[draw=MutedBlue] (order)--node[above,font=\tiny]{1\quad contains\quad 1..*}(item);
+        \draw[flow] (order)--(repo);
+      \end{tikzpicture}
+    \column{0.34\textwidth}
+      \begin{block}{読み方}
+        箱は型、区画は属性と操作、線は関連や依存を表します。多重度は関係できる個数です。
+      \end{block}
+      \begin{block}{載せる情報}
+        設計上の問いに必要な要素だけを載せます。全フィールドと全メソッドの転記を目的にしません。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{シーケンス図は、協調動作を時間順に示します}
+  \centering
+  \begin{tikzpicture}[x=0.9mm,y=0.52mm,every node/.append style={font=\scriptsize}]
+    \foreach \x/\name in {10/利用者,42/API,76/注文サービス,112/DB}{
+      \node[box,minimum width=22mm] (h\x) at (\x,0) {\name};
+      \draw[dashed,draw=PaleGray] (\x,-5)--(\x,-53);
+    }
+    \draw[flow] (10,-10)--node[above]{POST /orders}(42,-10);
+    \draw[flow] (42,-20)--node[above]{Create(cmd)}(76,-20);
+    \draw[flow] (76,-30)--node[above]{Save(order)}(112,-30);
+    \draw[softflow] (112,-39)--node[above]{id}(76,-39);
+    \draw[softflow] (76,-47)--node[above]{結果}(42,-47);
+    \node[font=\tiny,align=left] at (112,-58) {上から下へ時間が進みます};
+  \end{tikzpicture}
+  \vspace{1mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{見えるもの}
+        呼び出し順、同期・非同期、戻り値、代替経路を表せます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{設計での用途}
+        責務の偏り、往復回数、失敗時の戻り先、処理境界を検討します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{オブジェクト指向は、状態と振る舞いへ責務を割り当てます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{オブジェクト}
+        同一性、状態、操作を持つ概念として扱います。設計では「何を知り、何を行う責任があるか」を考えます。
+      \end{block}
+      \begin{block}{責務の配置}
+        値を所有する対象の近くへ、その値の不変条件を守る操作を置くと、規則の重複を減らせます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{カプセル化}
+        内部状態への任意の変更を許さず、公開操作を通じて不変条件を守ります。フィールドを非公開にするだけでは完了しません。
+      \end{block}
+      \begin{block}{注意点}
+        何でも一つの「Manager」へ集めると責務が肥大化します。データと規則が変わる理由を手掛かりに分けます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{継承より先に、関係が「is-a」か「has-a」かを問います}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{継承}
+        派生型を基底型として置換できる関係を表します。実装再利用だけを目的にすると、基底型の変更や前提へ強く結合します。
+      \end{block}
+      \begin{block}{使う条件}
+        公開契約と不変条件を派生型でも守り、利用者が型を置き換えても期待が崩れないかを確認します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{合成}
+        対象が別の部品を持ち、委譲して機能を組み立てます。部品をインタフェース越しに交換しやすくできます。
+      \end{block}
+      \begin{block}{判断例}
+        「通知はメールである」ではなく「通知サービスが送信手段を持つ」と捉え、メールとSMSを交換可能な部品にします。
+      \end{block}
+  \end{columns}
+  \takeaway{継承と合成は排他的な規則ではありません。置換関係と変更理由に合う方を選びます。}
+\end{frame}
+
+\begin{frame}[t,fragile]{ポリモーフィズムは、利用側を具体実装から離します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.53\textwidth}
+      \begin{lstlisting}[language=Go,basicstyle=\ttfamily\fontsize{7}{8.3}\selectfont]
+type Notifier interface {
+    Send(ctx context.Context, m Message) error
+}
+
+type Checkout struct {
+    notifier Notifier
+}
+
+func (c Checkout) Complete(ctx context.Context) error {
+    // 注文処理
+    return c.notifier.Send(ctx, Message{/* ... */})
+}
+      \end{lstlisting}
+    \column{0.43\textwidth}
+      \begin{block}{同じ呼び方、異なる実装}
+        \code{Notifier}の契約を満たすメール、SMS、テスト用偽物を、呼び出し側を変えずに差し替えられます。
+      \end{block}
+      \begin{block}{依存方向と粒度}
+        上位の業務処理が必要な抽象を定義し、外部連携がそれを実装すると、業務処理から技術詳細への直接依存を減らせます。
+        利用側が必要とする操作だけをインタフェースへ含めます。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{関数型の考え方は、計算と外部作用を分けます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{純粋関数}
+        同じ引数へ同じ結果を返し、外部から観測できる状態を変更しません。局所的な推論とテストをしやすくします。
+      \end{block}
+      \begin{block}{副作用}
+        入出力、時刻取得、乱数、共有状態の更新などです。必要な処理ですが、境界へ集めると計算部分を分離できます。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{不変性}
+        既存値を変更せず、新しい値を作ります。ある時点の値が後から変わらないため、共有や並行処理の推論を単純にできます。
+      \end{block}
+      \begin{block}{対価}
+        新しい値の確保やコピーが増える場合があります。永続データ構造、最適化、局所的な可変性を含めて測定します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{高階関数は、反復の形と処理内容を分離します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+      \begin{lstlisting}[language=Go]
+prices := []int{1200, 800, 2500, 300}
+
+// filter: 条件を満たす値だけ残す
+eligible := Filter(prices, func(x int) bool {
+    return x >= 1000
+})
+
+// map: 各値を別の値へ写す
+taxed := Map(eligible, func(x int) int {
+    return x * 110 / 100
+})
+
+// reduce: 列を一つの値へ畳み込む
+total := Reduce(taxed, 0, func(a, x int) int {
+    return a + x
+})
+      \end{lstlisting}
+    \column{0.42\textwidth}
+      \begin{block}{高階関数}
+        関数を引数に受け取る、または関数を返す関数です。走査、選別、変換、集約の共通形を再利用します。
+      \end{block}
+      \begin{block}{順序・副作用・Go}
+        評価順序に依存する副作用をコールバックへ入れると、置換や並列化が難しくなります。
+        Goは第一級関数を持ちます。上の\code{Filter}などは説明用の自作関数です。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{パラダイムは、問題の性質に応じて組み合わせます}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}lYYY@{}}
+    \toprule
+    観点 & 手続き型 & オブジェクト指向 & 関数型の考え方\\
+    \midrule
+    中心 & 操作手順と状態変化 & 責務を持つ対象の協調 & 値の変換と関数合成\\
+    適する例 & 順序が本質の処理、装置制御 & 状態と規則を持つ業務概念 & 集計、変換、並列化しやすい計算\\
+    注意 & 共有状態が広がる & 過剰な階層、肥大した対象 & 作用の扱い、割り当てコスト\\
+    \bottomrule
+  \end{tabularx}
+  \vspace{4mm}
+  \begin{block}{現代言語では混在します}
+    Goでも、手続き的な制御、構造体とインタフェース、関数値と不変な値を同じプログラムで使えます。
+    ラベルで統一するより、局所的な問題へ合う制約を選びます。
+  \end{block}
+\end{frame}
+
+\begin{frame}[t]{テストは、設計した境界と協調動作を検証します}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{単体テスト}
+        関数や小さなモジュールを隔離し、入力と結果、不変条件、境界値、失敗を高速に確認します。
+      \end{block}
+      \begin{block}{設計へのフィードバック}
+        外部状態なしに試せない、準備が大きい、結果を観測できない場合は、責務や依存境界を見直す手掛かりになります。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{結合テスト}
+        DB、ネットワーク、ファイル、複数モジュールの契約が、実際の組み合わせで成立するかを確認します。
+      \end{block}
+      \begin{block}{両方が必要です}
+        単体テストだけでは設定や通信形式の誤りを見逃し、結合テストだけでは原因特定と網羅が難しくなります。
+      \end{block}
+  \end{columns}
+  \takeaway{テストの数ではなく、どのリスクをどの層で検出するかを設計します。}
+\end{frame}
+
+\begin{frame}[t]{品質維持は、小さな変更と継続的な検証で行います}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{リファクタリング}
+        外部から観測できる振る舞いを保ちながら、内部構造を改善します。テストで振る舞いの保持を確認します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{コードレビュー}
+        正しさ、読みやすさ、保守性、セキュリティ、テストを別の視点で確認し、知識を共有します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{技術的負債}
+        短期の便益のため将来の変更コストを増やす判断です。意図、利息、返済条件を可視化します。
+      \end{block}
+  \end{columns}
+  \vspace{5mm}
+  \begin{block}{変更を分離します}
+    振る舞いを変える修正と構造だけを変える修正を小さく分けると、レビューで確認すべき差と障害時の切り分けが明確になります。
+  \end{block}
+  \source{Martin Fowler, \textit{Refactoring}; Ward Cunningham, “The WyCash Portfolio Management System”}
+\end{frame}
+
+\begin{frame}[t]{ケーススタディでは、注文規則を外部技術から分離します}
+  \centering
+  \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\scriptsize}]
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm] (adapter1) {入力アダプタ：HTTP API／バッチ};
+    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of adapter1] (usecase) {ユースケース：注文作成・入力検証・処理順序};
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of usecase] (domain) {ドメイン：Order・Money・割引規則・不変条件};
+    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of domain] (ports) {ポート：OrderRepository・PaymentGateway};
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of ports] (adapter2) {出力アダプタ：PostgreSQL／決済API};
+    \draw[flow] (adapter1)--(usecase);
+    \draw[flow] (usecase)--(domain);
+    \draw[flow] (domain)--(ports);
+    \draw[flow] (adapter2)--(ports);
+  \end{tikzpicture}
+  \vspace{2mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{内側の責務}
+        業務規則と処理の意図を表し、HTTP、SQL、特定ベンダーのSDKを直接知りません。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{外側の責務}
+        外部形式を内側の型へ変換し、内側が定めるポートを具体技術で実装します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{変更要求を流すと、境界の強さを評価できます}
+  \small
+  \begin{tabularx}{\textwidth}{@{}lYY@{}}
+    \toprule
+    変更要求 & 主に変える場所 & 変えずに保ちたい場所\\
+    \midrule
+    DBをPostgreSQLから別製品へ & Repositoryのアダプタ、設定、結合テスト & 注文規則、HTTP契約\\ \addlinespace[.7mm]
+    割引条件を会員ランク別へ & ドメイン規則、単体テスト & DB実装、決済連携\\ \addlinespace[.7mm]
+    RESTへバッチ入力を追加 & 入力アダプタ、組み立て & ユースケース、注文規則\\ \addlinespace[.7mm]
+    決済APIに再試行を追加 & 決済アダプタ、失敗契約、監視 & 注文金額の計算\\
+    \bottomrule
+  \end{tabularx}
+  \vspace{4mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{波及したら原因を調べます}
+        内部型の漏出、共有状態、曖昧な失敗契約、循環依存がないかを確認します。
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{層は目的ではありません}
+        小規模な処理へ同じ数の層を強制すると、間接参照だけが増えます。変更リスクに見合う境界を作ります。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{第4章の要点は、変更理由ごとに境界を作ることです}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{分割}
+        高い凝集と低い結合を目指し、変わりやすい判断を情報隠蔽します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{表現}
+        構造化、抽象化、モデル、契約で、制御と協調動作を説明可能にします。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{維持}
+        テスト、レビュー、リファクタリングで、小さな変更を継続的に検証します。
+      \end{block}
+  \end{columns}
+  \vspace{4mm}
+  \takeaway{手続き型、オブジェクト指向、関数型は道具です。依存、状態、副作用を制御できる組み合わせを選びます。}
+\end{frame}
+
+\begin{frame}[t]{確認問題では、変更要求から設計を評価します}
+  \begin{enumerate}
+    \item ソフトウェアの規模が増えると、変更コストが増える理由を説明してください。
+    \item 凝集度と結合度を、注文アプリの例で説明してください。
+    \item 情報隠蔽では、何をモジュール内へ隠しますか。
+    \item 逐次・選択・反復が制御フローの理解を助ける理由を説明してください。
+    \item クラス図とシーケンス図は、それぞれどの問いへ答えますか。
+    \item 継承ではなく合成を選ぶべき関係を一つ示してください。
+    \item 純粋関数と副作用を分けると、テストへどのような効果がありますか。
+    \item ケーススタディへ配送会社の追加要求を流し、変更箇所を示してください。
+  \end{enumerate}
+\end{frame}
