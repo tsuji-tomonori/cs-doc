@@ -1,0 +1,86 @@
+\section{序章}
+
+\begin{frame}[t]
+  \vspace{4mm}
+  {\fontsize{26}{31}\selectfont\bfseries 情報工学の基礎\par}
+  \vspace{1mm}
+  {\large 新卒アプリケーションエンジニア向け・社内研修教材\par}
+  \vspace{2mm}
+  \includegraphics[width=\textwidth,height=25mm,keepaspectratio]{assets/cover-progression.png}
+  \vspace{1mm}
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{下から積み上げる}
+        電気信号からCPU、言語、OSへ進みます。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{実務へ接続する}
+        メモリ、設計、通信を原理から説明します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{AIまで見通す}
+        数学と学習からLLMまでを一つの流れで扱います。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{研修の到達点は、現象を階層に分けて説明できることです}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      \begin{block}{読了後に説明できること}
+        \begin{itemize}
+          \item ソースコードがCPU命令として実行される流れ
+          \item データ構造と計算量、メモリ使用量の関係
+          \item HTTP通信が複数プロトコルを通る仕組み
+          \item 機械学習モデルが学習と推論を分ける理由
+        \end{itemize}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{対象と前提}
+        対象は、新卒のアプリケーションエンジニアです。
+        高校数学と、短いプログラムを読んだ経験を前提にします。
+        回路設計や機械学習の実装経験は必要ありません。
+      \end{block}
+      \begin{block}{扱わない範囲}
+        データベース、クラウド固有サービス、分散システム、認証・認可の詳細は後続研修へ分離します。
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t]{一つ下の階層を知ると、不具合を切り分けやすくなります}
+  \centering
+  \begin{tikzpicture}[node distance=1.5mm,every node/.append style={minimum height=6.5mm,inner sep=1mm}]
+    \node[accentbox,minimum width=112mm] (ai) {機械学習・生成AI：確率的な予測と評価};
+    \node[box,minimum width=112mm,below=of ai] (app) {アプリケーション：要件、設計、データ構造};
+    \node[box,minimum width=112mm,below=of app] (net) {ネットワーク：HTTP、TLS、TCP／QUIC、IP};
+    \node[box,minimum width=112mm,below=of net] (runtime) {言語・ランタイム・OS：型、プロセス、仮想メモリ};
+    \node[box,minimum width=112mm,below=of runtime] (cpu) {CPU・メモリ・論理回路：命令と0／1};
+    \draw[softflow] (cpu.east) -- ++(12mm,0) |- (ai.east);
+  \end{tikzpicture}
+  \vspace{1.5mm}
+  \takeaway{各階層は下位層の機能を利用し、上位層へ抽象化された機能を提供します。}
+\end{frame}
+
+\begin{frame}[t]{読む、確かめる、説明するの三段階で学びます}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+      \begin{block}{1　要点を読む}
+        定義、前提、例、帰結の順に読みます。
+        用語を暗記する前に、何を区別する語かを確認します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{2　図とコードで確かめる}
+        小さな入力を手で追い、値・状態・パケットがどこへ移るかを記録します。
+      \end{block}
+    \column{0.31\textwidth}
+      \begin{block}{3　自分の言葉で説明する}
+        章末問題と実習では、結果だけでなく、成立条件と例外も説明します。
+      \end{block}
+  \end{columns}
+  \vspace{3mm}
+  \begin{block}{章の共通構成}
+    本編の説明の後に「要点整理」「確認問題」「小さな実習」を置きます。
+    実習コードは学習用の最小例であり、本番運用の完全な実装例ではありません。
+  \end{block}
+\end{frame}

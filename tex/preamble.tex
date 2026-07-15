@@ -1,0 +1,139 @@
+\usepackage{luatexja-fontspec}
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,tabularx,array}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,automata,calc,fit,matrix,positioning,shapes.geometric}
+
+\setmainfont{Noto Sans CJK JP}
+\setsansfont{Noto Sans CJK JP}
+\setmonofont{DejaVu Sans Mono}[Scale=0.82]
+\setmainjfont{Noto Sans CJK JP}
+\setsansjfont{Noto Sans CJK JP}
+\setmonojfont{Noto Sans Mono CJK JP}[Scale=0.82]
+
+\definecolor{OffWhite}{HTML}{F7F6F1}
+\definecolor{DeepNavy}{HTML}{2B3A4A}
+\definecolor{MutedBlue}{HTML}{5E7E96}
+\definecolor{PaleGray}{HTML}{9AA4AD}
+\definecolor{PaleBlue}{HTML}{E8EEF2}
+\definecolor{CardWhite}{HTML}{FFFFFF}
+\definecolor{RuleGray}{HTML}{D6DDE2}
+
+\setbeamercolor{normal text}{fg=DeepNavy,bg=OffWhite}
+\setbeamercolor{structure}{fg=MutedBlue}
+\setbeamercolor{frametitle}{fg=DeepNavy,bg=OffWhite}
+\setbeamercolor{framesubtitle}{fg=MutedBlue,bg=OffWhite}
+\setbeamercolor{page number in head}{fg=PaleGray,bg=OffWhite}
+\setbeamercolor{section in head}{fg=MutedBlue,bg=OffWhite}
+\setbeamercolor{block title}{fg=DeepNavy,bg=PaleBlue}
+\setbeamercolor{block body}{fg=DeepNavy,bg=CardWhite}
+\setbeamercolor{alerted text}{fg=MutedBlue}
+\setbeamercolor{bibliography entry author}{fg=DeepNavy}
+\setbeamercolor{bibliography entry title}{fg=DeepNavy}
+\setbeamercolor{bibliography entry location}{fg=MutedBlue}
+\setbeamercolor{bibliography entry note}{fg=PaleGray}
+
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small,series=\mdseries}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+\setbeamerfont{block body}{size=\small}
+\setbeamerfont{page number in head}{size=\scriptsize}
+\setbeamerfont{section in head}{size=\scriptsize,series=\bfseries}
+
+\setbeamersize{text margin left=10mm,text margin right=10mm}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{itemize item}{\raise0.15ex\hbox{\color{MutedBlue}\scriptsize$\blacksquare$}}
+\setbeamertemplate{itemize subitem}{\raise0.15ex\hbox{\color{PaleGray}\tiny$\blacksquare$}}
+\setbeamertemplate{enumerate item}{\color{MutedBlue}\insertenumlabel.}
+
+\setbeamertemplate{headline}{%
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=5.5mm,dp=1.5mm,leftskip=10mm,rightskip=10mm]{page number in head}%
+    \usebeamerfont{section in head}\usebeamercolor[fg]{section in head}\insertsectionhead%
+    \hfill%
+    \usebeamerfont{page number in head}\usebeamercolor[fg]{page number in head}%
+    \insertframenumber\ / \inserttotalframenumber%
+  \end{beamercolorbox}%
+}
+
+\setbeamertemplate{frametitle}{%
+  \vspace{1mm}%
+  \begin{beamercolorbox}[wd=\textwidth,sep=0pt]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle\par%
+    \vspace{0.5mm}\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\par%
+    \vspace{1.5mm}{\color{MutedBlue}\rule{25mm}{0.6pt}}%
+  \end{beamercolorbox}%
+  \vspace{1mm}%
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=MutedBlue,
+  urlcolor=MutedBlue,
+  pdftitle={情報工学の基礎},
+  pdfsubject={新卒アプリケーションエンジニア向け社内研修教材},
+  pdfauthor={社内研修教材}
+}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\term}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\source}[1]{\par\vfill\raggedleft{\color{PaleGray}\fontsize{6.5}{8}\selectfont 出典：#1\par}}
+\newcommand{\takeaway}[1]{%
+  \begin{beamercolorbox}[wd=\textwidth,sep=2mm,rounded=false]{block body}%
+    \textbf{要点}\quad #1%
+  \end{beamercolorbox}%
+}
+
+\newcommand{\chapterframe}[3]{%
+  \section{#1}%
+  \begin{frame}[t]
+    \vspace{8mm}
+    {\color{MutedBlue}\large #2\par}
+    \vspace{3mm}
+    {\color{DeepNavy}\fontsize{24}{30}\selectfont\bfseries #1\par}
+    \vspace{3mm}{\color{MutedBlue}\rule{35mm}{0.8pt}}\par
+    \vspace{5mm}
+    \begin{minipage}{0.78\textwidth}
+      \large #3
+    \end{minipage}
+  \end{frame}%
+}
+
+\lstdefinestyle{codebase}{
+  basicstyle=\ttfamily\fontsize{7.5}{9}\selectfont,
+  keywordstyle=\color{MutedBlue}\bfseries,
+  commentstyle=\color{PaleGray},
+  stringstyle=\color{DeepNavy},
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{RuleGray},
+  backgroundcolor=\color{CardWhite},
+  xleftmargin=2mm,
+  xrightmargin=2mm,
+  aboveskip=1mm,
+  belowskip=1mm
+}
+\lstdefinelanguage{Go}{
+  morekeywords={package,import,func,var,const,type,struct,interface,map,range,return,if,else,for,switch,case,default,go,defer,select,chan},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]"
+}
+\lstset{style=codebase}
+
+\tikzset{
+  box/.style={draw=RuleGray,fill=CardWhite,rounded corners=1mm,minimum height=8mm,inner sep=2mm,align=center,text=DeepNavy},
+  accentbox/.style={box,draw=MutedBlue,fill=PaleBlue},
+  flow/.style={-{Latex[length=2mm]},draw=MutedBlue,line width=0.5pt},
+  softflow/.style={-{Latex[length=2mm]},draw=PaleGray,line width=0.5pt},
+  node/.style={circle,draw=MutedBlue,fill=CardWhite,minimum size=6mm,inner sep=0pt}
+}
