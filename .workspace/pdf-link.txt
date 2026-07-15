@@ -1,0 +1,63 @@
+結論として、章構成の大部分は MIT・Stanford・Cornell・CMU・東大などの公開PDFで高品質に支えられます。講義の主教材には大学資料を、Go・Python・HTTPSなど更新されやすい部分には公式仕様を併用するのが安全です。
+
+## 章別の推奨PDF
+
+| 章   | 中核に適した資料                                                                                                                                                                                                               | 主にカバーする範囲                                  | 難易度・使い方                                                                          |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------- |
+| 第1章 | [MIT 6.004 Computation Structures — Lecture Notes](https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/pages/lecture-notes/)                                                                          | デジタル抽象化、CMOS、論理ゲート、順序回路、メモリ、ISA、機械語、CPU    | 学部標準。1.1〜1.8の正本候補                                                                |
+|     | [MIT 6.111 — Memory Devices: SRAM / DRAM](https://web.mit.edu/6.111/www/f2017/handouts/L12_4.pdf)                                                                                                                      | SRAM、DRAM、リフレッシュ、メモリアドレス                   | 1.7の補強                                                                           |
+|     | [東京大学 酒井研究室「コンピュータハードウェア」](https://www.mtl.t.u-tokyo.ac.jp/~sakai/hard/)                                                                                                                                               | 2進表現、加算器、FF、メモリ、命令実行                       | 日本語の主教材候補。[CPU・命令実行の回](https://www.mtl.t.u-tokyo.ac.jp/~sakai/hard/hard7.pdf)も有用 |
+| 第2章 | [Cornell CS4120 — Introduction to Compilers](https://www.cs.cornell.edu/courses/cs4120/2016sp/lectures/01intro/lec01-sp16.pdf)                                                                                         | 字句解析→構文解析→AST→意味解析→コード生成                   | 2.1〜2.3を非常に明快に俯瞰                                                                 |
+|     | [Stanford CS143 — Abstract Syntax Trees](https://web.stanford.edu/class/cs143/lectures/lecture06.pdf)                                                                                                                  | AST構築、再帰下降、構文主導翻訳                          | 2.2〜2.5の正本候補                                                                     |
+|     | [Stanford CS106B — DFS / Backtracking](https://web.stanford.edu/class/cs106b-8/lectures/backtracking-optimization/Lecture13.pdf)・[Graphs / BFS](https://web.stanford.edu/class/cs106b-8/lectures/graphs/Lecture28.pdf) | DFS、再帰、BFS、キュー                             | 2.4〜2.6の初学者向け補助                                                                  |
+|     | [電気通信大学「言語処理系」](https://www.edu.cc.uec.ac.jp/~ka002689/sysof17/lp.pdf)                                                                                                                                                 | 字句解析・構文解析・コンパイラ全体                          | 日本語でまとまった教科書型PDF                                                                 |
+| 第3章 | [Stanford CS107 — Stack and Heap](https://web.stanford.edu/class/archive/cs/cs107/cs107.1222/lectures/07/Lecture07.pdf)                                                                                                | ポインタ、スタックフレーム、ヒープ、malloc                   | 3.1の中核。C中心だが原理は共通                                                                |
+|     | [MIT 6.006 — Dynamic Arrays and Amortization](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/851ae1c98f7a73382b76732f977bb92f_CHhwJjR0mZA.pdf)                                               | 配列、動的配列、償却O(1)                             | 3.3〜3.5の理論的な正本候補                                                                 |
+|     | [CMU 15-122 — Hash Tables](https://www.cs.cmu.edu/~15122/handouts/lectures/12-hashing.pdf)                                                                                                                             | ハッシュ関数、衝突、連鎖法、負荷率、リサイズ                     | 3.6を丁寧に説明                                                                        |
+|     | [Brown University — A Guide to Go](https://cs.brown.edu/courses/csci1270/documents/go-guide.pdf)                                                                                                                       | ポインタ、配列、スライス、マップ                           | Goへの橋渡し。実装内部までは公式資料で補う                                                           |
+|     | [University of Toronto — Python Memory Model](https://www.cs.toronto.edu/~guerzhoy/180/lec/memory.pdf)                                                                                                                 | 変数、オブジェクト、参照、アドレス                          | 3.7の導入向け                                                                         |
+| 第4章 | [UPenn CIS1200 — Programming Languages and Techniques](https://www.cis.upenn.edu/~cis120/current/files/1200notes.pdf)                                                                                                  | 抽象化、モジュール、関数型、命令型、OOP、インタフェース              | 4.2、4.4、4.6〜4.8を一冊で広くカバー                                                         |
+|     | [CMU 15-214 — Principles of Software Construction](https://www.cs.cmu.edu/~charlie/courses/15-214/2013-spring/slides/01_intro.pdf)                                                                                     | 複雑性、モジュール性、情報隠蔽、変更容易性、モデリング                | 第4章の思想的な中核                                                                       |
+|     | [NATO Software Engineering Conference 1968](https://homepages.cs.ncl.ac.uk/brian.randell/NATO/)                                                                                                                        | ソフトウェア危機の一次資料                              | 4.1の歴史確認に利用                                                                      |
+|     | [Dijkstra — Go To Statement Considered Harmful](https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf)                                                                                                        | goto批判、制御構造                                | 4.3の一次資料                                                                         |
+|     | [Parnas — On the Criteria to Be Used in Decomposing Systems into Modules](https://wstomv.win.tue.nl/edu/2ip30/references/criteria_for_modularization.pdf)                                                              | 情報隠蔽、モジュール分割                               | 4.2・4.4の古典                                                                       |
+|     | [OMG UML 2.5.1 Specification](https://www.omg.org/spec/UML/2.5.1/About-UML)                                                                                                                                            | UMLの正式仕様                                   | 4.5の記法確認用。初学者の主教材には重すぎる                                                          |
+| 第5章 | [Stanford CS45 — Introduction to Computer Networking](https://web.stanford.edu/class/archive/cs/cs45/cs45.1234/lectures/7-intro-to-computer-networking.pdf)                                                            | パケット交換、Ethernet、IP、TCP、DNS、NAT、DHCP        | 初学者向けの主教材として優秀                                                                   |
+|     | [Stanford CS144 — Networking Introduction](https://www.scs.stanford.edu/10au-cs144/notes/l1.pdf)                                                                                                                       | 階層化、OSI/TCP-IP、IP、TCP/UDP、DNS、HTTP         | 5.2〜5.7の俯瞰                                                                       |
+|     | [Stanford CS144 — TCP/UDP and Reliability](https://www.scs.stanford.edu/10au-cs144/notes/l3-print.pdf)・[Congestion Control](https://www.scs.stanford.edu/10au-cs144/notes/l4.pdf)                                      | ハンドシェイク、再送、ウィンドウ、輻輳制御                      | 5.5・5.6を補強                                                                       |
+|     | [Stanford CS155 — Web Security](https://cs155.stanford.edu/lectures/08-web.pdf)                                                                                                                                        | HTTPS、TLS、証明書、Webセキュリティ                    | 5.7はこれで更新・補強                                                                     |
+|     | [京都大学「HTTPプログラミング」](https://www.fos.kuis.kyoto-u.ac.jp/le2soft/le2soft-2014.pdf)                                                                                                                                       | IP、DNS、TCP、HTTP、クライアント／サーバ実習               | 日本語で実装につなげやすい                                                                    |
+| 第6章 | [MIT 6.390 — Introduction to Machine Learning](https://introml.mit.edu/_static/spring25/notes.pdf)                                                                                                                     | 学習、分類、回帰、確率的推論、ニューラルネット                    | 初学者向けの主教材候補                                                                      |
+|     | [Stanford CS229 — Machine Learning Notes](https://cs229.stanford.edu/lectures-spring2022/main_notes.pdf)                                                                                                               | 線形モデル、正則化、分類、ニューラルネット、逆伝播                  | 数学的に一段深い参照資料                                                                     |
+|     | [Bishop — Pattern Recognition and Machine Learning](https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf)                                      | 曲線フィッティング、過学習、決定理論、識別、NN                   | 6.2〜6.6と章案が非常によく対応。初学者には難しい                                                      |
+|     | [Stanford CS224N — Transformers](https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1244/slides/cs224n-2024-lecture08-transformers.pdf)                                                                           | Self-Attention、Transformer、encoder/decoder | 6.7の講義用中核                                                                        |
+|     | [Attention Is All You Need](https://papers.neurips.cc/paper/7181-attention-is-all-you-need.pdf)                                                                                                                        | Transformer原論文                             | 一次資料。講義後の発展読書向け                                                                  |
+
+## 特に採用しやすい「最小セット」
+
+資料数を絞るなら、以下を各章の骨格にするのがよさそうです。
+
+1. 第1章：MIT 6.004＋東大ハードウェア
+2. 第2章：Cornell CS4120＋Stanford CS143/CS106B
+3. 第3章：Stanford CS107＋MIT 6.006＋CMU Hash Tables
+4. 第4章：UPenn CIS1200＋CMU 15-214＋歴史的一次資料
+5. 第5章：Stanford CS45/CS144＋CS155
+6. 第6章：MIT 6.390＋PRML＋Stanford CS224N
+
+PRMLや原論文は「講義でそのまま読ませる教材」ではなく、執筆者が説明の正確性を確認するための参照資料に回すのが適切です。
+
+## 章構成で修正したい点
+
+* 「0V/5V」は固定値として教えず、Low/Highを判定する電圧範囲・しきい値として説明するべきです。現代の回路が常に5Vで動くわけではありません。
+* ASTの評価は通常、深さ優先、とりわけ後順走査に近い処理です。BFSはコンパイラの必須工程というより、木・グラフ探索の比較教材として位置付けると自然です。
+* 「型がメモリ配置を決める」は、「型、ABI、コンパイラ、ランタイムが表現を決める」とする方が正確です。
+* マップの検索は「平均・期待O(1)」であり、最悪計算量までO(1)とは限りません。
+* PythonとGoの比較は「動的型付けだから遅い」と単純化せず、オブジェクトヘッダ、間接参照、型検査、動的ディスパッチ、GC、最適化方式に分解すると安全です。
+* OSIは概念モデルとして扱い、実際のインターネットはTCP/IPを中心に説明します。HTTP/3はQUIC/UDPを利用するため、「HTTP/HTTPSは常にTCP上」とはしない方がよいです。
+* TransformerからLLMへ進む間に、トークン化、学習目的、事前学習、decoder-only構成、推論を追加するとつながりが明瞭になります。
+* 機械学習の前に、ベクトル・行列、微分、勾配、確率の短い準備節が必要です。
+
+また、第3章のスタック／ヒープを理解する前に、プロセス・仮想メモリ・システムコールを扱う「OSの基礎」があると体系がかなり安定します。追加教材には、University of Wisconsin–Madisonの無償教科書 [Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/) が非常に適しています。
+
+利用条件については、MIT OCWは原則としてCC BY-NC-SAですが、大学サイト上のPDFがすべて再配布可能とは限りません。社内資料へ組み込む場合も、PDF自体の転載ではなく、リンク提示・要約・独自図解を基本にするのが安全です。
+
