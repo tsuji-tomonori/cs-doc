@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="新卒アプリケーションエンジニア向け研修教材『情報工学の基礎』">
+  <title>情報工学の基礎</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f6f1;
+      --ink: #2b3a4a;
+      --accent: #5e7e96;
+      --rule: #d6dde2;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Noto Sans CJK JP", "Hiragino Sans", sans-serif;
+      line-height: 1.7;
+    }
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0; }
+    header { border-bottom: 1px solid var(--rule); margin-bottom: 28px; padding-bottom: 22px; }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.25; margin: 0 0 10px; }
+    p { max-width: 72ch; }
+    nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    a.button {
+      border: 1px solid var(--accent);
+      color: var(--ink);
+      display: inline-block;
+      font-weight: 700;
+      padding: 9px 16px;
+      text-decoration: none;
+    }
+    a.button:focus, a.button:hover { background: #e8eef2; outline: 2px solid transparent; }
+    .viewer { background: var(--card); border: 1px solid var(--rule); margin-top: 28px; }
+    iframe { border: 0; display: block; height: min(76vh, 820px); width: 100%; }
+    footer { border-top: 1px solid var(--rule); color: #66727c; font-size: 0.9rem; margin-top: 28px; padding-top: 18px; }
+    footer a { color: var(--accent); }
+    @media (max-width: 700px) { iframe { height: 65vh; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p>新卒アプリケーションエンジニア向け・社内研修教材</p>
+      <h1>情報工学の基礎</h1>
+      <p>電気信号、CPU、言語、OS、データ構造、設計、ネットワーク、機械学習、LLMを177ページでつなぎます。</p>
+      <nav aria-label="教材へのリンク">
+        <a class="button" href="information-engineering-basics.pdf">PDFを開く</a>
+        <a class="button" href="https://github.com/tsuji-tomonori/cs-doc">TeXソースを見る</a>
+      </nav>
+    </header>
+    <section aria-labelledby="viewer-title">
+      <h2 id="viewer-title">教材プレビュー</h2>
+      <div class="viewer">
+        <iframe src="information-engineering-basics.pdf#view=FitH" title="情報工学の基礎 PDF"></iframe>
+      </div>
+    </section>
+    <footer>
+      <p>PDFはGitHub ActionsでLuaLaTeXから生成しています。外部資料は参考文献章から一次資料を参照できます。</p>
+    </footer>
+  </main>
+</body>
+</html>

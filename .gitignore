@@ -3,6 +3,7 @@
 
 # LaTeX build artifacts
 /build/
+/site/information-engineering-basics.pdf
 *.aux
 *.bbl
 *.bcf
