@@ -53,12 +53,18 @@
 
 \setbeamertemplate{headline}{%
   \leavevmode%
-  \begin{beamercolorbox}[wd=\dimexpr\paperwidth-20mm\relax,ht=5.5mm,dp=1.5mm,leftskip=10mm]{page number in head}%
-    \usebeamerfont{section in head}\usebeamercolor[fg]{section in head}\insertsectionhead%
-    \hfill%
-    \usebeamerfont{page number in head}\usebeamercolor[fg]{page number in head}%
-    \insertframenumber\ / \inserttotalframenumber%
-  \end{beamercolorbox}%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=5.5mm,dp=1.5mm]{page number in head}%
+      \hbox to \paperwidth{%
+        \hskip10mm%
+        \usebeamerfont{section in head}\usebeamercolor[fg]{section in head}\insertsectionhead%
+        \hfil%
+        \usebeamerfont{page number in head}\usebeamercolor[fg]{page number in head}%
+        \insertframenumber\ / \inserttotalframenumber%
+        \hskip10mm%
+      }%
+    \end{beamercolorbox}%
+  }%
 }
 
 \setbeamertemplate{frametitle}{%
@@ -83,7 +89,10 @@
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcommand{\term}[1]{\textbf{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\source}[1]{\par\vfill\raggedleft{\color{PaleGray}\fontsize{6.5}{8}\selectfont 出典：#1\par}}
+\newcommand{\source}[1]{%
+  \par\vfill%
+  {\raggedleft\color{PaleGray}\fontsize{6.5}{8}\selectfont 出典：#1\par}%
+}
 \newcommand{\takeaway}[1]{%
   \begin{beamercolorbox}[wd=\textwidth,sep=2mm,rounded=false]{block body}%
     \textbf{要点}\quad #1%
