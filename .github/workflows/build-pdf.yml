@@ -1,0 +1,68 @@
+name: PDFをビルドしてPagesへ公開
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: LuaLaTeXでビルド
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: ソースを取得
+        uses: actions/checkout@v6
+
+      - name: TeXと検証ツールを導入
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            latexmk \
+            texlive-luatex \
+            texlive-lang-japanese \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            fonts-noto-cjk \
+            poppler-utils
+
+      - name: PDFと公開ページを生成
+        run: make site
+
+      - name: 組版結果を検証
+        run: make verify
+
+      - name: Pagesを設定
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Pages成果物を保存
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: GitHub Pagesへ公開
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Pagesへデプロイ
+        id: deployment
+        uses: actions/deploy-pages@v4
