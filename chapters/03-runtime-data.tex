@@ -1,6 +1,22 @@
-\chapterframe{第3章　実行・メモリ・型・データ構造}{値が置かれ、操作される仕組みを追う}{OSと仮想メモリから出発し、型とデータ表現、計算量、配列、Goのスライスとマップを扱います。Pythonとの比較を通じて、言語仕様と実装詳細を分けて考えます。}
+% !TEX root = ../main.tex
+\chapter{実行環境・メモリ・型・データ構造}
+\label{chap:runtime-data}
 
-\begin{frame}[t]{OSは、アプリケーションへ管理された実行環境を提供します}
+\begin{chapterabstract}
+プログラムがプロセスとして実行される仕組みから始め、仮想メモリ、値の配置、型、計算量、配列、スライス、マップへ進みます。GoとPythonの例を通じて、言語仕様、実装詳細、測定結果を分けて考えます。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item プログラム、プロセス、スレッド、システムコールの関係を説明できます。
+  \item 仮想アドレス、スタック、ヒープを、保護と寿命の観点から説明できます。
+  \item 値のコピーと、値が参照する記憶領域の共有を区別できます。
+  \item 計算量の前提を示し、主要なデータ構造を操作特性から選べます。
+\end{learninggoals}
+
+
+\section{OSは、アプリケーションへ管理された実行環境を提供します}
+\label{sec:03-runtime-data-01}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\small}]
     \node[box,minimum width=29mm] (app1) {アプリA};
@@ -12,46 +28,62 @@
     \draw[flow] (os) -- (hw);
   \end{tikzpicture}
   \vspace{4mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{抽象化}
+\begingroup
+\paragraph{抽象化}
         ファイル、プロセス、仮想メモリなど、ハードウェアより扱いやすい単位を提供します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{保護}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{保護}
         権限とアドレス空間を分け、ある処理の誤りが別の処理へ波及する範囲を抑えます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{資源管理}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{資源管理}
         CPU時間、物理メモリ、入出力装置を複数の処理へ割り当てます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \source{Arpaci-Dusseau et al., \textit{Operating Systems: Three Easy Pieces}}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{プログラムは、OSに読み込まれてプロセスとして動きます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{プログラム}
+
+\section{プログラムは、OSに読み込まれてプロセスとして動きます}
+\label{sec:03-runtime-data-02}
+\begingroup
+\begingroup
+\paragraph{プログラム}
         命令や初期データを含む静的な記述です。実行可能ファイルやスクリプトは、それだけではCPU時間を持ちません。
-      \end{block}
-      \begin{block}{プロセス}
-        実行中のプログラムに、アドレス空間、レジスタ状態、開いているファイルなどの実行文脈を加えたものです。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{スレッド}
-        プロセス内の実行の流れです。同じプロセスのスレッドはアドレス空間などを共有し、各スレッドはレジスタ状態とスタックを持ちます。
-      \end{block}
-      \begin{block}{並行性の注意}
-        共有データへの読み書きが競合すると、実行順によって結果が変わります。同期で許される順序を定めます。
-      \end{block}
-  \end{columns}
-  \takeaway{同じプログラムを2回起動すると、通常は別のプロセスと別の仮想アドレス空間が作られます。}
-\end{frame}
 
-\begin{frame}[t]{システムコールは、利用者コードからOS機能を頼む境界です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
+\paragraph{プロセス}
+        実行中のプログラムに、アドレス空間、レジスタ状態、開いているファイルなどの実行文脈を加えたものです。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{スレッド}
+        プロセス内の実行の流れです。同じプロセスのスレッドはアドレス空間などを共有し、各スレッドはレジスタ状態とスタックを持ちます。
+
+\paragraph{並行性の注意}
+        共有データへの読み書きが競合すると、実行順によって結果が変わります。同期で許される順序を定めます。
+
+\par
+\endgroup
+  \takeaway{同じプログラムを2回起動すると、通常は別のプロセスと別の仮想アドレス空間が作られます。}
+\par
+\endgroup
+
+
+\section{システムコールは、利用者コードからOS機能を頼む境界です}
+\label{sec:03-runtime-data-03}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
         \node[box,minimum width=58mm] (user) {利用者モード：アプリ／ライブラリ};
@@ -61,20 +93,27 @@
         \draw[flow] (gate) -- (kernel);
         \draw[softflow] (kernel.west) to[bend right=30] node[left,font=\scriptsize]{戻り値} (user.west);
       \end{tikzpicture}
-    \column{0.41\textwidth}
-      \begin{block}{代表例}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{代表例}
         ファイルの読み書き、ネットワーク通信、仮想メモリの操作、プロセス生成などを依頼します。
-      \end{block}
-      \begin{block}{ライブラリとの違い}
-        通常の関数呼び出しだけで完結する処理もあります。API呼び出しが必ず1対1のシステムコールになるとは限りません。
-      \end{block}
-  \end{columns}
-  \source{OSTEP, “Processes” / “Limited Direct Execution”}
-\end{frame}
 
-\begin{frame}[t]{仮想アドレスは、ページ表を介して物理メモリへ対応します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.58\textwidth}
+\paragraph{ライブラリとの違い}
+        通常の関数呼び出しだけで完結する処理もあります。API呼び出しが必ず1対1のシステムコールになるとは限りません。
+
+\par
+\endgroup
+  \source{OSTEP, “Processes” / “Limited Direct Execution”}
+\par
+\endgroup
+
+
+\section{仮想アドレスは、ページ表を介して物理メモリへ対応します}
+\label{sec:03-runtime-data-04}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=0.9mm,y=0.9mm,every node/.append style={font=\scriptsize}]
         \node[box,minimum width=22mm] (va) at (10,22) {仮想アドレス};
@@ -86,21 +125,28 @@
         \draw[softflow] (pt) -- (mmu);
         \node[font=\scriptsize,align=center] at (40,-9) {未登録・権限違反なら\\ページフォルト};
       \end{tikzpicture}
-    \column{0.38\textwidth}
-      \begin{block}{プロセスごとの見え方}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{プロセスごとの見え方}
         同じ数値の仮想アドレスでも、プロセスごとに異なる物理ページへ対応できます。
-      \end{block}
-      \begin{block}{得られる性質}
+
+\paragraph{得られる性質}
         分離、疎なアドレス空間、共有ページ、必要時の割り当てなどを実現できます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{3mm}
   \takeaway{仮想アドレスは物理メモリ上の位置そのものではなく、変換に使う名前です。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{アドレス空間では、用途と寿命に応じて領域を分けます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.38\textwidth}
+
+\section{アドレス空間では、用途と寿命に応じて領域を分けます}
+\label{sec:03-runtime-data-05}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
         \draw[draw=MutedBlue] (0,0) rectangle (35,52);
@@ -114,63 +160,87 @@
         \node[color=PaleGray] at (17.5,28.5) {未割り当て領域};
         \node at (17.5,44) {$\downarrow$ スタック};
       \end{tikzpicture}
-    \column{0.58\textwidth}
-      \begin{block}{スタック}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{スタック}
         関数呼び出しのフレームを後入れ先出しで管理します。戻り先や局所的な状態を置き、呼び出し終了に合わせて巻き戻せます。
-      \end{block}
-      \begin{block}{ヒープ}
+
+\paragraph{ヒープ}
         呼び出しの終了を越えて生きる値など、動的な寿命の記憶領域に使います。確保と再利用はランタイムやアロケータが管理します。
-      \end{block}
+
       {\scriptsize 図は概念例です。領域の順序・成長方向・配置はOS、ABI、処理系に依存します。}
-  \end{columns}
+\par
+\endgroup
   \source{Stanford CS107, “Stack and Heap”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{ポインタと参照は、値の所在と寿命を意識させます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{ポインタ／参照}
+
+\section{ポインタと参照は、値の所在と寿命を意識させます}
+\label{sec:03-runtime-data-06}
+\begingroup
+\begingroup
+\paragraph{ポインタ／参照}
         別の値へ到達するための情報です。複数の変数が同じ対象を共有すると、一方の更新を他方から観測できます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{寿命の誤り}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{寿命の誤り}
         解放済み領域を指す参照や、必要な値を早く解放する処理は不正アクセスにつながります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{GC}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{GC}
         ガベージコレクションは到達可能性などを基準に、不要になった領域を自動で再利用します。資源解放の時刻までは保証しません。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{4mm}
-  \begin{block}{Goでの境界}
+\paragraph{Goでの境界}
     Goはポインタを持ちますが、通常のポインタ演算は認めません。値をスタックかヒープのどちらへ置くかは、エスケープ解析などを用いる処理系の判断です。
-  \end{block}
+
   \source{The Go Programming Language Specification; Go FAQ, “stack or heap”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{型は、値と許される操作の集合を定めます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{型が表すもの}
+
+\section{型は、値と許される操作の集合を定めます}
+\label{sec:03-runtime-data-07}
+\begingroup
+\begingroup
+\paragraph{型が表すもの}
         値の集合、利用できる演算、式の組み合わせ方を定めます。表現方法や実行時検査の有無は、言語仕様と実装を分けて確認します。
-      \end{block}
-      \begin{block}{型安全性の範囲}
-        型が付けば業務上正しいとは限りません。例えば、同じ整数型でも円と個数の取り違えは防げません。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{静的型付け}
-        実行前の解析で式の型整合性を主に検査します。検査を通った後も、配列境界や0除算など別種の実行時エラーは残ります。
-      \end{block}
-      \begin{block}{動的型付け}
-        実行時の値が型を持ち、操作時に適用可能性を検査します。型が存在しないという意味ではありません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{Goの基本型は、用途と表現範囲を明示します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{代表的な基本型}
+\paragraph{型安全性の範囲}
+        型が付けば業務上正しいとは限りません。例えば、同じ整数型でも円と個数の取り違えは防げません。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{静的型付け}
+        実行前の解析で式の型整合性を主に検査します。検査を通った後も、配列境界や0除算など別種の実行時エラーは残ります。
+
+\paragraph{動的型付け}
+        実行時の値が型を持ち、操作時に適用可能性を検査します。型が存在しないという意味ではありません。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{Goの基本型は、用途と表現範囲を明示します}
+\label{sec:03-runtime-data-08}
+\begingroup
+\begingroup
+\paragraph{代表的な基本型}
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           型 & 役割・注意点\\
@@ -183,21 +253,28 @@
           \code{string} & 不変なバイト列\\
           \bottomrule
         \end{tabularx}
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{別名}
-        \code{byte}は\code{uint8}、\code{rune}は\code{int32}の別名です。runeはUnicodeコードポイントを表す用途に使います。
-      \end{block}
-      \begin{block}{ゼロ値}
-        明示的に初期化していない変数にも、型ごとのゼロ値があります。数値は0、真偽値は\code{false}、文字列は空文字列です。
-      \end{block}
-  \end{columns}
-  \source{The Go Programming Language Specification, “Types”}
-\end{frame}
 
-\begin{frame}[t]{サイズとアラインメントは、配置先の規則と組で決まります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{別名}
+        \code{byte}は\code{uint8}、\code{rune}は\code{int32}の別名です。runeはUnicodeコードポイントを表す用途に使います。
+
+\paragraph{ゼロ値}
+        明示的に初期化していない変数にも、型ごとのゼロ値があります。数値は0、真偽値は\code{false}、文字列は空文字列です。
+
+\par
+\endgroup
+  \source{The Go Programming Language Specification, “Types”}
+\par
+\endgroup
+
+
+\section{サイズとアラインメントは、配置先の規則と組で決まります}
+\label{sec:03-runtime-data-09}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=8mm,y=8mm,every node/.append style={font=\scriptsize}]
         \foreach \x in {0,...,7}{\draw[draw=RuleGray,fill=CardWhite] (\x,0) rectangle ++(1,1);}
@@ -209,30 +286,40 @@
         \foreach \x in {0,...,7}{\node[below,font=\tiny] at (\x+0.5,0) {\x};}
       \end{tikzpicture}
       \vspace{2mm}
-      \begin{block}{なぜ隙間が生じるか}
+\paragraph{なぜ隙間が生じるか}
         値の開始位置をアラインメント境界へ合わせるため、構造体のフィールド間や末尾にパディングが入る場合があります。
-      \end{block}
-    \column{0.41\textwidth}
-      \begin{block}{確認方法}
-        Goでは\code{unsafe.Sizeof}、\code{unsafe.Alignof}、\code{unsafe.Offsetof}で対象ビルドの値を調べられます。
-      \end{block}
-      \begin{block}{仕様との区別}
-        ポインタや\code{int}のサイズ、構造体の総サイズはアーキテクチャや実装に依存します。図の配置は一例です。
-      \end{block}
-  \end{columns}
-  \source{The Go Programming Language Specification, “Size and alignment guarantees”}
-\end{frame}
 
-\begin{frame}[t]{Goは値を渡しますが、値の内部で記憶領域を共有できます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{代入と引数渡し}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{確認方法}
+        Goでは\code{unsafe.Sizeof}、\code{unsafe.Alignof}、\code{unsafe.Offsetof}で対象ビルドの値を調べられます。
+
+\paragraph{仕様との区別}
+        ポインタや\code{int}のサイズ、構造体の総サイズはアーキテクチャや実装に依存します。図の配置は一例です。
+
+\par
+\endgroup
+  \source{The Go Programming Language Specification, “Size and alignment guarantees”}
+\par
+\endgroup
+
+
+\section{Goは値を渡しますが、値の内部で記憶領域を共有できます}
+\label{sec:03-runtime-data-10}
+\begingroup
+\begingroup
+\paragraph{代入と引数渡し}
         代入や関数呼び出しでは値をコピーします。整数や配列を渡すと、その値のコピーを更新しても元の値は変わりません。
-      \end{block}
-      \begin{block}{ポインタ}
+
+\paragraph{ポインタ}
         ポインタ値もコピーされます。コピーされた二つのポインタが同じ対象を指せば、その対象への更新は共有されます。
-      \end{block}
-    \column{0.48\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
         \node[box] (s1) {slice変数 s\\先頭・長さ・容量};
@@ -242,15 +329,19 @@
         \draw[flow] (s2) -- (arr);
       \end{tikzpicture}
       \vspace{3mm}
-      \begin{block}{記述子を持つ値}
+\paragraph{記述子を持つ値}
         スライス、マップなどをコピーしても、内部のデータ構造を共有する場合があります。共有の単位を確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{計算量は、入力サイズが増えたときの増え方を表します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{計算量は、入力サイズが増えたときの増え方を表します}
+\label{sec:03-runtime-data-11}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=5mm,y=4mm,every node/.append style={font=\scriptsize}]
         \draw[->,draw=PaleGray] (0,0)--(8.5,0) node[right] {$n$};
@@ -262,29 +353,39 @@
         \draw[draw=PaleGray,line width=.7pt] plot[smooth] coordinates {(0,0)(2,.35)(4,1.4)(6,3.15)(8,5.6)};
         \node[above left] at (7.7,5.3) {$O(n^2)$};
       \end{tikzpicture}
-    \column{0.44\textwidth}
-      \begin{block}{入力サイズ $n$}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{入力サイズ $n$}
         要素数、頂点数、桁数など、処理対象の規模を表す量です。何を$n$とするかを先に定義します。
-      \end{block}
-      \begin{block}{O記法}
+
+\paragraph{O記法}
         十分大きな$n$で、増え方の上限を定数倍まで無視して表します。実測時間そのものではありません。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{3mm}
   \takeaway{同じ$O(n)$でも定数、メモリアクセス、入力分布、実装によって実時間は異なります。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{時間・空間と、最良・平均・最悪を分けて評価します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{時間計算量}
+
+\section{時間・空間と、最良・平均・最悪を分けて評価します}
+\label{sec:03-runtime-data-12}
+\begingroup
+\begingroup
+\paragraph{時間計算量}
         比較、代入、メモリアクセスなど、計算モデルで定めた基本操作の回数を数えます。
-      \end{block}
-      \begin{block}{空間計算量}
+
+\paragraph{空間計算量}
         入力以外に必要な補助記憶や、再帰スタックを含む使用量の増え方を評価します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{線形探索の例}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{線形探索の例}
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           条件 & 比較回数\\
@@ -294,17 +395,21 @@
           最悪 & 末尾または不在：$n$\\
           \bottomrule
         \end{tabularx}
-      \end{block}
-      \begin{block}{平均には仮定が必要です}
-        どの入力がどの確率で現れるかを示さない「平均」は再現できません。
-      \end{block}
-  \end{columns}
-  \source{MIT 6.006, “Asymptotic Complexity”}
-\end{frame}
 
-\begin{frame}[t]{配列は、添字アクセスを一定回数の計算へ変えます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.57\textwidth}
+\paragraph{平均には仮定が必要です}
+        どの入力がどの確率で現れるかを示さない「平均」は再現できません。
+
+\par
+\endgroup
+  \source{MIT 6.006, “Asymptotic Complexity”}
+\par
+\endgroup
+
+
+\section{配列は、添字アクセスを一定回数の計算へ変えます}
+\label{sec:03-runtime-data-13}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=9mm,y=9mm,every node/.append style={font=\scriptsize}]
         \foreach \x/\v in {0/18,1/7,2/31,3/4,4/12,5/9}{
@@ -316,22 +421,29 @@
         \node[below,font=\scriptsize] at (2.5,-1.5) {base $+ 2\times$要素幅};
       \end{tikzpicture}
       \vspace{4mm}
-      \begin{block}{ランダムアクセス}
+\paragraph{ランダムアクセス}
         固定幅要素の位置を基準位置と添字から計算できるため、RAMモデルでは読み書きを$O(1)$と扱います。
-      \end{block}
-    \column{0.39\textwidth}
-      \begin{block}{固定長}
-        Goの配列型\code{[N]T}では長さ$N$が型の一部です。要素は順に配置されます。
-      \end{block}
-      \begin{block}{挿入と削除}
-        途中へ挿入するには後続要素をずらすため、最悪$O(n)$です。順序を保たないなら別の設計も選べます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{スライスは、元配列の区間を表す記述子です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.46\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{固定長}
+        Goの配列型\code{[N]T}では長さ$N$が型の一部です。要素は順に配置されます。
+
+\paragraph{挿入と削除}
+        途中へ挿入するには後続要素をずらすため、最悪$O(n)$です。順序を保たないなら別の設計も選べます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{スライスは、元配列の区間を表す記述子です}
+\label{sec:03-runtime-data-14}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=9mm,y=8mm,every node/.append style={font=\scriptsize}]
         \draw[draw=MutedBlue,fill=PaleBlue] (0,3) rectangle (3,4);
@@ -347,40 +459,54 @@
         \draw[draw=PaleGray,line width=.7pt] (1,-.35)--(6,-.35);
         \node[below] at (3.5,-.35) {cap = 5};
       \end{tikzpicture}
-    \column{0.50\textwidth}
-      \begin{block}{三つの情報}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{三つの情報}
         先頭要素への参照、現在の長さ\code{len}、先頭から元配列末尾までの容量\code{cap}を概念的に持ちます。具体的な内部配置は仕様ではありません。
-      \end{block}
-      \begin{block}{区間の共有}
+
+\paragraph{区間の共有}
         \code{s[1:4]}のような再スライスは、通常同じ元配列を参照します。一方の要素更新を別のスライスから観測できます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \source{Go Blog, “Go Slices: usage and internals”; Go specification, “Slice types”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{append後は、返されたスライスを基準に考えます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{容量が足りる場合}
+
+\section{append後は、返されたスライスを基準に考えます}
+\label{sec:03-runtime-data-15}
+\begingroup
+\begingroup
+\paragraph{容量が足りる場合}
         元配列の空き領域へ要素を書き、同じ元配列を参照する可能性があります。別名のスライスにも影響し得ます。
-      \end{block}
-      \begin{block}{容量が足りない場合}
-        より大きな元配列を確保して要素をコピーし、そこを指す新しいスライスを返します。元配列との共有は切れます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{必ず返り値を受け取ります}
-        \code{s = append(s, x)}のように書きます。再確保の有無と容量の増やし方は、コードから固定値として仮定しません。
-      \end{block}
-      \begin{block}{償却$O(1)$}
-        容量を幾何級数的に増やす動的配列では、複数回の末尾追加へ再確保コストを配ると1回当たり$O(1)$になります。これは一回ごとの最悪時間ではありません。
-      \end{block}
-  \end{columns}
-  \source{Go specification, built-in \code{append}; MIT 6.006, “Dynamic Arrays”}
-\end{frame}
 
-\begin{frame}[t]{マップは、ハッシュ値からキーの格納候補を探します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
+\paragraph{容量が足りない場合}
+        より大きな元配列を確保して要素をコピーし、そこを指す新しいスライスを返します。元配列との共有は切れます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{必ず返り値を受け取ります}
+        \code{s = append(s, x)}のように書きます。再確保の有無と容量の増やし方は、コードから固定値として仮定しません。
+
+\paragraph{償却$O(1)$}
+        容量を幾何級数的に増やす動的配列では、複数回の末尾追加へ再確保コストを配ると1回当たり$O(1)$になります。これは一回ごとの最悪時間ではありません。
+
+\par
+\endgroup
+  \source{Go specification, built-in \code{append}; MIT 6.006, “Dynamic Arrays”}
+\par
+\endgroup
+
+
+\section{マップは、ハッシュ値からキーの格納候補を探します}
+\label{sec:03-runtime-data-16}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
         \node[box] (key) {キー ``cat''};
@@ -391,23 +517,30 @@
         \draw[flow] (idx)--(slots);
       \end{tikzpicture}
       \vspace{2mm}
-      \begin{block}{衝突}
+\paragraph{衝突}
         異なるキーが同じ候補へ対応することがあります。実装はキー比較と追加の探索で区別します。
-      \end{block}
-    \column{0.42\textwidth}
-      \begin{block}{負荷率とリサイズ}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{負荷率とリサイズ}
         衝突や探索が増え過ぎないよう、要素数に応じて格納領域を拡張し、配置を組み直す実装があります。
-      \end{block}
-      \begin{block}{計算量と保証範囲}
+
+\paragraph{計算量と保証範囲}
         良い分散と適切な負荷率を仮定すれば検索・追加は平均$O(1)$、偏れば最悪$O(n)$です。
         Go仕様は具体的な表構造や反復順を保証しません。
-      \end{block}
-  \end{columns}
-  \source{CMU 15-121, “Hash Tables”; The Go Programming Language Specification}
-\end{frame}
 
-\begin{frame}[t]{データ構造は、必要な操作の組み合わせで選びます}
-  \footnotesize
+\par
+\endgroup
+  \source{CMU 15-121, “Hash Tables”; The Go Programming Language Specification}
+\par
+\endgroup
+
+
+\section{データ構造は、必要な操作の組み合わせで選びます}
+\label{sec:03-runtime-data-17}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYYYY@{}}
     \toprule
     構造 & 添字／キー検索 & 末尾追加 & 途中挿入 & 主な注意点\\
@@ -419,21 +552,27 @@
     \bottomrule
   \end{tabularx}
   \vspace{2mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{要件から選ぶ}
+\begingroup
+\paragraph{要件から選ぶ}
         順序、重複、検索キー、更新頻度、走査方法、メモリ量を列挙し、頻繁な操作を安くします。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{記号の前提}
-        表は典型的な実装とRAMモデルの値です。平均計算量には入力とハッシュ分布の仮定があります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{Pythonでは、名前が型を持つオブジェクトへ束縛されます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{記号の前提}
+        表は典型的な実装とRAMモデルの値です。平均計算量には入力とハッシュ分布の仮定があります。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{Pythonでは、名前が型を持つオブジェクトへ束縛されます}
+\label{sec:03-runtime-data-18}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=6mm,every node/.append style={font=\scriptsize}]
         \node[box] (x) {名前 x};
@@ -442,23 +581,30 @@
         \draw[flow] (x)--(obj); \draw[flow] (y)--(obj);
       \end{tikzpicture}
       \vspace{4mm}
-      \begin{block}{共有と可変性}
+\paragraph{共有と可変性}
         \code{y = x}は同じオブジェクトへの束縛を作ります。リストを\code{y.append(3)}で変更すると、\code{x}からも変更後の値が見えます。
-      \end{block}
-    \column{0.46\textwidth}
-      \begin{block}{オブジェクトモデル}
-        Pythonのすべてのデータはオブジェクトで、各オブジェクトは同一性、型、値を持ちます。オブジェクトの型は生成後に変わりません。
-      \end{block}
-      \begin{block}{Goとの比較}
-        Pythonは操作時の型検査や属性検索などを実行時に行います。メモリ量と速度差は、言語名だけでなく処理系、値、処理内容を固定して測ります。
-      \end{block}
-  \end{columns}
-  \source{Python 3 Language Reference, “Data model”}
-\end{frame}
 
-\begin{frame}[t,fragile]{ミニ実習：配列、スライス、マップの性能を測ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.58\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{オブジェクトモデル}
+        Pythonのすべてのデータはオブジェクトで、各オブジェクトは同一性、型、値を持ちます。オブジェクトの型は生成後に変わりません。
+
+\paragraph{Goとの比較}
+        Pythonは操作時の型検査や属性検索などを実行時に行います。メモリ量と速度差は、言語名だけでなく処理系、値、処理内容を固定して測ります。
+
+\par
+\endgroup
+  \source{Python 3 Language Reference, “Data model”}
+\par
+\endgroup
+
+
+\section{ミニ実習：配列、スライス、マップの性能を測ります}
+\label{sec:03-runtime-data-19}
+\begingroup
+\begingroup
       \begin{lstlisting}[language=Go]
 var sink int
 
@@ -479,37 +625,55 @@ func BenchmarkMapLookup(b *testing.B) {
     }
 }
       \end{lstlisting}
-    \column{0.38\textwidth}
-      \begin{block}{実行と比較条件}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{実行と比較条件}
         \code{go test -bench=. -benchmem}を5回実行し、\code{ns/op}と\code{allocs/op}を記録します。
         要素数、キー分布、事前確保、CPU、Go版を揃えます。
-      \end{block}
-      \begin{block}{追加課題}
-        \code{append}の初期容量を0と要素数に変え、割り当て回数を比べます。測定値は計算量の証明ではありません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{第3章の要点は、抽象化の裏側にある共有とコストです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{実行}
+\paragraph{追加課題}
+        \code{append}の初期容量を0と要素数に変え、割り当て回数を比べます。測定値は計算量の証明ではありません。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{第3章の要点は、抽象化の裏側にある共有とコストです}
+\label{sec:03-runtime-data-20}
+\begingroup
+\begingroup
+\paragraph{実行}
         OSはプロセス、スレッド、仮想メモリを通じて、資源を抽象化し保護します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{表現}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{表現}
         型は値と操作を定めます。サイズや配置は仕様と対象実装の両方を確認します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{構造}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{構造}
         配列、スライス、マップは、アクセス、更新、共有、再確保の性質が異なります。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{4mm}
   \takeaway{値のコピーと記憶領域の共有を区別し、計算量の前提と実測条件を明示します。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{確認問題では、仕様・実装・測定を分けて説明します}
+
+\section{確認問題では、仕様・実装・測定を分けて説明します}
+\label{sec:03-runtime-data-21}
+\begingroup
   \begin{enumerate}
     \item プログラム、プロセス、スレッドの違いを説明してください。
     \item 仮想アドレスがプロセス分離に役立つ理由を説明してください。
@@ -519,4 +683,5 @@ func BenchmarkMapLookup(b *testing.B) {
     \item ハッシュマップの平均$O(1)$には、どのような仮定が必要ですか。
     \item GoとPythonの速度を公平に比べるため、固定すべき条件を挙げてください。
   \end{enumerate}
-\end{frame}
+\par
+\endgroup

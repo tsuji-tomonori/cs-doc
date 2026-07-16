@@ -1,6 +1,22 @@
-\chapterframe{終章　学んだ知識を実務につなげる}{一つの現象を、複数の階層から説明する}{Webアプリケーションの要求処理を端から端までたどります。遅延、メモリ、通信、変更容易性、AIの不安定さを、観測可能な事実と基礎知識へ対応づけます。}
+% !TEX root = ../main.tex
+\chapter{学んだ知識を実務につなげる}
+\label{chap:practice}
 
-\begin{frame}[t]{一つのリクエストは、すべての階層を通ります}
+\begin{chapterabstract}
+Webアプリケーションの一つの要求を端から端までたどり、これまでの章を一つの因果関係へまとめます。遅延、メモリ、通信、変更容易性、AI品質の問題を、観測可能な事実と検証可能な仮説へ変える方法を学びます。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item Web要求を、コード、OS、メモリ、通信、アプリケーションの各層へ分解できます。
+  \item 観測結果を、対応する層と資源へ結び付けて仮説を絞れます。
+  \item 障害仮説を、反証に必要な観測と期待結果を含む形で記述できます。
+  \item 担当する問題から、次に学ぶ分野と演習課題を選べます。
+\end{learninggoals}
+
+
+\section{一つのリクエストは、すべての階層を通ります}
+\label{sec:07-practice-01}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\tiny,minimum width=17mm,inner sep=1mm}]
     \node[accentbox] (user) {利用者の操作\\URL・API};
@@ -13,19 +29,26 @@
     \draw[flow] (runtime)--(machine); \draw[flow] (machine)--(signal);
   \end{tikzpicture}
   \vspace{3mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{上位層の役割}
+\begingroup
+\paragraph{上位層の役割}
         利用者の目的に近い意味を扱います。下位層の詳細を抽象化し、要求、データ、業務規則として表現します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{下位層の役割}
-        上位層が使う計算、記憶、配送を実現します。障害時には抽象化の下へ一段ずつ降りて観測します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{ソースコードは、命令列と実行時資源へ変換されます}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{下位層の役割}
+        上位層が使う計算、記憶、配送を実現します。障害時には抽象化の下へ一段ずつ降りて観測します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{ソースコードは、命令列と実行時資源へ変換されます}
+\label{sec:07-practice-02}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (src) {ソースコード};
@@ -41,23 +64,33 @@
     \draw[flow] (loader)--(proc); \draw[flow] (proc)--(cpu); \draw[flow] (cpu)--(sys);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{ビルド時}
+\begingroup
+\paragraph{ビルド時}
         文法、型、依存関係を検査し、対象の命令セットで実行できる形式を作ります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{起動時}
-        OSがコードとデータを仮想メモリへ対応づけ、実行コンテキストを作ります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{実行時}
-        CPUは命令を処理し、ファイルや通信などの保護された機能をOSへ依頼します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{要求は、通信の各層で包まれてサーバーへ届きます}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{起動時}
+        OSがコードとデータを仮想メモリへ対応づけ、実行コンテキストを作ります。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{実行時}
+        CPUは命令を処理し、ファイルや通信などの保護された機能をOSへ依頼します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{要求は、通信の各層で包まれてサーバーへ届きます}
+\label{sec:07-practice-03}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
     \node[accentbox,minimum width=23mm] (browser) {クライアント};
@@ -71,21 +104,27 @@
     \draw[flow] (tls)--node[above]{HTTP}(server);
     \draw[softflow] (server.south) to[bend left=18] node[below]{応答は逆向きに戻る} (browser.south);
   \end{tikzpicture}
-  \vspace{-0.5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{サーバーへ届くまで}
+\begingroup
+\paragraph{サーバーへ届くまで}
         DNSで宛先を求め、トランスポート接続を作り、TLSで相手と通信路を検証してからHTTP要求を送ります。再利用やキャッシュで一部を省く場合があります。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{アプリへ渡るまで}
-        ネットワークインターフェースからカーネルへ届いたバイト列を、OSがソケットを介して待機中のプロセスへ渡します。
-      \end{block}
-  \end{columns}
-  \takeaway{「サーバーへ届かない」を一つの現象にまとめず、名前、経路、接続、TLS、HTTP、プロセスへ分解します。}
-\end{frame}
 
-\begin{frame}[t]{アプリケーションは、入力を内部表現へ変えて処理します}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{アプリへ渡るまで}
+        ネットワークインターフェースからカーネルへ届いたバイト列を、OSがソケットを介して待機中のプロセスへ渡します。
+
+\par
+\endgroup
+  \takeaway{「サーバーへ届かない」を一つの現象にまとめず、名前、経路、接続、TLS、HTTP、プロセスへ分解します。}
+\par
+\endgroup
+
+
+\section{アプリケーションは、入力を内部表現へ変えて処理します}
+\label{sec:07-practice-04}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=2.4mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (bytes) {HTTPのバイト列};
@@ -97,34 +136,46 @@
     \draw[flow] (validate)--(usecase); \draw[flow] (usecase)--(output);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{表現}
+\begingroup
+\paragraph{表現}
         JSONなどを型、配列、スライス、マップ、オブジェクトへ変換します。表現ごとに容量と探索コストが異なります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{処理}
-        分岐、探索、並べ替え、集約を組み合わせます。入力サイズと計算量から増え方を予測します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{設計}
-        通信形式、業務規則、外部依存を別の責務に分け、変更理由が同じ処理をまとめます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{処理中のデータには、置き場所と生存期間があります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{スタックとヒープ}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{処理}
+        分岐、探索、並べ替え、集約を組み合わせます。入力サイズと計算量から増え方を予測します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{設計}
+        通信形式、業務規則、外部依存を別の責務に分け、変更理由が同じ処理をまとめます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{処理中のデータには、置き場所と生存期間があります}
+\label{sec:07-practice-05}
+\begingroup
+\begingroup
+\paragraph{スタックとヒープ}
         \textbf{スタック}は関数呼び出しに対応する局所状態を保持します。
         \textbf{ヒープ}は呼び出しを越えて共有するオブジェクトを保持し、参照が残れば回収できません。
-      \end{block}
-      \begin{block}{キャッシュとバッファ}
+
+\paragraph{キャッシュとバッファ}
         再計算や入出力回数を減らせますが、上限、失効、解放の方針がなければ増え続けます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{一件当たりから見積もります}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{一件当たりから見積もります}
         \centering
         $
           M_{\mathrm{total}} \approx
@@ -132,14 +183,19 @@
           + M_{\mathrm{cache}}
         $\par
         要素本体だけでなく、参照、型情報、容量の余り、一時コピーも含めます。
-      \end{block}
-      \begin{block}{観測する量}
-        常駐メモリ、ヒープ内訳、割り当て速度、GC時間、同時処理数、キャッシュ件数を時系列で比べます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{機械学習モデルは、境界を決めて呼び出します}
+\paragraph{観測する量}
+        常駐メモリ、ヒープ内訳、割り当て速度、GC時間、同時処理数、キャッシュ件数を時系列で比べます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{機械学習モデルは、境界を決めて呼び出します}
+\label{sec:07-practice-06}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (case) {業務処理};
@@ -151,20 +207,26 @@
     \draw[flow] (model)--(check); \draw[flow] (check)--(decision);
   \end{tikzpicture}
   \vspace{6mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{通常の関数と異なる点}
+\begingroup
+\paragraph{通常の関数と異なる点}
         同じ目的でも出力が変わり、流暢さと正しさは一致しません。タイムアウト、費用、モデル更新、分布変化も依存条件です。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{アプリ側の責任}
-        入力・出力の契約、評価集合、失敗時の代替、権限、監査、人の確認点を、モデルの外側で実装します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{観測結果を階層へ対応づけると、仮説を絞れます}
-  \scriptsize
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{アプリ側の責任}
+        入力・出力の契約、評価集合、失敗時の代替、権限、監査、人の確認点を、モデルの外側で実装します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{観測結果を階層へ対応づけると、仮説を絞れます}
+\label{sec:07-practice-07}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{19mm}YY@{}}
     \toprule
     階層 & 代表的な観測 & 読み取れること \\
@@ -179,55 +241,76 @@
   \end{tabularx}
   \vspace{1mm}
   \takeaway{単一のログだけで結論を出さず、同じ時刻・同じ要求ID・同じ入力条件の観測をつなぎます。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{処理が遅いときは、時間を分解して増え方を調べます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{端から端までの時間}
+
+\section{処理が遅いときは、時間を分解して増え方を調べます}
+\label{sec:07-practice-08}
+\begingroup
+\begingroup
+\paragraph{端から端までの時間}
         \[
           T_{\mathrm{total}}=
           T_{\mathrm{queue}}+T_{\mathrm{network}}+
           T_{\mathrm{compute}}+T_{\mathrm{I/O}}
         \]
         平均だけでなく、中央値、上位百分位、入力サイズ、同時実行数ごとに分けます。
-      \end{block}
-      \begin{block}{アルゴリズム}
+
+\paragraph{アルゴリズム}
         入力を2倍にしたときの変化を測ります。二重ループ、不要な全件走査、連結配列の再確保を疑います。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{メモリとCPU}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{メモリとCPU}
         キャッシュミス、過剰な割り当て、コピー、GC、競合はCPU時間を増やします。プロファイルで上位箇所を確認します。
-      \end{block}
-      \begin{block}{ネットワークと外部待ち}
+
+\paragraph{ネットワークと外部待ち}
         DNS、接続、TLS、最初の応答バイト、転送を別々に測ります。再試行は遅延と負荷をさらに増やし得ます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{メモリを使いすぎるときは、量と生存期間を分けます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{大きい}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{メモリを使いすぎるときは、量と生存期間を分けます}
+\label{sec:07-practice-09}
+\begingroup
+\begingroup
+\paragraph{大きい}
         一件の配列、画像、応答、モデル入力が大きい場合です。ストリーミング、上限、より小さい表現を検討します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{多い}
-        同時要求、オブジェクト数、一時コピーが多い場合です。並行数、バッファ再利用、データ構造を見直します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{長く残る}
-        キャッシュ、グローバル参照、コールバック、元配列の共有で回収できない場合です。参照経路を調べます。
-      \end{block}
-  \end{columns}
-  \vspace{5mm}
-  \begin{block}{切り分けの順序}
-    基準時点と高負荷時点のヒープを比較し、増えた型と確保元を特定します。その後、所有者、生存期間、上限、解放条件をコード上で確認します。
-  \end{block}
-  \takeaway{GCがあることは、不要になった時点で自動的に解放されることを意味しません。到達可能な参照が残れば回収されません。}
-\end{frame}
 
-\begin{frame}[t]{通信失敗は、最初に失敗した段階を探します}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{多い}
+        同時要求、オブジェクト数、一時コピーが多い場合です。並行数、バッファ再利用、データ構造を見直します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{長く残る}
+        キャッシュ、グローバル参照、コールバック、元配列の共有で回収できない場合です。参照経路を調べます。
+
+\par
+\endgroup
+  \vspace{5mm}
+\paragraph{切り分けの順序}
+    基準時点と高負荷時点のヒープを比較し、増えた型と確保元を特定します。その後、所有者、生存期間、上限、解放条件をコード上で確認します。
+
+  \takeaway{GCがあることは、不要になった時点で自動的に解放されることを意味しません。到達可能な参照が残れば回収されません。}
+\par
+\endgroup
+
+
+\section{通信失敗は、最初に失敗した段階を探します}
+\label{sec:07-practice-10}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=2.6mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (dns) {名前をIPへ解決できたか};
@@ -247,51 +330,69 @@
     \draw[softflow] (http)--node[left]{いいえ}(hf);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{block}{確認条件をそろえます}
+\paragraph{確認条件をそろえます}
     発生時刻、接続元、対象名、IP、ポート、プロトコル版、証明書、HTTP要求を記録します。別の端末で成功しても、DNSキャッシュや経路が同じとは限りません。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{変更が難しいときは、変更理由と依存方向を見直します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{兆候}
+\par
+\endgroup
+
+
+\section{変更が難しいときは、変更理由と依存方向を見直します}
+\label{sec:07-practice-11}
+\begingroup
+\begingroup
+\paragraph{兆候}
         一つの仕様変更で多数の場所を直す、テストに外部サービスが必須、条件分岐が各所に重複する、データ表現が境界を越えて漏れます。
-      \end{block}
-      \begin{block}{原因を構造で捉えます}
+
+\paragraph{原因を構造で捉えます}
         責務の混在、共有状態、暗黙の契約、循環依存、実装詳細への直接依存を、モジュール図と変更履歴で確認します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{小さく改善します}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{小さく改善します}
         まず現在の振る舞いをテストで固定し、境界を一つ選びます。インターフェースを狭め、依存を注入し、移動ごとに検証します。
-      \end{block}
-      \begin{block}{評価します}
+
+\paragraph{評価します}
         変更箇所数、テスト時間、障害範囲、理解に必要なモジュール数が減ったかを確認します。パターン導入自体を目的にしません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{AIの回答が安定しないときは、再現条件と評価集合を作ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{条件を固定します}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{AIの回答が安定しないときは、再現条件と評価集合を作ります}
+\label{sec:07-practice-12}
+\begingroup
+\begingroup
+\paragraph{条件を固定します}
         モデル版、プロンプト、システム指示、参照資料、温度、最大長、ツール結果、実行日時を残します。
-      \end{block}
-      \begin{block}{失敗を分類します}
-        指示不遵守、形式違反、根拠不足、事実誤り、検索漏れ、拒否、遅延、費用超過を別の指標にします。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{入力群ごとに測ります}
-        通常例だけでなく、境界例、曖昧な入力、長文、攻撃的入力、重要な利用者群を固定評価集合へ含めます。
-      \end{block}
-      \begin{block}{利用境界を調整します}
-        出力検査、根拠提示、再試行、代替処理、人の確認を加えます。改善が不十分なら自動化範囲を狭めます。
-      \end{block}
-  \end{columns}
-  \takeaway{一つの成功例や失敗例ではなく、版管理した入力集合に対する分布として品質を比較します。}
-\end{frame}
 
-\begin{frame}[t]{障害調査は、仮説を反証できる形で進めます}
+\paragraph{失敗を分類します}
+        指示不遵守、形式違反、根拠不足、事実誤り、検索漏れ、拒否、遅延、費用超過を別の指標にします。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{入力群ごとに測ります}
+        通常例だけでなく、境界例、曖昧な入力、長文、攻撃的入力、重要な利用者群を固定評価集合へ含めます。
+
+\paragraph{利用境界を調整します}
+        出力検査、根拠提示、再試行、代替処理、人の確認を加えます。改善が不十分なら自動化範囲を狭めます。
+
+\par
+\endgroup
+  \takeaway{一つの成功例や失敗例ではなく、版管理した入力集合に対する分布として品質を比較します。}
+\par
+\endgroup
+
+
+\section{障害調査は、仮説を反証できる形で進めます}
+\label{sec:07-practice-13}
+\begingroup
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
@@ -306,24 +407,33 @@
   \end{tikzpicture}%
   }
   \vspace{6mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{事実}
+\begingroup
+\paragraph{事実}
         「遅い」ではなく、対象、時刻、入力、期待値、実測値、頻度、影響を書くと比較できます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{仮説}
-        正しければ何が観測され、誤りなら何が観測されないかを先に決めます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{変更}
-        緊急回避と恒久対策を分けます。対策後も同じ指標を測り、副作用を確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{次に学ぶ分野は、担当する問題から選びます}
-  \scriptsize
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{仮説}
+        正しければ何が観測され、誤りなら何が観測されないかを先に決めます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{変更}
+        緊急回避と恒久対策を分けます。対策後も同じ指標を測り、副作用を確認します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{次に学ぶ分野は、担当する問題から選びます}
+\label{sec:07-practice-14}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{30mm}YY@{}}
     \toprule
     分野 & 次の主題 & 実務で答えられる問い \\
@@ -338,29 +448,39 @@
   \end{tabularx}
   \vspace{1mm}
   \takeaway{用語の暗記ではなく、自分の担当システムで再現できる小さな観測・実装・説明を学習単位にします。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{総合演習では、注文APIを端から端まで説明します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
-      \begin{block}{シナリオ}
+
+\section{総合演習では、注文APIを端から端まで説明します}
+\label{sec:07-practice-15}
+\begingroup
+\begingroup
+\paragraph{シナリオ}
         利用者がブラウザから注文を確定すると、Web APIが商品ごとの小計と合計を計算します。任意機能として、商品説明を要約する生成AIを呼び出し、応答を返します。
-      \end{block}
-      \begin{block}{発生している現象}
-        通常は300msですが、明細が多い注文では上位1\%が5秒を超えます。メモリは負荷試験中に増え続け、まれにTLSエラーが発生します。AI要約には存在しない注意事項が混じります。
-      \end{block}
-    \column{0.42\textwidth}
-      \begin{block}{前提としてよいこと}
-        入力はHTTPSのJSONです。アプリはコンパイル済みプロセスとして動作し、注文を配列、商品索引をマップで保持します。
-      \end{block}
-      \begin{block}{演習の目的}
-        すぐに原因を断定するのではなく、各階層の処理、失敗点、必要な観測、検証順序を説明します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{演習A：正常系の動作を、因果関係で図示します}
-  \footnotesize
+\paragraph{発生している現象}
+        通常は300msですが、明細が多い注文では上位1\%が5秒を超えます。メモリは負荷試験中に増え続け、まれにTLSエラーが発生します。AI要約には存在しない注意事項が混じります。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{前提としてよいこと}
+        入力はHTTPSのJSONです。アプリはコンパイル済みプロセスとして動作し、注文を配列、商品索引をマップで保持します。
+
+\paragraph{演習の目的}
+        すぐに原因を断定するのではなく、各階層の処理、失敗点、必要な観測、検証順序を説明します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{演習A：正常系の動作を、因果関係で図示します}
+\label{sec:07-practice-16}
+\begingroup
   \begin{enumerate}
     \setlength{\itemsep}{1mm}
     \item ソースコードからプロセス起動までを、コンパイラ、機械語、OS、仮想メモリ、CPUを使って説明してください。
@@ -370,13 +490,16 @@
     \item AI要約を任意機能として分離し、入力制御、タイムアウト、出力検査、失敗時の代替を境界へ書いてください。
   \end{enumerate}
   \vspace{1mm}
-  \begin{block}{提出物}
+\paragraph{提出物}
     A3用紙一枚相当のシーケンス図または階層図と、各矢印を説明する800〜1,200字の文章を作ります。図中の矢印には、渡すデータと提供する保証を書きます。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{演習B：四つの現象に、検証可能な調査計画を作ります}
-  \small
+\par
+\endgroup
+
+
+\section{演習B：四つの現象に、検証可能な調査計画を作ります}
+\label{sec:07-practice-17}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{22mm}YY@{}}
     \toprule
     現象 & 少なくとも立てる仮説 & 必ず含める観測 \\
@@ -388,13 +511,16 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{block}{計画の書式}
+\paragraph{計画の書式}
     各現象について「事実 → 仮説 → 仮説を支持する観測 → 反証する観測 → 最初の安全な検証 → 対策後の確認指標」を一組にします。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{演習は、説明のつながりと検証可能性で評価します}
-  \scriptsize
+\par
+\endgroup
+
+
+\section{演習は、説明のつながりと検証可能性で評価します}
+\label{sec:07-practice-18}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{25mm}p{14mm}Y@{}}
     \toprule
     評価観点 & 配点 & 達成基準 \\
@@ -407,26 +533,37 @@
     \bottomrule
   \end{tabularx}
   \vspace{1mm}
-  \begin{block}{相互レビュー}
+\paragraph{相互レビュー}
     ペアで説明を交換し、矢印を一つ選んで「誰が、何を、どの表現で、どの保証の下に渡すか」を質問します。答えられない境界を追加調査の候補にします。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{終章の要点は、階層を越えて証拠をつなぐことです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{説明}
+\par
+\endgroup
+
+
+\section{終章の要点は、階層を越えて証拠をつなぐことです}
+\label{sec:07-practice-19}
+\begingroup
+\begingroup
+\paragraph{説明}
         上位の目的を、下位が提供する計算、記憶、通信へ分解します。境界ではデータ表現と保証を確認します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{調査}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{調査}
         現象を測定可能にし、階層別の仮説を作り、反証できる観測を一つずつ集めます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{改善}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{改善}
         回避策と恒久策を分け、変更前後を同じ指標で比べます。新しい抽象化にも利用境界を設けます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{5mm}
   \takeaway{情報工学の基礎は、すべてを自分で実装するためではなく、見えない層を含むシステムを根拠とともに説明し、改善するための共通言語です。}
-\end{frame}
+\par
+\endgroup

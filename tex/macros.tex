@@ -1,0 +1,40 @@
+% 章の導入
+\newenvironment{chapterabstract}{%
+  \begin{chapterabstractbox}
+  {\sffamily\bfseries\color{MutedBlue}この章について}\par\smallskip
+}{%
+  \end{chapterabstractbox}
+}
+
+% 章の到達目標
+\newenvironment{learninggoals}{%
+  \par\medskip
+  {\large\sffamily\bfseries\color{DeepNavy}この章の到達目標}\par\smallskip
+  \begin{itemize}
+}{%
+  \end{itemize}
+  \medskip
+}
+
+\newcommand{\term}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\takeaway}[1]{%
+  \begin{takeawaybox}
+  \textbf{要点}\quad #1
+  \end{takeawaybox}
+}
+
+\newcommand{\source}[1]{%
+  \par\smallskip
+  {\raggedleft\footnotesize\color{PaleGray}出典：#1\par}%
+  \medskip
+}
+
+\newcommand{\materialref}[3]{%
+  \par\noindent\textbf{\href{#1}{#2}}\par
+  \begingroup\small #3\par\endgroup
+  \smallskip
+}
+
+\newcommand{\ChapterRef}[1]{第\ref{#1}章}

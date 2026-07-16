@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="新卒アプリケーションエンジニア向け研修教材『情報工学の基礎』">
+  <meta name="description" content="電気信号からWeb、機械学習までをつなぐ技術書『情報工学の基礎』">
   <title>情報工学の基礎</title>
   <style>
     :root {
@@ -20,11 +20,12 @@
       background: var(--paper);
       color: var(--ink);
       font-family: "Noto Sans CJK JP", "Hiragino Sans", sans-serif;
-      line-height: 1.7;
+      line-height: 1.75;
     }
     main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0; }
-    header { border-bottom: 1px solid var(--rule); margin-bottom: 28px; padding-bottom: 22px; }
+    header { border-bottom: 1px solid var(--rule); margin-bottom: 32px; padding-bottom: 24px; }
     h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.25; margin: 0 0 10px; }
+    h2 { font-size: 1.45rem; margin: 2rem 0 0.8rem; }
     p { max-width: 72ch; }
     nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
     a.button {
@@ -36,7 +37,17 @@
       text-decoration: none;
     }
     a.button:focus, a.button:hover { background: #e8eef2; outline: 2px solid transparent; }
-    .viewer { background: var(--card); border: 1px solid var(--rule); margin-top: 28px; }
+    .chapters {
+      display: grid;
+      gap: 1px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .chapter { background: var(--card); padding: 16px; }
+    .chapter strong { display: block; margin-bottom: 4px; }
+    .chapter span { color: #66727c; font-size: 0.92rem; }
+    .viewer { background: var(--card); border: 1px solid var(--rule); margin-top: 16px; }
     iframe { border: 0; display: block; height: min(76vh, 820px); width: 100%; }
     footer { border-top: 1px solid var(--rule); color: #66727c; font-size: 0.9rem; margin-top: 28px; padding-top: 18px; }
     footer a { color: var(--accent); }
@@ -46,22 +57,37 @@
 <body>
   <main>
     <header>
-      <p>新卒アプリケーションエンジニア向け・社内研修教材</p>
+      <p>新卒アプリケーションエンジニア向け・読み物形式の研修教材</p>
       <h1>情報工学の基礎</h1>
-      <p>電気信号、CPU、言語、OS、データ構造、設計、ネットワーク、機械学習、LLMを177ページでつなぎます。</p>
+      <p>電気信号からCPU、言語、OS、設計、ネットワーク、機械学習、LLMまでを、A4・113ページの一冊としてつなぎます。</p>
       <nav aria-label="教材へのリンク">
-        <a class="button" href="information-engineering-basics.pdf">PDFを開く</a>
+        <a class="button" href="information-engineering-basics.pdf">PDFを読む</a>
         <a class="button" href="https://github.com/tsuji-tomonori/cs-doc">TeXソースを見る</a>
       </nav>
     </header>
+
+    <section aria-labelledby="chapters-title">
+      <h2 id="chapters-title">本書の流れ</h2>
+      <div class="chapters">
+        <div class="chapter"><strong>第1章　コンピュータ</strong><span>電気信号からCPUまで</span></div>
+        <div class="chapter"><strong>第2章　言語</strong><span>機械語、AST、探索</span></div>
+        <div class="chapter"><strong>第3章　実行とデータ</strong><span>OS、メモリ、型、データ構造</span></div>
+        <div class="chapter"><strong>第4章　ソフトウェア工学</strong><span>変更を支える境界と設計</span></div>
+        <div class="chapter"><strong>第5章　ネットワーク</strong><span>IPからHTTP・TLSまで</span></div>
+        <div class="chapter"><strong>第6章　機械学習</strong><span>回帰からTransformer・LLMまで</span></div>
+        <div class="chapter"><strong>第7章　実務への接続</strong><span>観測、仮説、障害調査</span></div>
+      </div>
+    </section>
+
     <section aria-labelledby="viewer-title">
-      <h2 id="viewer-title">教材プレビュー</h2>
+      <h2 id="viewer-title">本文プレビュー</h2>
       <div class="viewer">
         <iframe src="information-engineering-basics.pdf#view=FitH" title="情報工学の基礎 PDF"></iframe>
       </div>
     </section>
+
     <footer>
-      <p>PDFはGitHub ActionsでLuaLaTeXから生成しています。外部資料は参考文献章から一次資料を参照できます。</p>
+      <p>PDFはGitHub ActionsでLuaLaTeXから生成しています。本文末の参考文献から、大学教材、公式仕様、RFC、原著論文を参照できます。</p>
     </footer>
   </main>
 </body>
