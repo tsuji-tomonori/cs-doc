@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{ネットワークを層ごとに理解する}
+\chapter{ネットワーク}
 \label{chap:network}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item 遅延、帯域幅、損失を区別し、通信性能を分解して説明できます。
-  \item IPアドレス、経路選択、DNS、ポート番号の役割を区別できます。
-  \item TCP、UDP、QUICが提供する保証と責任範囲を比較できます。
-  \item TLSとHTTPを含むWeb通信を、層ごとの準備と処理に分解できます。
+この章では、遅延、帯域幅、損失を区別して通信性能を分解します。IPアドレス、経路選択、DNS、ポート番号の役割を整理し、TCP、UDP、QUICが提供する保証と責任範囲を比較します。そのうえで、TLSとHTTPを含むWeb通信を層ごとの準備と処理としてたどります。
 \end{learninggoals}
 
 
-\section{通信には、宛先・通信路・共有する規則が必要です}
+\section{通信の要素}
 \label{sec:05-network-01}
 \begingroup
 \begingroup
@@ -46,11 +43,12 @@
 \endgroup
 
 
-\section{性能は、帯域幅だけでなく遅延と損失で決まります}
+\section{通信性能}
 \label{sec:05-network-02}
 \begingroup
 \begingroup
 \paragraph{一つのリンクで生じる遅延}
+        一つのリンクを通過する時間は、処理、待ち、送信、伝搬の各遅延に分けられます。
         \begin{align*}
           d_{\mathrm{total}} &=
           d_{\mathrm{proc}}+d_{\mathrm{queue}}+
@@ -77,7 +75,7 @@
 \endgroup
 
 
-\section{プロトコルは、メッセージの形式・意味・順序を定めます}
+\section{プロトコル}
 \label{sec:05-network-03}
 \begingroup
 \begingroup
@@ -108,7 +106,7 @@
 \endgroup
 
 
-\section{階層化は、上位データを下位のペイロードへ包みます}
+\section{階層化とカプセル化}
 \label{sec:05-network-04}
 \begingroup
 \begingroup
@@ -143,7 +141,7 @@
 \endgroup
 
 
-\section{OSIは7層、TCP/IPは実装で使う層構造を示します}
+\section{OSIとTCP/IP}
 \label{sec:05-network-05}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}cYcY@{}}
@@ -160,7 +158,7 @@
     \bottomrule
   \end{tabularx}
   \vspace{3mm}
-\paragraph{対応は厳密な同一関係ではありません}
+\paragraph{層モデルの対応関係}
     OSI参照モデルは役割を7層で整理します。インターネットプロトコル群は、RFC 1122ではアプリケーション、トランスポート、インターネット、リンクの4層で整理します。
 
   \source{ISO/IEC 7498-1; RFC 1122}
@@ -168,7 +166,7 @@
 \endgroup
 
 
-\section{IPアドレスとCIDRは、端点とネットワーク接頭辞を表します}
+\section{IPアドレスとCIDR}
 \label{sec:05-network-06}
 \begingroup
 \begingroup
@@ -195,7 +193,7 @@
 \endgroup
 
 
-\section{ルーターは、最長一致する接頭辞から次の転送先を選びます}
+\section{ルーティング}
 \label{sec:05-network-07}
 \begingroup
 \begingroup
@@ -228,7 +226,7 @@
 \endgroup
 
 
-\section{DNSは、名前を複数種類の資源レコードへ対応づけます}
+\section{DNS}
 \label{sec:05-network-08}
 \begingroup
   \centering
@@ -269,7 +267,7 @@
 \endgroup
 
 
-\section{ポート番号は、同じ端末内の通信先を多重化します}
+\section{ポート番号}
 \label{sec:05-network-09}
 \begingroup
 \begingroup
@@ -299,7 +297,7 @@
 \endgroup
 
 
-\section{TCPは、3ウェイハンドシェイクで双方の状態を作ります}
+\section{TCP接続}
 \label{sec:05-network-10}
 \begingroup
 \begingroup
@@ -330,7 +328,7 @@
 \endgroup
 
 
-\section{TCPは、バイト列を順序どおりアプリへ渡します}
+\section{TCPのデータ転送}
 \label{sec:05-network-11}
 \begingroup
 \begingroup
@@ -356,7 +354,7 @@
 \endgroup
 
 
-\section{フロー制御と輻輳制御は、守る対象が異なります}
+\section{フロー制御と輻輳制御}
 \label{sec:05-network-12}
 \begingroup
 \begingroup
@@ -383,7 +381,7 @@
 \endgroup
 
 
-\section{UDPはデータグラムを保ち、追加保証をアプリへ委ねます}
+\section{UDP}
 \label{sec:05-network-13}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
@@ -407,7 +405,7 @@
 \endgroup
 
 
-\section{HTTPは、要求と応答の意味をアプリケーション層で定めます}
+\section{HTTP}
 \label{sec:05-network-14}
 \begingroup
 \begingroup
@@ -440,11 +438,12 @@
 \endgroup
 
 
-\section{メソッドとステータスは、処理結果の意味を共有します}
+\section{HTTPメソッドとステータス}
 \label{sec:05-network-15}
 \begingroup
 \begingroup
 \paragraph{代表的なメソッド}
+        HTTPメソッドは、対象資源へ求める操作の意味を表します。
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           GET & 資源の表現を取得します。安全かつ冪等です。\\
@@ -471,7 +470,7 @@
 \endgroup
 
 
-\section{TLSは、機密性・完全性・相手認証を提供します}
+\section{TLS}
 \label{sec:05-network-16}
 \begingroup
 \begingroup
@@ -503,7 +502,7 @@
 \endgroup
 
 
-\section{証明書検証は、公開鍵を接続先の名前へ結び付けます}
+\section{証明書検証}
 \label{sec:05-network-17}
 \begingroup
   \centering
@@ -532,7 +531,7 @@
 \endgroup
 
 
-\section{HTTPの各版は、意味を保ちつつ転送方法を変えます}
+\section{HTTPの各バージョン}
 \label{sec:05-network-18}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
@@ -546,7 +545,7 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-\paragraph{HTTPの意味は共通です}
+\paragraph{HTTPの共通仕様}
     メソッド、ステータス、ヘッダーフィールドなどの意味はRFC 9110で共通化されています。版は主にメッセージを運ぶ形式と接続管理を変えます。
 
   \source{RFC 9110; RFC 9112; RFC 9113; RFC 9114}
@@ -554,7 +553,7 @@
 \endgroup
 
 
-\section{URL入力後は、名前解決・接続・暗号化を順に準備します}
+\section{URLから接続まで}
 \label{sec:05-network-19}
 \begingroup
   \centering
@@ -592,7 +591,7 @@
 \endgroup
 
 
-\section{応答後は、文書解析と追加資源の取得を繰り返します}
+\section{応答から画面表示まで}
 \label{sec:05-network-20}
 \begingroup
 \begingroup
@@ -619,7 +618,7 @@
 \endgroup
 
 
-\section{ミニ実習：名前解決とHTTP接続を観察します}
+\section{実習：DNSとHTTP}
 \label{sec:05-network-21}
 \begingroup
 \begingroup
@@ -650,7 +649,7 @@ $ curl --write-out \
 \endgroup
 
 
-\section{第5章の要点は、各層の保証を組み合わせることです}
+\section{まとめ}
 \label{sec:05-network-22}
 \begingroup
 \begingroup
@@ -679,7 +678,7 @@ $ curl --write-out \
 \endgroup
 
 
-\section{確認問題では、層ごとの役割と保証を区別します}
+\section{確認問題}
 \label{sec:05-network-23}
 \begingroup
   \begin{enumerate}

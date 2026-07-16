@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{機械学習と大規模言語モデルの基礎}
+\chapter{機械学習とLLM}
 \label{chap:machine-learning}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item 学習データ、モデル、損失、最適化、評価指標の役割を説明できます。
-  \item 過学習とデータ漏洩を区別し、妥当な評価手順を設計できます。
-  \item ニューラルネットの順伝播と逆伝播を、合成関数の計算として説明できます。
-  \item TransformerとLLMの入出力、学習、生成、限界を区別して説明できます。
+この章では、学習データ、モデル、損失、最適化、評価指標の役割を一つの学習過程へ結び付けます。過学習とデータ漏洩を区別して評価手順を設計し、ニューラルネットの順伝播と逆伝播を合成関数の計算として捉えます。後半では、TransformerとLLMの入出力、学習、生成、利用上の限界を整理します。
 \end{learninggoals}
 
 
-\section{関数・ベクトル・行列は、モデルを短く表現します}
+\section{関数・ベクトル・行列}
 \label{sec:06-machine-learning-01}
 \begingroup
 \begingroup
@@ -39,7 +36,7 @@
 \paragraph{行列}
         複数の線形変換やデータを$W$へまとめます。$W\mathbf{x}$で、入力ベクトルを別の空間へ写します。
 
-\paragraph{形状を確認します}
+\paragraph{形状}
         $W\in\mathbb{R}^{m\times d}$と$\mathbf{x}\in\mathbb{R}^{d}$なら、出力は$\mathbb{R}^{m}$です。
 
 \par
@@ -48,11 +45,12 @@
 \endgroup
 
 
-\section{勾配は、多変数関数が最も増える局所方向を示します}
+\section{微分と勾配}
 \label{sec:06-machine-learning-02}
 \begingroup
 \begingroup
 \paragraph{微分}
+        一変数関数$f$の点$x$における微分は、差分の極限として定義します。
         \[
           f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}
         \]
@@ -66,6 +64,7 @@
 \medskip
 \begingroup
 \paragraph{勾配}
+        多変数の損失$L$では、各パラメータ方向の偏微分を一つのベクトルへまとめます。
         \[
           \nabla L(\boldsymbol{\theta})=
           \left(
@@ -84,11 +83,12 @@
 \endgroup
 
 
-\section{確率は不確実さを、期待値は長期的な平均を表します}
+\section{確率と期待値}
 \label{sec:06-machine-learning-03}
 \begingroup
 \begingroup
 \paragraph{条件付き確率}
+        事象$B$が分かった後の事象$A$の確率は、同時に起こる確率を$B$の確率で割って求めます。
         \[
           P(A\mid B)=\frac{P(A\cap B)}{P(B)}
           \quad (P(B)>0)
@@ -103,12 +103,13 @@
 \medskip
 \begingroup
 \paragraph{離散変数の期待値}
+        離散確率変数$X$の期待値は、起こり得る値をその確率で重み付けして足し合わせます。
         \[
           \mathbb{E}[X]=\sum_x xP(X=x)
         \]
         起こり得る値を確率で重み付けした平均です。必ずしも実際に取る値ではありません。
 
-\paragraph{分布を明示します}
+\paragraph{分布の前提}
         確率はデータ生成過程や信念のモデルに依存します。標本で推定した量と真の分布の量を区別します。
 
 \par
@@ -117,7 +118,7 @@
 \endgroup
 
 
-\section{機械学習は、データから予測規則のパラメータを求めます}
+\section{機械学習}
 \label{sec:06-machine-learning-04}
 \begingroup
   \centering
@@ -149,7 +150,7 @@
 \endgroup
 
 
-\section{特徴量・ラベル・モデルを、学習と推論で使い分けます}
+\section{学習と推論}
 \label{sec:06-machine-learning-05}
 \begingroup
 \begingroup
@@ -172,14 +173,14 @@
 \par
 \endgroup
   \vspace{4mm}
-\paragraph{モデルはデータそのものではありません}
+\paragraph{モデルとデータ}
     モデルは入力から出力を計算する構造とパラメータです。訓練データの性質を反映しますが、事実を完全に保存・再現するものではありません。
 
 \par
 \endgroup
 
 
-\section{訓練・検証・テストは、役割ごとに分離します}
+\section{データ分割}
 \label{sec:06-machine-learning-06}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
@@ -192,7 +193,7 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-\paragraph{分割単位が重要です}
+\paragraph{分割単位}
     同じ利用者、時系列の未来、ほぼ重複する文書などが分割をまたぐと、運用時には使えない情報が評価へ漏れます。
     独立性と運用時の時間順を反映して分けます。
 
@@ -200,11 +201,12 @@
 \endgroup
 
 
-\section{損失関数は誤りを数値化し、最適化の目的を作ります}
+\section{損失関数}
 \label{sec:06-machine-learning-07}
 \begingroup
 \begingroup
 \paragraph{経験損失}
+        訓練データ上の経験損失は、各例の損失を平均して求めます。
         \[
           \hat{R}(\boldsymbol{\theta})=
           \frac{1}{n}\sum_{i=1}^{n}
@@ -232,7 +234,7 @@
 \endgroup
 
 
-\section{多項式は、次数を変えて曲線の複雑さを調整できます}
+\section{多項式回帰}
 \label{sec:06-machine-learning-08}
 \begingroup
 \begingroup
@@ -253,7 +255,7 @@
         {\centering$\displaystyle f(x;\mathbf{w})=\sum_{j=0}^{M}w_jx^j$\par}
         次数$M$を増やすほど、多様な曲線を表せます。
 
-\paragraph{線形モデルでもあります}
+\paragraph{パラメータに対する線形性}
         $x$には多項式ですが、$\mathbf{w}$には線形です。特徴を$(1,x,\ldots,x^M)$と見ます。
 
 \par
@@ -263,11 +265,12 @@
 \endgroup
 
 
-\section{最小二乗法は、残差の二乗和を最小化します}
+\section{最小二乗法}
 \label{sec:06-machine-learning-09}
 \begingroup
 \begingroup
 \paragraph{目的関数}
+        最小二乗法では、予測と観測値の残差を二乗し、その総和を最小化します。
         \[
           E(\mathbf{w})=
           \frac{1}{2}\sum_{i=1}^{n}
@@ -285,7 +288,7 @@
 \paragraph{解き方}
         フルランクなら正規方程式が得られます。ただし数値計算では、逆行列を明示的に作らずQR分解やSVDなどを使う方法があります。
 
-\paragraph{仮定を確認します}
+\paragraph{最小二乗法の仮定}
         二乗誤差は外れ値へ敏感です。誤差分布、測定精度、目的に応じて別の損失も検討します。
 
 \par
@@ -294,7 +297,7 @@
 \endgroup
 
 
-\section{未学習と過学習は、訓練誤差だけでは区別できません}
+\section{未学習と過学習}
 \label{sec:06-machine-learning-10}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
@@ -308,7 +311,7 @@
   \end{tabularx}
   \vspace{4mm}
 \begingroup
-\paragraph{複雑さは次数だけではありません}
+\paragraph{モデルの複雑さ}
         パラメータ数、正則化、特徴量、データ量、最適化、学習回数が実効的な複雑さへ影響します。
 
 \par
@@ -324,11 +327,12 @@
 \endgroup
 
 
-\section{正則化は、訓練誤差とモデルの複雑さを同時に制御します}
+\section{正則化}
 \label{sec:06-machine-learning-11}
 \begingroup
 \begingroup
 \paragraph{L2正則化の例}
+        L2正則化では、損失へ重みの二乗和を加えます。
         \[
           E_{\lambda}(\mathbf{w})=
           E(\mathbf{w})+\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2
@@ -345,7 +349,7 @@
 \paragraph{汎化性能}
         訓練に使っていない、運用時と同じ分布の例へ、どれだけ良く予測できるかです。
 
-\paragraph{正則化だけでは足りません}
+\paragraph{正則化の限界}
         データ漏洩、分布差、誤ったラベル、評価指標の不一致があれば、正則化しても妥当な評価にはなりません。
 
 \par
@@ -354,11 +358,12 @@
 \endgroup
 
 
-\section{ベイズの式は、観測後の確率を分解して表します}
+\section{ベイズの式}
 \label{sec:06-machine-learning-12}
 \begingroup
 \begingroup
 \paragraph{ベイズの式}
+        観測$B$を得た後の事象$A$の確率は、次の式で分解できます。
         \[
           P(C\mid\mathbf{x})=
           \frac{P(\mathbf{x}\mid C)P(C)}
@@ -385,7 +390,7 @@
 \endgroup
 
 
-\section{意思決定は、確率と誤りの損失を組み合わせます}
+\section{確率的意思決定}
 \label{sec:06-machine-learning-13}
 \begingroup
 \begingroup
@@ -414,7 +419,7 @@
 \endgroup
 
 
-\section{線形識別関数は、超平面のどちら側かで分類します}
+\section{線形識別}
 \label{sec:06-machine-learning-14}
 \begingroup
 \begingroup
@@ -432,6 +437,7 @@
 \medskip
 \begingroup
 \paragraph{2クラス分類}
+        線形識別関数は、入力と重みの内積にバイアスを加えて符号を判定します。
         \[
           g(\mathbf{x})=\mathbf{w}^\top\mathbf{x}+b,\qquad
           \hat{y}=\operatorname{sign}(g(\mathbf{x}))
@@ -447,7 +453,7 @@
 \endgroup
 
 
-\section{パーセプトロンは、誤分類した例の方向へ重みを直します}
+\section{パーセプトロン}
 \label{sec:06-machine-learning-15}
 \begingroup
 \begingroup
@@ -478,7 +484,7 @@
 \endgroup
 
 
-\section{XORは、一つの直線では分離できません}
+\section{XOR}
 \label{sec:06-machine-learning-16}
 \begingroup
 \begingroup
@@ -514,7 +520,7 @@
 \endgroup
 
 
-\section{ニューロンは、重み付き和へ非線形変換を適用します}
+\section{ニューロン}
 \label{sec:06-machine-learning-17}
 \begingroup
 \begingroup
@@ -546,7 +552,7 @@
 \endgroup
 
 
-\section{順伝播は予測を計算し、損失へ接続します}
+\section{順伝播}
 \label{sec:06-machine-learning-18}
 \begingroup
   \centering
@@ -577,11 +583,12 @@
 \endgroup
 
 
-\section{勾配降下法は、損失の局所的な下り方向へ更新します}
+\section{勾配降下法}
 \label{sec:06-machine-learning-19}
 \begingroup
 \begingroup
 \paragraph{基本更新}
+        勾配降下法は、現在のパラメータから勾配と反対方向へ学習率だけ進めます。
         \[
           \boldsymbol{\theta}_{t+1}
           =\boldsymbol{\theta}_{t}
@@ -609,7 +616,7 @@
 \endgroup
 
 
-\section{誤差逆伝播は、連鎖律で全パラメータの勾配を再利用計算します}
+\section{誤差逆伝播}
 \label{sec:06-machine-learning-20}
 \begingroup
 \begingroup
@@ -640,7 +647,7 @@
 \endgroup
 
 
-\section{系列では、依存関係・順序・長さを同時に扱います}
+\section{系列データ}
 \label{sec:06-machine-learning-21}
 \begingroup
 \begingroup
@@ -671,7 +678,7 @@
 \endgroup
 
 
-\section{Attentionは、参照先ごとの重み付き和を作ります}
+\section{Attention}
 \label{sec:06-machine-learning-22}
 \begingroup
 \begingroup
@@ -703,7 +710,7 @@
 \endgroup
 
 
-\section{Query・Key・Valueは、検索条件・索引・内容を分けます}
+\section{Query・Key・Value}
 \label{sec:06-machine-learning-23}
 \begingroup
 \begingroup
@@ -728,7 +735,8 @@
 \endgroup
   \vspace{5mm}
 \paragraph{Scaled Dot-Product Attention}
-    \[
+        QueryとKeyの内積を次元数で調整し、softmaxで重みに変えてValueを集約します。
+        \[
       \operatorname{Attention}(Q,K,V)
       =\operatorname{softmax}
       \left(\frac{QK^\top}{\sqrt{d_k}}+M\right)V
@@ -740,7 +748,7 @@
 \endgroup
 
 
-\section{Self-Attentionは、同じ系列からQ・K・Vを作ります}
+\section{Self-Attention}
 \label{sec:06-machine-learning-24}
 \begingroup
   \centering
@@ -771,7 +779,7 @@
 \endgroup
 
 
-\section{位置情報は、同じトークン集合の並び順を区別します}
+\section{位置情報}
 \label{sec:06-machine-learning-25}
 \begingroup
 \begingroup
@@ -797,7 +805,7 @@
 \endgroup
 
 
-\section{Encoder・Decoder・Decoder-onlyは、参照できる情報が異なります}
+\section{Transformerの構成}
 \label{sec:06-machine-learning-26}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
@@ -810,7 +818,7 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-\paragraph{名称だけで能力は決まりません}
+\paragraph{構成と能力}
     学習目的、データ、規模、位置表現、推論方法によって性質は変わります。現代の実装には各構成の変種があります。
 
   \source{Stanford CS224N, “Transformers” lecture}
@@ -818,7 +826,7 @@
 \endgroup
 
 
-\section{トークン化は、文字列を有限語彙のID列へ変換します}
+\section{トークン化}
 \label{sec:06-machine-learning-27}
 \begingroup
   \centering
@@ -831,7 +839,7 @@
   \end{tikzpicture}
   \vspace{5mm}
 \begingroup
-\paragraph{単位は単語とは限りません}
+\paragraph{トークンの単位}
         頻出する文字列片、文字、バイトなどを組み合わせます。日本語の語境界とも一致しない場合があります。
 
 \par
@@ -848,11 +856,12 @@
 \endgroup
 
 
-\section{次トークン予測は、系列の条件付き確率を学習します}
+\section{次トークン予測}
 \label{sec:06-machine-learning-28}
 \begingroup
 \begingroup
 \paragraph{自己回帰分解}
+        系列全体の確率は、それ以前のトークンを条件とする次トークン確率の積へ分解できます。
         \[
           P(t_1,\ldots,t_n)
           =\prod_{i=1}^{n}
@@ -870,7 +879,7 @@
 \paragraph{大規模事前学習}
         多様な文書やコードで共通の予測目的を最適化し、言語パターンや知識をパラメータへ統計的に反映します。
 
-\paragraph{事実データベースではありません}
+\paragraph{モデルと事実}
         記憶、一般化、混同が同じ生成過程に現れます。学習目的は個々の出力の真偽を直接保証しません。
 
 \par
@@ -879,7 +888,7 @@
 \endgroup
 
 
-\section{プロンプトとコンテキストは、その推論で参照する入力です}
+\section{プロンプトとコンテキスト}
 \label{sec:06-machine-learning-29}
 \begingroup
 \begingroup
@@ -905,7 +914,7 @@
 \endgroup
 
 
-\section{文章生成は、確率分布から一トークンずつ選びます}
+\section{文章生成}
 \label{sec:06-machine-learning-30}
 \begingroup
   \centering
@@ -944,7 +953,7 @@
 \endgroup
 
 
-\section{評価指標は、業務上の誤りとベースラインから選びます}
+\section{評価}
 \label{sec:06-machine-learning-31}
 \begingroup
 \begingroup
@@ -970,7 +979,7 @@
 \endgroup
 
 
-\section{データ漏洩と偏りは、評価をゆがめます}
+\section{データ漏洩と偏り}
 \label{sec:06-machine-learning-32}
 \begingroup
 \begingroup
@@ -996,7 +1005,7 @@
 \endgroup
 
 
-\section{分布変化とハルシネーションを前提に、利用境界を設けます}
+\section{分布変化とハルシネーション}
 \label{sec:06-machine-learning-33}
 \begingroup
 \begingroup
@@ -1028,7 +1037,7 @@
 \endgroup
 
 
-\section{ミニ実習：次数ごとの訓練誤差とテスト誤差を比べます}
+\section{実習：多項式回帰}
 \label{sec:06-machine-learning-34}
 \begingroup
 \begingroup
@@ -1068,7 +1077,7 @@ for degree in [0, 1, 3, 9]:
 \endgroup
 
 
-\section{第6章の要点は、予測・学習・判断・評価を分けることです}
+\section{まとめ}
 \label{sec:06-machine-learning-35}
 \begingroup
 \begingroup
@@ -1097,7 +1106,7 @@ for degree in [0, 1, 3, 9]:
 \endgroup
 
 
-\section{確認問題では、数式と運用上の意味を対応づけます}
+\section{確認問題}
 \label{sec:06-machine-learning-36}
 \begingroup
   \begin{enumerate}

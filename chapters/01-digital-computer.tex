@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{コンピュータはいかにして0と1を扱うのか}
+\chapter{コンピュータの仕組み}
 \label{chap:digital-computer}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item ビット列と、それを整数・文字・実数として読む規則を区別できます。
-  \item 論理ゲートから加算器と記憶回路が構成される流れを説明できます。
-  \item メモリ階層が速度・容量・コストの差から生じる理由を説明できます。
-  \item CPUのフェッチ、デコード、実行を、データ経路と制御信号に対応づけられます。
+この章では、ビット列と、それを整数・文字・実数として読む規則を区別します。論理ゲートから加算器と記憶回路を構成し、速度・容量・コストの差からメモリ階層が生じる理由をたどります。最後に、CPUのフェッチ、デコード、実行をデータ経路と制御信号へ対応づけます。
 \end{learninggoals}
 
 
-\section{0と1は電圧そのものではなく、電圧範囲の解釈です}
+\section{電圧と論理値}
 \label{sec:01-digital-computer-01}
 \begingroup
 \begingroup
@@ -53,18 +50,16 @@
 \endgroup
 
 
-\section{2進数は、各桁に2の累乗という重みを与えます}
+\section{2進数}
 \label{sec:01-digital-computer-02}
 \begingroup
 \begingroup
 \paragraph{ビット、バイト、ワード}
-        \begin{itemize}
-          \item \term{ビット}は0または1の一桁です。
-          \item \term{バイト}は通常8ビットです。
-          \item \term{ワード}はCPUが基本単位として扱うビット幅で、命令セットに依存します。
-        \end{itemize}
+        \term{ビット}は0または1の一桁で、通常は8ビットをまとめて\term{バイト}として扱います。
+        \term{ワード}はCPUが基本単位として扱うビット幅を指し、その幅は命令セットによって異なります。
 
 \paragraph{同じ値を異なる基数で表す例}
+        10進数の45は、2進数と16進数では次のように表せます。
         \[
           45_{10}=0010\,1101_2=2\mathrm{D}_{16}
         \]
@@ -75,6 +70,7 @@
 \medskip
 \begingroup
 \paragraph{桁の重み}
+        6ビットの各桁へ重みを対応づけると、値45を次のように確認できます。
         \centering
         \begin{tabular}{c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c}
           桁 & 5 & 4 & 3 & 2 & 1 & 0\\
@@ -94,7 +90,7 @@
 \endgroup
 
 
-\section{2の補数は、加算回路を共有したまま負数を表せます}
+\section{負数と2の補数}
 \label{sec:01-digital-computer-03}
 \begingroup
 \begingroup
@@ -111,6 +107,7 @@
 \medskip
 \begingroup
 \paragraph{8ビットで $-5$ を作る}
+        2の補数表現は、正の値をビット反転して1を加えると確認できます。
         \begin{enumerate}
           \item $5=0000\,0101_2$ と表します。
           \item 各ビットを反転して $1111\,1010_2$ にします。
@@ -128,7 +125,7 @@
 \endgroup
 
 
-\section{同じビット列でも、文字と実数では解釈規則が異なります}
+\section{ビット列の解釈}
 \label{sec:01-digital-computer-04}
 \begingroup
 \begingroup
@@ -159,7 +156,7 @@
 \endgroup
 
 
-\section{トランジスタは、電気信号で導通状態を切り替える素子です}
+\section{トランジスタ}
 \label{sec:01-digital-computer-05}
 \begingroup
 \begingroup
@@ -196,11 +193,12 @@
 \endgroup
 
 
-\section{論理ゲートは、入力ビットから出力ビットを決める規則です}
+\section{論理ゲート}
 \label{sec:01-digital-computer-06}
 \begingroup
 \begingroup
 \paragraph{基本ゲートの真理値表}
+        AND、OR、XORは、二つの入力に対する出力を次の真理値表で定義できます。
         \centering
         \begin{tabular}{ccccc}
           \toprule
@@ -236,7 +234,7 @@
 \endgroup
 
 
-\section{NANDだけでNOT、AND、ORを構成できます}
+\section{NANDによる回路構成}
 \label{sec:01-digital-computer-07}
 \begingroup
 \begingroup
@@ -272,7 +270,7 @@
 \endgroup
 
 
-\section{加算器は、真理値表を段階的に回路へ変換した例です}
+\section{加算器}
 \label{sec:01-digital-computer-08}
 \begingroup
 \begingroup
@@ -291,6 +289,7 @@
 \medskip
 \begingroup
 \paragraph{全加算器}
+        入力$a$、$b$と下位桁からの桁上がり$c_{in}$に対し、和と次の桁上がりは次式で求められます。
         \[
           S=A\oplus B\oplus C_{in}
         \]
@@ -312,7 +311,7 @@
 \endgroup
 
 
-\section{全加算器を桁ごとに連結すると、複数ビットを加算できます}
+\section{多ビット加算とALU}
 \label{sec:01-digital-computer-09}
 \begingroup
   \centering
@@ -348,7 +347,7 @@
 \endgroup
 
 
-\section{記憶には、過去の状態を次の時刻へ戻す経路が必要です}
+\section{記憶回路}
 \label{sec:01-digital-computer-10}
 \begingroup
 \begingroup
@@ -383,7 +382,7 @@
 \endgroup
 
 
-\section{クロックは、回路全体が状態を更新する基準時刻を作ります}
+\section{クロックとレジスタ}
 \label{sec:01-digital-computer-11}
 \begingroup
 \begingroup
@@ -415,19 +414,15 @@
 \endgroup
 
 
-\section{メモリは、記憶素子をアドレスで選べる配列にしたものです}
+\section{メモリ}
 \label{sec:01-digital-computer-12}
 \begingroup
 \begingroup
 \paragraph{三つの信号群}
-        \begin{itemize}
-          \item \term{アドレス}：読み書きする位置を指定します。
-          \item \term{データ}：読み出す値、または書き込む値です。
-          \item \term{制御}：読み出しか書き込みか、動作時刻などを指定します。
-        \end{itemize}
+        メモリとのやり取りには、読み書きする位置を指定する\term{アドレス}、読み出す値または書き込む値を運ぶ\term{データ}、読み出しか書き込みかと動作時刻を指定する\term{制御信号}を使います。
 
 \paragraph{バス}
-        複数ビットの信号線をまとめた伝送路です。
+        \term{バス}は、複数ビットの信号線をまとめた伝送路です。
         複数装置で共有する構成もあります。
 
 \par
@@ -453,7 +448,7 @@
 \endgroup
 
 
-\section{SRAMは保持回路を使い、DRAMは電荷を定期的に再生します}
+\section{SRAMとDRAM}
 \label{sec:01-digital-computer-13}
 \begingroup
 \begingroup
@@ -484,7 +479,7 @@
 \endgroup
 
 
-\section{速さ、容量、コストの差がメモリ階層を作ります}
+\section{メモリ階層}
 \label{sec:01-digital-computer-14}
 \begingroup
   \centering
@@ -514,7 +509,7 @@
 \endgroup
 
 
-\section{ノイマン型コンピュータは、命令とデータをメモリに置きます}
+\section{ノイマン型コンピュータ}
 \label{sec:01-digital-computer-15}
 \begingroup
 \begingroup
@@ -543,7 +538,7 @@
 \endgroup
 
 
-\section{CPUはフェッチ、デコード、実行を繰り返します}
+\section{CPUの命令実行}
 \label{sec:01-digital-computer-16}
 \begingroup
   \centering
@@ -578,7 +573,7 @@
 \endgroup
 
 
-\section{加算命令は、制御信号がデータ経路を選んで実行します}
+\section{加算命令の実行}
 \label{sec:01-digital-computer-17}
 \begingroup
 \noindent{\sffamily\bfseries\color{MutedBlue}例：\code{ADD R3, R1, R2} はR1とR2を加え、R3へ保存します}\par\medskip
@@ -599,6 +594,7 @@
 \endgroup
 \medskip
 \begingroup
+      加算命令は、次の順序でデータ経路を使います。
       \begin{enumerate}
         \item 命令をメモリから読みます。
         \item 命令形式からR1、R2、R3を特定します。
@@ -614,7 +610,7 @@
 \endgroup
 
 
-\section{第1章の要点は、抽象化を一段ずつ積み上げることです}
+\section{まとめ}
 \label{sec:01-digital-computer-18}
 \begingroup
 \begingroup
@@ -645,7 +641,7 @@
 \endgroup
 
 
-\section{確認問題では、値と状態の変化を説明します}
+\section{確認問題}
 \label{sec:01-digital-computer-19}
 \begingroup
   \begin{enumerate}
@@ -661,7 +657,7 @@
 \endgroup
 
 
-\section{小さな実習：固定幅整数と浮動小数点数を観察します}
+\section{実習：整数と浮動小数点数}
 \label{sec:01-digital-computer-20}
 \begingroup
 \begingroup
@@ -680,6 +676,7 @@ print((0.1 + 0.2) == 0.3)
 \medskip
 \begingroup
 \paragraph{観察する項目}
+        実行結果では、次の四点を観察します。
         \begin{itemize}
           \item 256の下位8ビット
           \item $-1$と$-5$のビット列

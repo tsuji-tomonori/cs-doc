@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{ソフトウェアの複雑さを管理する}
+\chapter{ソフトウェア設計}
 \label{chap:software-engineering}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item 凝集度、結合度、情報隠蔽を、変更の波及という観点から説明できます。
-  \item インタフェースとモデルが、何を示し何を省くのかを判断できます。
-  \item オブジェクト指向と関数型の考え方を、目的に応じて組み合わせられます。
-  \item 変更要求を使って、設計した境界とテストの妥当性を評価できます。
+この章では、凝集度、結合度、情報隠蔽を変更の波及という観点から捉えます。インタフェースとモデルが何を示し、何を省くのかを判断し、オブジェクト指向と関数型の考え方を目的に応じて組み合わせます。最後に、具体的な変更要求を使って設計した境界とテストの妥当性を評価します。
 \end{learninggoals}
 
 
-\section{「ソフトウェア危機」は、開発を工学として扱う契機になりました}
+\section{ソフトウェア危機}
 \label{sec:04-software-engineering-01}
 \begingroup
 \begingroup
@@ -29,7 +26,7 @@
 \endgroup
 \medskip
 \begingroup
-\paragraph{個人技だけでは解けません}
+\paragraph{工学的な開発}
         言語やアルゴリズムだけでなく、設計、工程、検証、協働、運用を含む仕組みが必要です。
 
 \paragraph{現在への読み替え}
@@ -42,7 +39,7 @@
 \endgroup
 
 
-\section{規模が増えると、相互作用は要素数より速く増え得ます}
+\section{規模と相互作用}
 \label{sec:04-software-engineering-02}
 \begingroup
 \begingroup
@@ -74,7 +71,7 @@
 \endgroup
 
 
-\section{分割統治は、大きな問題を独立して扱える部分へ分けます}
+\section{分割統治}
 \label{sec:04-software-engineering-03}
 \begingroup
 \begingroup
@@ -105,7 +102,7 @@
 \endgroup
 
 
-\section{高い凝集と低い結合は、変更の波及を抑えます}
+\section{凝集度と結合度}
 \label{sec:04-software-engineering-04}
 \begingroup
 \begingroup
@@ -133,7 +130,7 @@
 \endgroup
 
 
-\section{情報隠蔽は、変わりやすい設計判断をモジュール内へ置きます}
+\section{情報隠蔽}
 \label{sec:04-software-engineering-05}
 \begingroup
   \centering
@@ -172,14 +169,14 @@
 \endgroup
 
 
-\section{構造化は、制御の入口と出口を追いやすくします}
+\section{構造化}
 \label{sec:04-software-engineering-06}
 \begingroup
 \begingroup
 \paragraph{goto依存の問題}
         任意の位置への分岐が増えると、現在地点へ至る経路と、成立している状態を局所的に説明しにくくなります。
 
-\paragraph{禁止が目的ではありません}
+\paragraph{構造化の目的}
         問題は命令名ではなく、制御フローと状態変化を人が対応づけられるかです。例外処理や早期returnも同じ観点で読みます。
 
 \par
@@ -205,7 +202,7 @@
 \endgroup
 
 
-\section{抽象化は、本質を残し、目的に不要な詳細を省きます}
+\section{抽象化}
 \label{sec:04-software-engineering-07}
 \begingroup
 \begingroup
@@ -236,7 +233,7 @@
 \endgroup
 
 
-\section{インタフェースは、境界を越える約束を明示します}
+\section{インタフェース}
 \label{sec:04-software-engineering-08}
 \begingroup
 \begingroup
@@ -264,7 +261,7 @@
 \endgroup
 
 
-\section{モデルは、目的に合わせて現実の一部を強調します}
+\section{モデル}
 \label{sec:04-software-engineering-09}
 \begingroup
 \begingroup
@@ -291,7 +288,7 @@
 \endgroup
 
 
-\section{クラス図は、型の責務と静的な関係を表します}
+\section{クラス図}
 \label{sec:04-software-engineering-10}
 \begingroup
 \begingroup
@@ -319,7 +316,7 @@
 \endgroup
 
 
-\section{シーケンス図は、協調動作を時間順に示します}
+\section{シーケンス図}
 \label{sec:04-software-engineering-11}
 \begingroup
   \centering
@@ -353,7 +350,7 @@
 \endgroup
 
 
-\section{オブジェクト指向は、状態と振る舞いへ責務を割り当てます}
+\section{オブジェクト指向}
 \label{sec:04-software-engineering-12}
 \begingroup
 \begingroup
@@ -379,7 +376,7 @@
 \endgroup
 
 
-\section{継承より先に、関係が「is-a」か「has-a」かを問います}
+\section{継承とコンポジション}
 \label{sec:04-software-engineering-13}
 \begingroup
 \begingroup
@@ -406,7 +403,7 @@
 \endgroup
 
 
-\section{ポリモーフィズムは、利用側を具体実装から離します}
+\section{ポリモーフィズム}
 \label{sec:04-software-engineering-14}
 \begingroup
 \begingroup
@@ -441,7 +438,7 @@ func (c Checkout) Complete(ctx context.Context) error {
 \endgroup
 
 
-\section{関数型の考え方は、計算と外部作用を分けます}
+\section{関数型の考え方}
 \label{sec:04-software-engineering-15}
 \begingroup
 \begingroup
@@ -467,7 +464,7 @@ func (c Checkout) Complete(ctx context.Context) error {
 \endgroup
 
 
-\section{高階関数は、反復の形と処理内容を分離します}
+\section{高階関数}
 \label{sec:04-software-engineering-16}
 \begingroup
 \begingroup
@@ -506,7 +503,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{パラダイムは、問題の性質に応じて組み合わせます}
+\section{パラダイムの選択}
 \label{sec:04-software-engineering-17}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
@@ -519,7 +516,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-\paragraph{現代言語では混在します}
+\paragraph{パラダイムの併用}
     Goでも、手続き的な制御、構造体とインタフェース、関数値と不変な値を同じプログラムで使えます。
     ラベルで統一するより、局所的な問題へ合う制約を選びます。
 
@@ -527,7 +524,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{テストは、設計した境界と協調動作を検証します}
+\section{テスト}
 \label{sec:04-software-engineering-18}
 \begingroup
 \begingroup
@@ -544,7 +541,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \paragraph{結合テスト}
         DB、ネットワーク、ファイル、複数モジュールの契約が、実際の組み合わせで成立するかを確認します。
 
-\paragraph{両方が必要です}
+\paragraph{二つのテストの役割}
         単体テストだけでは設定や通信形式の誤りを見逃し、結合テストだけでは原因特定と網羅が難しくなります。
 
 \par
@@ -554,7 +551,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{品質維持は、小さな変更と継続的な検証で行います}
+\section{品質の維持}
 \label{sec:04-software-engineering-19}
 \begingroup
 \begingroup
@@ -578,7 +575,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \par
 \endgroup
   \vspace{5mm}
-\paragraph{変更を分離します}
+\paragraph{変更の分離}
     振る舞いを変える修正と構造だけを変える修正を小さく分けると、レビューで確認すべき差と障害時の切り分けが明確になります。
 
   \source{Martin Fowler, \textit{Refactoring}; Ward Cunningham, “The WyCash Portfolio Management System”}
@@ -586,7 +583,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{ケーススタディでは、注文規則を外部技術から分離します}
+\section{ケーススタディ：注文処理}
 \label{sec:04-software-engineering-20}
 \begingroup
   \centering
@@ -619,7 +616,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{変更要求を流すと、境界の強さを評価できます}
+\section{変更要求による評価}
 \label{sec:04-software-engineering-21}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
@@ -634,14 +631,14 @@ total := Reduce(taxed, 0, func(a, x int) int {
   \end{tabularx}
   \vspace{4mm}
 \begingroup
-\paragraph{波及したら原因を調べます}
+\paragraph{波及の原因}
         内部型の漏出、共有状態、曖昧な失敗契約、循環依存がないかを確認します。
 
 \par
 \endgroup
 \medskip
 \begingroup
-\paragraph{層は目的ではありません}
+\paragraph{層の役割}
         小規模な処理へ同じ数の層を強制すると、間接参照だけが増えます。変更リスクに見合う境界を作ります。
 
 \par
@@ -650,7 +647,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{第4章の要点は、変更理由ごとに境界を作ることです}
+\section{まとめ}
 \label{sec:04-software-engineering-22}
 \begingroup
 \begingroup
@@ -679,7 +676,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{確認問題では、変更要求から設計を評価します}
+\section{確認問題}
 \label{sec:04-software-engineering-23}
 \begingroup
   \begin{enumerate}
