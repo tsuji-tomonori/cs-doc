@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="コンピュータからAIまでをつなぐ技術書『情報工学入門』">
+  <meta name="description" content="一つのAIアプリ要求を追い、物理からアプリまでをつなぐ技術書『情報工学入門』">
   <title>情報工学入門</title>
   <style>
     :root {
@@ -39,12 +39,11 @@
     a.button:focus, a.button:hover { background: #e8eef2; outline: 2px solid transparent; }
     .chapters {
       display: grid;
-      gap: 1px;
+      gap: 12px;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      background: var(--rule);
-      border: 1px solid var(--rule);
+      background: transparent;
     }
-    .chapter { background: var(--card); padding: 16px; }
+    .chapter { background: var(--card); border: 1px solid var(--rule); padding: 16px; }
     .chapter strong { display: block; margin-bottom: 4px; }
     .chapter span { color: #66727c; font-size: 0.92rem; }
     .viewer { background: var(--card); border: 1px solid var(--rule); margin-top: 16px; }
@@ -57,9 +56,9 @@
 <body>
   <main>
     <header>
-      <p>新卒アプリケーションエンジニア向け・読み物形式の研修教材</p>
+      <p>新卒アプリケーションエンジニア向け・一つのリクエストを追う技術書</p>
       <h1>情報工学入門</h1>
-      <p>コンピュータ、言語、OS、設計、ネットワーク、機械学習、LLMを、A4・95ページの文章でつなぎます。</p>
+      <p>「注文番号1234はいつ届きますか」という一つの送信を止め、電気信号からCPU、コード、OS、設計、通信、LLM、画面の応答までをA4・108ページでたどります。</p>
       <nav aria-label="教材へのリンク">
         <a class="button" href="information-engineering-basics.pdf">PDFを読む</a>
         <a class="button" href="https://github.com/tsuji-tomonori/cs-doc">TeXソースを見る</a>
@@ -69,13 +68,13 @@
     <section aria-labelledby="chapters-title">
       <h2 id="chapters-title">章構成</h2>
       <div class="chapters">
-        <div class="chapter"><strong>第1章　コンピュータの仕組み</strong><span>電気信号からCPUまで</span></div>
-        <div class="chapter"><strong>第2章　プログラムと言語処理</strong><span>機械語、AST、探索</span></div>
-        <div class="chapter"><strong>第3章　実行環境とデータ</strong><span>OS、メモリ、型、データ構造</span></div>
-        <div class="chapter"><strong>第4章　ソフトウェア設計</strong><span>変更を支える境界と設計</span></div>
-        <div class="chapter"><strong>第5章　ネットワーク</strong><span>IPからHTTP・TLSまで</span></div>
-        <div class="chapter"><strong>第6章　機械学習とLLM</strong><span>回帰からTransformer・LLMまで</span></div>
-        <div class="chapter"><strong>第7章　実務への応用</strong><span>観測、仮説、障害調査</span></div>
+        <div class="chapter"><strong>第1章　信号から計算へ</strong><span>電圧がCPUの命令になる</span></div>
+        <div class="chapter"><strong>第2章　コードから命令へ</strong><span>人の意図が機械語になる</span></div>
+        <div class="chapter"><strong>第3章　プログラムが動く場所</strong><span>OSとメモリが実行の場を作る</span></div>
+        <div class="chapter"><strong>第4章　変更を支える設計</strong><span>異なる変化を境界で分ける</span></div>
+        <div class="chapter"><strong>第5章　データが届くまで</strong><span>要求が層をまとって相手へ進む</span></div>
+        <div class="chapter"><strong>第6章　言葉が応答になるまで</strong><span>文字列が数値を経て言葉へ戻る</span></div>
+        <div class="chapter"><strong>第7章　一つの応答をたどる</strong><span>全経路をつなぎ、問題の場所へ戻る</span></div>
       </div>
     </section>
 
@@ -87,7 +86,7 @@
     </section>
 
     <footer>
-      <p>PDFはGitHub ActionsでLuaLaTeXから生成しています。本文末の参考文献から、大学教材、公式仕様、RFC、原著論文を参照できます。</p>
+      <p>PDFはGitHub ActionsでLuaLaTeXから生成しています。各章は要求の「現在地」から始まり、章末の問いを次章へ渡します。</p>
     </footer>
   </main>
 </body>
