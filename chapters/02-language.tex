@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{機械語からプログラミング言語へ}
+\chapter{プログラムと言語処理}
 \label{chap:language}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item 命令セットがCPUとソフトウェアの間で保証する範囲を説明できます。
-  \item 字句解析、構文解析、AST生成、コード生成の役割を区別できます。
-  \item 再帰呼び出しとコールスタックの関係を説明できます。
-  \item DFSとBFSを、必要な順序と使用するデータ構造から選べます。
+この章では、命令セットがCPUとソフトウェアの間で保証する範囲を確認します。ソースコードが字句解析、構文解析、AST生成、コード生成を経て実行可能な表現へ変わる過程をたどり、再帰呼び出しとコールスタックの関係を学びます。さらに、必要な走査順とデータ構造に応じてDFSとBFSを選べるようにします。
 \end{learninggoals}
 
 
-\section{命令セットは、ソフトウェアとCPUの間の契約です}
+\section{命令セット}
 \label{sec:02-language-01}
 \begingroup
 \begingroup
@@ -41,7 +38,7 @@
         \node[font=\scriptsize] at (67,6) {即値};
       \end{tikzpicture}
       \vspace{4mm}
-\paragraph{同じISAでも実装は異なります}
+\paragraph{ISAと実装}
         同じ命令セットを実行するCPUでも、パイプライン、キャッシュ、並列実行の方式は異なり得ます。
         プログラムはISAが保証する動作へ依存します。
 
@@ -51,7 +48,7 @@
 \endgroup
 
 
-\section{機械語とアセンブリ言語は、同じ命令を異なる表記で示します}
+\section{機械語とアセンブリ言語}
 \label{sec:02-language-02}
 \begingroup
 \begingroup
@@ -68,12 +65,8 @@
 \medskip
 \begingroup
 \paragraph{代表的な命令の役割}
-        \begin{itemize}
-          \item \term{ロード}：メモリからレジスタへ読みます。
-          \item \term{ストア}：レジスタからメモリへ書きます。
-          \item \term{演算}：レジスタ値をALUで処理します。
-          \item \term{分岐}：条件に応じて次のPCを変えます。
-        \end{itemize}
+        \term{ロード}はメモリからレジスタへ値を読み、\term{ストア}はレジスタからメモリへ値を書きます。
+        \term{演算}はレジスタ値をALUで処理し、\term{分岐}は条件に応じて次のPCを変更します。
 
 \paragraph{ロード／ストア型の例}
         \code{LOAD R1, [R2]}、\code{ADD R3, R1, R4}、\code{STORE [R2], R3} のように、メモリ操作と演算を分けます。
@@ -84,7 +77,7 @@
 \endgroup
 
 
-\section{高級言語は、命令列より問題領域に近い表現を提供します}
+\section{高級言語}
 \label{sec:02-language-03}
 \begingroup
 \begingroup
@@ -116,7 +109,7 @@
 \endgroup
 
 
-\section{コンパイラは、意味を保ちながら表現を段階的に変換します}
+\section{コンパイル}
 \label{sec:02-language-04}
 \begingroup
   \centering
@@ -152,7 +145,7 @@
 \endgroup
 
 
-\section{コンパイルと解釈実行は、排他的な二方式ではありません}
+\section{実行方式}
 \label{sec:02-language-05}
 \begingroup
 \begingroup
@@ -181,7 +174,7 @@
 \endgroup
 
 
-\section{字句解析は、文字列を意味のある最小単位へ分けます}
+\section{字句解析}
 \label{sec:02-language-06}
 \begingroup
 \noindent{\sffamily\bfseries\color{MutedBlue}入力例：\code{total = price * 110 / 100}}\par\medskip
@@ -215,11 +208,12 @@
 \endgroup
 
 
-\section{構文解析は、トークン列が文法から生成できるかを調べます}
+\section{構文解析}
 \label{sec:02-language-07}
 \begingroup
 \begingroup
 \paragraph{文法の例}
+        加算と乗算を含む式の文法は、例えば次の生成規則で記述できます。
         \[
         \begin{aligned}
           \mathit{expr} &\rightarrow \mathit{expr}+\mathit{term}\mid\mathit{term}\\
@@ -247,7 +241,7 @@
 \endgroup
 
 
-\section{ASTは、評価に不要な構文上の詳細を省いた木です}
+\section{抽象構文木}
 \label{sec:02-language-08}
 \begingroup
 \begingroup
@@ -282,17 +276,13 @@
 \endgroup
 
 
-\section{木は、部分木も木になる再帰的なデータ構造です}
+\section{木構造}
 \label{sec:02-language-09}
 \begingroup
 \begingroup
 \paragraph{構成要素}
-        \begin{itemize}
-          \item \term{根}：親を持たない始点です。
-          \item \term{節}：値と子への辺を持つ要素です。
-          \item \term{葉}：子を持たない節です。
-          \item \term{辺}：親子関係を表します。
-        \end{itemize}
+        木には、親を持たない始点である\term{根}、値と子への関係を持つ\term{節}、子を持たない\term{葉}があります。
+        節どうしの親子関係は\term{辺}で表します。
 
 \paragraph{再帰的な定義}
         木は、一つの根と0個以上の部分木から構成されます。
@@ -319,7 +309,7 @@
 \endgroup
 
 
-\section{再帰呼び出しは、未完了の処理をコールスタックへ積みます}
+\section{再帰とコールスタック}
 \label{sec:02-language-10}
 \begingroup
 \begingroup
@@ -350,16 +340,13 @@
 \endgroup
 
 
-\section{DFSは一つの枝を深くたどり、戻りながら別の枝へ進みます}
+\section{深さ優先探索}
 \label{sec:02-language-11}
 \begingroup
 \begingroup
 \paragraph{三つの走査順}
-        \begin{itemize}
-          \item \term{前順}：節、左部分木、右部分木
-          \item \term{間順}：左部分木、節、右部分木
-          \item \term{後順}：左部分木、右部分木、節
-        \end{itemize}
+        \term{前順}は節、左部分木、右部分木の順、\term{間順}は左部分木、節、右部分木の順に訪問します。
+        \term{後順}では左部分木と右部分木を訪れてから節を処理します。
 
 \paragraph{再帰による実装}
         関数呼び出しのスタックが、訪問途中の節を保持します。
@@ -384,7 +371,7 @@
 \endgroup
 
 
-\section{ASTの評価は、子の値を得てから親を処理する後順走査です}
+\section{ASTの評価}
 \label{sec:02-language-12}
 \begingroup
   \centering
@@ -416,7 +403,7 @@
 \endgroup
 
 
-\section{BFSは根からの距離が小さい節を先に訪問します}
+\section{幅優先探索}
 \label{sec:02-language-13}
 \begingroup
 \begingroup
@@ -432,6 +419,7 @@
 \medskip
 \begingroup
 \paragraph{DFSとの使い分け}
+        DFSとBFSは、保持するデータ構造と訪問順、向いている用途が異なります。
         \begin{tabularx}{\linewidth}{@{}lYY@{}}
           \toprule
           & DFS & BFS\\
@@ -453,7 +441,7 @@
 \endgroup
 
 
-\section{ミニ実習：四則演算ASTを再帰で評価します}
+\section{実習：四則演算AST}
 \label{sec:02-language-14}
 \begingroup
 \begingroup
@@ -493,7 +481,7 @@ func Eval(n *Node) int {
 \endgroup
 
 
-\section{第2章の要点は、表現の変換と木の走査です}
+\section{まとめ}
 \label{sec:02-language-15}
 \begingroup
 \begingroup
@@ -522,7 +510,7 @@ func Eval(n *Node) int {
 \endgroup
 
 
-\section{確認問題では、変換前後の表現を対応づけます}
+\section{確認問題}
 \label{sec:02-language-16}
 \begingroup
   \begin{enumerate}

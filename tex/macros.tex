@@ -1,18 +1,18 @@
 % 章の導入
 \newenvironment{chapterabstract}{%
   \begin{chapterabstractbox}
-  {\sffamily\bfseries\color{MutedBlue}この章について}\par\smallskip
+  {\sffamily\bfseries\color{MutedBlue}概要}\par\smallskip
 }{%
   \end{chapterabstractbox}
 }
 
-% 章の到達目標
+% 章で扱う内容
 \newenvironment{learninggoals}{%
   \par\medskip
-  {\large\sffamily\bfseries\color{DeepNavy}この章の到達目標}\par\smallskip
-  \begin{itemize}
+  {\large\sffamily\bfseries\color{DeepNavy}この章で学ぶこと}\par\smallskip
+  \begingroup
 }{%
-  \end{itemize}
+  \par\endgroup
   \medskip
 }
 

@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{実行環境・メモリ・型・データ構造}
+\chapter{実行環境とデータ}
 \label{chap:runtime-data}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item プログラム、プロセス、スレッド、システムコールの関係を説明できます。
-  \item 仮想アドレス、スタック、ヒープを、保護と寿命の観点から説明できます。
-  \item 値のコピーと、値が参照する記憶領域の共有を区別できます。
-  \item 計算量の前提を示し、主要なデータ構造を操作特性から選べます。
+この章では、プログラム、プロセス、スレッド、システムコールの関係から実行環境を捉えます。仮想アドレス、スタック、ヒープを保護と寿命の観点から整理し、値のコピーと記憶領域の共有を区別します。そのうえで、計算量の前提を明示し、必要な操作に合うデータ構造を選ぶ方法を学びます。
 \end{learninggoals}
 
 
-\section{OSは、アプリケーションへ管理された実行環境を提供します}
+\section{OSの役割}
 \label{sec:03-runtime-data-01}
 \begingroup
   \centering
@@ -53,7 +50,7 @@
 \endgroup
 
 
-\section{プログラムは、OSに読み込まれてプロセスとして動きます}
+\section{プログラムとプロセス}
 \label{sec:03-runtime-data-02}
 \begingroup
 \begingroup
@@ -80,7 +77,7 @@
 \endgroup
 
 
-\section{システムコールは、利用者コードからOS機能を頼む境界です}
+\section{システムコール}
 \label{sec:03-runtime-data-03}
 \begingroup
 \begingroup
@@ -110,7 +107,7 @@
 \endgroup
 
 
-\section{仮想アドレスは、ページ表を介して物理メモリへ対応します}
+\section{仮想メモリ}
 \label{sec:03-runtime-data-04}
 \begingroup
 \begingroup
@@ -143,7 +140,7 @@
 \endgroup
 
 
-\section{アドレス空間では、用途と寿命に応じて領域を分けます}
+\section{アドレス空間}
 \label{sec:03-runtime-data-05}
 \begingroup
 \begingroup
@@ -178,7 +175,7 @@
 \endgroup
 
 
-\section{ポインタと参照は、値の所在と寿命を意識させます}
+\section{ポインタと参照}
 \label{sec:03-runtime-data-06}
 \begingroup
 \begingroup
@@ -210,7 +207,7 @@
 \endgroup
 
 
-\section{型は、値と許される操作の集合を定めます}
+\section{型}
 \label{sec:03-runtime-data-07}
 \begingroup
 \begingroup
@@ -236,11 +233,12 @@
 \endgroup
 
 
-\section{Goの基本型は、用途と表現範囲を明示します}
+\section{Goの基本型}
 \label{sec:03-runtime-data-08}
 \begingroup
 \begingroup
 \paragraph{代表的な基本型}
+        Goの基本型は、用途と代表的な例を次のように整理できます。
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           型 & 役割・注意点\\
@@ -271,7 +269,7 @@
 \endgroup
 
 
-\section{サイズとアラインメントは、配置先の規則と組で決まります}
+\section{サイズとアラインメント}
 \label{sec:03-runtime-data-09}
 \begingroup
 \begingroup
@@ -306,7 +304,7 @@
 \endgroup
 
 
-\section{Goは値を渡しますが、値の内部で記憶領域を共有できます}
+\section{Goの値渡し}
 \label{sec:03-runtime-data-10}
 \begingroup
 \begingroup
@@ -338,7 +336,7 @@
 \endgroup
 
 
-\section{計算量は、入力サイズが増えたときの増え方を表します}
+\section{計算量}
 \label{sec:03-runtime-data-11}
 \begingroup
 \begingroup
@@ -371,7 +369,7 @@
 \endgroup
 
 
-\section{時間・空間と、最良・平均・最悪を分けて評価します}
+\section{計算量の評価軸}
 \label{sec:03-runtime-data-12}
 \begingroup
 \begingroup
@@ -386,6 +384,7 @@
 \medskip
 \begingroup
 \paragraph{線形探索の例}
+        配列、連結リスト、ハッシュ表では、探索と更新に必要な計算量が異なります。
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           条件 & 比較回数\\
@@ -396,7 +395,7 @@
           \bottomrule
         \end{tabularx}
 
-\paragraph{平均には仮定が必要です}
+\paragraph{平均計算量の前提}
         どの入力がどの確率で現れるかを示さない「平均」は再現できません。
 
 \par
@@ -406,7 +405,7 @@
 \endgroup
 
 
-\section{配列は、添字アクセスを一定回数の計算へ変えます}
+\section{配列}
 \label{sec:03-runtime-data-13}
 \begingroup
 \begingroup
@@ -440,7 +439,7 @@
 \endgroup
 
 
-\section{スライスは、元配列の区間を表す記述子です}
+\section{スライス}
 \label{sec:03-runtime-data-14}
 \begingroup
 \begingroup
@@ -476,7 +475,7 @@
 \endgroup
 
 
-\section{append後は、返されたスライスを基準に考えます}
+\section{appendの動作}
 \label{sec:03-runtime-data-15}
 \begingroup
 \begingroup
@@ -490,7 +489,7 @@
 \endgroup
 \medskip
 \begingroup
-\paragraph{必ず返り値を受け取ります}
+\paragraph{appendの返り値}
         \code{s = append(s, x)}のように書きます。再確保の有無と容量の増やし方は、コードから固定値として仮定しません。
 
 \paragraph{償却$O(1)$}
@@ -503,7 +502,7 @@
 \endgroup
 
 
-\section{マップは、ハッシュ値からキーの格納候補を探します}
+\section{マップ}
 \label{sec:03-runtime-data-16}
 \begingroup
 \begingroup
@@ -538,7 +537,7 @@
 \endgroup
 
 
-\section{データ構造は、必要な操作の組み合わせで選びます}
+\section{データ構造の選択}
 \label{sec:03-runtime-data-17}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}lYYYY@{}}
@@ -569,7 +568,7 @@
 \endgroup
 
 
-\section{Pythonでは、名前が型を持つオブジェクトへ束縛されます}
+\section{Pythonのオブジェクト}
 \label{sec:03-runtime-data-18}
 \begingroup
 \begingroup
@@ -601,7 +600,7 @@
 \endgroup
 
 
-\section{ミニ実習：配列、スライス、マップの性能を測ります}
+\section{実習：データ構造の性能}
 \label{sec:03-runtime-data-19}
 \begingroup
 \begingroup
@@ -642,7 +641,7 @@ func BenchmarkMapLookup(b *testing.B) {
 \endgroup
 
 
-\section{第3章の要点は、抽象化の裏側にある共有とコストです}
+\section{まとめ}
 \label{sec:03-runtime-data-20}
 \begingroup
 \begingroup
@@ -671,7 +670,7 @@ func BenchmarkMapLookup(b *testing.B) {
 \endgroup
 
 
-\section{確認問題では、仕様・実装・測定を分けて説明します}
+\section{確認問題}
 \label{sec:03-runtime-data-21}
 \begingroup
   \begin{enumerate}

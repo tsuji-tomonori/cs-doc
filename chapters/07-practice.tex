@@ -1,5 +1,5 @@
 % !TEX root = ../main.tex
-\chapter{学んだ知識を実務につなげる}
+\chapter{実務への応用}
 \label{chap:practice}
 
 \begin{chapterabstract}
@@ -7,14 +7,11 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item Web要求を、コード、OS、メモリ、通信、アプリケーションの各層へ分解できます。
-  \item 観測結果を、対応する層と資源へ結び付けて仮説を絞れます。
-  \item 障害仮説を、反証に必要な観測と期待結果を含む形で記述できます。
-  \item 担当する問題から、次に学ぶ分野と演習課題を選べます。
+この章では、Web要求をコード、OS、メモリ、通信、アプリケーションの各層へ分解します。観測結果を対応する層と資源へ結び付け、障害仮説を反証に必要な観測と期待結果まで含む形で記述します。最後に、担当する問題から次に学ぶ分野と演習課題を選びます。
 \end{learninggoals}
 
 
-\section{一つのリクエストは、すべての階層を通ります}
+\section{リクエストの全体像}
 \label{sec:07-practice-01}
 \begingroup
   \centering
@@ -46,7 +43,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{ソースコードは、命令列と実行時資源へ変換されます}
+\section{コードから実行まで}
 \label{sec:07-practice-02}
 \begingroup
   \centering
@@ -88,7 +85,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{要求は、通信の各層で包まれてサーバーへ届きます}
+\section{通信経路}
 \label{sec:07-practice-03}
 \begingroup
   \centering
@@ -122,7 +119,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{アプリケーションは、入力を内部表現へ変えて処理します}
+\section{アプリケーション処理}
 \label{sec:07-practice-04}
 \begingroup
   \centering
@@ -160,7 +157,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{処理中のデータには、置き場所と生存期間があります}
+\section{メモリの使用}
 \label{sec:07-practice-05}
 \begingroup
 \begingroup
@@ -175,7 +172,8 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 \medskip
 \begingroup
-\paragraph{一件当たりから見積もります}
+\paragraph{使用量の見積もり}
+        同時実行数$C$と一件当たりの平均使用量$m$から、合計使用量の目安を求めます。
         \centering
         $
           M_{\mathrm{total}} \approx
@@ -193,7 +191,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{機械学習モデルは、境界を決めて呼び出します}
+\section{機械学習モデルの組み込み}
 \label{sec:07-practice-06}
 \begingroup
   \centering
@@ -224,7 +222,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{観測結果を階層へ対応づけると、仮説を絞れます}
+\section{観測と仮説}
 \label{sec:07-practice-07}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{19mm}YY@{}}
@@ -245,11 +243,12 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{処理が遅いときは、時間を分解して増え方を調べます}
+\section{遅延の調査}
 \label{sec:07-practice-08}
 \begingroup
 \begingroup
 \paragraph{端から端までの時間}
+        応答時間は、アプリケーション内の処理時間と外部待ち時間へ分解します。
         \[
           T_{\mathrm{total}}=
           T_{\mathrm{queue}}+T_{\mathrm{network}}+
@@ -276,7 +275,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{メモリを使いすぎるときは、量と生存期間を分けます}
+\section{メモリ問題の調査}
 \label{sec:07-practice-09}
 \begingroup
 \begingroup
@@ -308,7 +307,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{通信失敗は、最初に失敗した段階を探します}
+\section{通信障害の調査}
 \label{sec:07-practice-10}
 \begingroup
   \centering
@@ -330,31 +329,31 @@ Webアプリケーションの一つの要求を端から端までたどり、�
     \draw[softflow] (http)--node[left]{いいえ}(hf);
   \end{tikzpicture}
   \vspace{5mm}
-\paragraph{確認条件をそろえます}
+\paragraph{確認条件}
     発生時刻、接続元、対象名、IP、ポート、プロトコル版、証明書、HTTP要求を記録します。別の端末で成功しても、DNSキャッシュや経路が同じとは限りません。
 
 \par
 \endgroup
 
 
-\section{変更が難しいときは、変更理由と依存方向を見直します}
+\section{変更容易性の改善}
 \label{sec:07-practice-11}
 \begingroup
 \begingroup
 \paragraph{兆候}
         一つの仕様変更で多数の場所を直す、テストに外部サービスが必須、条件分岐が各所に重複する、データ表現が境界を越えて漏れます。
 
-\paragraph{原因を構造で捉えます}
+\paragraph{構造上の原因}
         責務の混在、共有状態、暗黙の契約、循環依存、実装詳細への直接依存を、モジュール図と変更履歴で確認します。
 
 \par
 \endgroup
 \medskip
 \begingroup
-\paragraph{小さく改善します}
+\paragraph{小さな改善}
         まず現在の振る舞いをテストで固定し、境界を一つ選びます。インターフェースを狭め、依存を注入し、移動ごとに検証します。
 
-\paragraph{評価します}
+\paragraph{効果測定}
         変更箇所数、テスト時間、障害範囲、理解に必要なモジュール数が減ったかを確認します。パターン導入自体を目的にしません。
 
 \par
@@ -363,24 +362,24 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{AIの回答が安定しないときは、再現条件と評価集合を作ります}
+\section{AI品質の調査}
 \label{sec:07-practice-12}
 \begingroup
 \begingroup
-\paragraph{条件を固定します}
+\paragraph{条件の固定}
         モデル版、プロンプト、システム指示、参照資料、温度、最大長、ツール結果、実行日時を残します。
 
-\paragraph{失敗を分類します}
+\paragraph{失敗の分類}
         指示不遵守、形式違反、根拠不足、事実誤り、検索漏れ、拒否、遅延、費用超過を別の指標にします。
 
 \par
 \endgroup
 \medskip
 \begingroup
-\paragraph{入力群ごとに測ります}
+\paragraph{入力群別の測定}
         通常例だけでなく、境界例、曖昧な入力、長文、攻撃的入力、重要な利用者群を固定評価集合へ含めます。
 
-\paragraph{利用境界を調整します}
+\paragraph{利用境界}
         出力検査、根拠提示、再試行、代替処理、人の確認を加えます。改善が不十分なら自動化範囲を狭めます。
 
 \par
@@ -390,7 +389,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{障害調査は、仮説を反証できる形で進めます}
+\section{障害調査の進め方}
 \label{sec:07-practice-13}
 \begingroup
   \centering
@@ -431,7 +430,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{次に学ぶ分野は、担当する問題から選びます}
+\section{次の学習}
 \label{sec:07-practice-14}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{30mm}YY@{}}
@@ -452,7 +451,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{総合演習では、注文APIを端から端まで説明します}
+\section{総合演習：注文API}
 \label{sec:07-practice-15}
 \begingroup
 \begingroup
@@ -478,7 +477,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{演習A：正常系の動作を、因果関係で図示します}
+\section{演習A：正常系}
 \label{sec:07-practice-16}
 \begingroup
   \begin{enumerate}
@@ -497,7 +496,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{演習B：四つの現象に、検証可能な調査計画を作ります}
+\section{演習B：障害調査}
 \label{sec:07-practice-17}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{22mm}YY@{}}
@@ -518,7 +517,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{演習は、説明のつながりと検証可能性で評価します}
+\section{評価方法}
 \label{sec:07-practice-18}
 \begingroup
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{25mm}p{14mm}Y@{}}
@@ -540,7 +539,7 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \endgroup
 
 
-\section{終章の要点は、階層を越えて証拠をつなぐことです}
+\section{まとめ}
 \label{sec:07-practice-19}
 \begingroup
 \begingroup
@@ -564,6 +563,6 @@ Webアプリケーションの一つの要求を端から端までたどり、�
 \par
 \endgroup
   \vspace{5mm}
-  \takeaway{情報工学の基礎は、すべてを自分で実装するためではなく、見えない層を含むシステムを根拠とともに説明し、改善するための共通言語です。}
+  \takeaway{本書で扱った基礎知識は、すべてを自分で実装するためではなく、見えない層を含むシステムを根拠とともに説明し、改善するための共通言語です。}
 \par
 \endgroup
