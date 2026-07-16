@@ -1,18 +1,19 @@
 % !TEX root = ../main.tex
-\chapter{機械学習とLLM}
+\chapter{言葉が応答になるまで}
 \label{chap:machine-learning}
 
 \begin{chapterabstract}
-関数、ベクトル、微分、確率を道具として、データから予測規則を学ぶ意味を定義します。回帰、分類、ニューラルネット、Transformer、LLMを一本の流れでつなぎ、評価方法と利用時の限界まで扱います。
-\end{chapterabstract}
+要求はサーバーへ届き、アプリは注文データから「明日の午後」という事実を得ました。残る仕事は、その事実と利用者の質問を受け取り、自然な応答へ変えることです。ここで物語の中にあった大きな箱、言語モデルの内側へ入ります。
 
-\begin{learninggoals}
-この章では、学習データ、モデル、損失、最適化、評価指標の役割を一つの学習過程へ結び付けます。過学習とデータ漏洩を区別して評価手順を設計し、ニューラルネットの順伝播と逆伝播を合成関数の計算として捉えます。後半では、TransformerとLLMの入出力、学習、生成、利用上の限界を整理します。
-\end{learninggoals}
+文字列はそのままではモデルへ渡せません。トークンを数値へ、数値をベクトルへ変え、層を通るたびに別の表現へ写します。なぜその変換を学べるのかを理解するため、関数、微分、確率、回帰から始め、ニューラルネットとTransformerへ進みます。最後に次のトークンを一つずつ選び、応答が生まれるところまで、数式とアプリの出来事を切り離さずにたどります。
+\end{chapterabstract}
 
 
 \section{関数・ベクトル・行列}
 \label{sec:06-machine-learning-01}
+
+サーバーへ届いた質問をモデルへ渡すには、言葉を計算できる形へ変えなければなりません。モデルの内側では、一つの入力を一つの出力へ対応づける関数、多くの特徴を並べるベクトル、それらをまとめて変換する行列が共通の言葉になります。
+
 \begingroup
 \begingroup
 \paragraph{関数}
@@ -47,6 +48,9 @@
 
 \section{微分と勾配}
 \label{sec:06-machine-learning-02}
+
+行列の値を決めれば関数は動きますが、良い応答を生む値を人が一つずつ設定することはできません。出力の誤りが、どの値をどちらへ動かすと減るかを知るため、関数の変化を微分と勾配で読みます。
+
 \begingroup
 \begingroup
 \paragraph{微分}
@@ -85,6 +89,9 @@
 
 \section{確率と期待値}
 \label{sec:06-machine-learning-03}
+
+同じ入力に常に唯一の正解があるとは限らず、観測データにもばらつきがあります。候補がどれほど起こりやすいかを確率で表し、繰り返したときの平均的な結果を期待値で捉えると、不確実さを含む判断を比較できます。
+
 \begingroup
 \begingroup
 \paragraph{条件付き確率}
@@ -120,6 +127,9 @@
 
 \section{機械学習}
 \label{sec:06-machine-learning-04}
+
+関数を変え、誤りを測り、不確実さを扱う道具がそろいました。ここで、すべての規則を開発者が書く代わりに、例から関数のパラメータを決めるという考えへ進みます。それが機械学習です。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
@@ -152,6 +162,9 @@
 
 \section{学習と推論}
 \label{sec:06-machine-learning-05}
+
+モデルが作られる時間と、利用者の質問へ答える時間は分けて考えます。多くの例からパラメータを更新するのが学習であり、固定したパラメータへ今の入力を通して出力を得るのが推論です。物語の現在地は推論ですが、その振る舞いの理由は学習にあります。
+
 \begingroup
 \begingroup
 \paragraph{特徴量 $\mathbf{x}$}
@@ -182,7 +195,11 @@
 
 \section{データ分割}
 \label{sec:06-machine-learning-06}
+
+学習に使った例へよく合うだけでは、新しい質問へ答えられるか分かりません。パラメータを決めるデータ、途中の選択に使うデータ、最後まで触れずに評価するデータを分け、未知の入力に対する力を測ります。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
     分割 & 使い方 & 避けること\\
@@ -203,6 +220,9 @@
 
 \section{損失関数}
 \label{sec:06-machine-learning-07}
+
+「良いモデル」という言葉を更新計算へつなぐには、予測と正解のずれを数へ変える必要があります。損失関数は一例の誤りを測り、学習は多くの例でその値が小さくなる方向を探します。
+
 \begingroup
 \begingroup
 \paragraph{経験損失}
@@ -236,6 +256,9 @@
 
 \section{多項式回帰}
 \label{sec:06-machine-learning-08}
+
+大きな言語モデルへ進む前に、見通しのよい小さな問題で学習の全体を見ます。入力から連続値を予測する多項式回帰なら、表現を複雑にすると何が良くなり、何が危うくなるかを図で追えます。
+
 \begingroup
 \begingroup
       \centering
@@ -267,6 +290,9 @@
 
 \section{最小二乗法}
 \label{sec:06-machine-learning-09}
+
+回帰の曲線をデータへ合わせるため、予測誤差の二乗を足した量を最小にします。行列表現へまとめると、個々の点で起きていたずれが一つの目的関数になり、パラメータを決める問題へ変わります。
+
 \begingroup
 \begingroup
 \paragraph{目的関数}
@@ -299,7 +325,11 @@
 
 \section{未学習と過学習}
 \label{sec:06-machine-learning-10}
+
+曲線が単純すぎれば関係を捉えられず、複雑すぎれば学習例の偶然まで覚えます。前者が未学習、後者が過学習です。流暢な応答を返すモデルでも、見たことのない条件で正しいとは限らない理由がここから始まります。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     状態 & 訓練データ & 未知データ & 主な兆候\\
@@ -329,6 +359,9 @@
 
 \section{正則化}
 \label{sec:06-machine-learning-11}
+
+複雑さを増やせるモデルへ、学習データだけを完全に追わない制約を加えます。パラメータの大きさへ代価を課す正則化は、表現力を捨てるのではなく、未知の入力へ持ち出せる規則を選ぶための調整です。
+
 \begingroup
 \begingroup
 \paragraph{L2正則化の例}
@@ -360,6 +393,9 @@
 
 \section{ベイズの式}
 \label{sec:06-machine-learning-12}
+
+新しい証拠を得たとき、ある原因の見込みをどう更新するかを考えます。ベイズの式は、事前の見込みと観測の起こりやすさを結び付け、証拠を見た後の確率へ変えます。障害調査で仮説を更新するときにも同じ向きが現れます。
+
 \begingroup
 \begingroup
 \paragraph{ベイズの式}
@@ -392,6 +428,9 @@
 
 \section{確率的意思決定}
 \label{sec:06-machine-learning-13}
+
+確率を出しただけでは、アプリが何をすべきかは決まりません。誤って答える損失、回答を控える損失、人へ確認を求める損失を比べ、期待される影響が小さい行動を選びます。予測と業務判断の境界です。
+
 \begingroup
 \begingroup
 \paragraph{期待損失}
@@ -421,6 +460,9 @@
 
 \section{線形識別}
 \label{sec:06-machine-learning-14}
+
+連続値の予測から、入力を複数の側へ分ける問題へ進みます。特徴量の重み付き和を境界として使うと、どちら側にあるかで分類できます。単純な形だからこそ、何を表せて何を表せないかが見えます。
+
 \begingroup
 \begingroup
       \centering
@@ -455,6 +497,9 @@
 
 \section{パーセプトロン}
 \label{sec:06-machine-learning-15}
+
+線形境界をデータから動かす最小の学習器がパーセプトロンです。誤分類した例に出会うたび、その例を正しい側へ移す方向に重みを更新します。局所的な誤りがパラメータの変化へ戻る、学習の原型です。
+
 \begingroup
 \begingroup
 \paragraph{更新則}
@@ -486,6 +531,9 @@
 
 \section{XOR}
 \label{sec:06-machine-learning-16}
+
+一枚の直線では、どんな規則でも分けられるわけではありません。XORは小さな例でその限界を示します。入力を一度別の表現へ写してから境界を引く必要があり、多層化へ進む理由が生まれます。
+
 \begingroup
 \begingroup
       \centering
@@ -522,6 +570,9 @@
 
 \section{ニューロン}
 \label{sec:06-machine-learning-17}
+
+重み付き和へ非線形な変換を加えた単位を重ねると、入力を何段階も別の表現へ写せます。一つのニューロンは単純でも、層として組み合わせることで、直線だけでは分けられなかった関係を表せます。
+
 \begingroup
 \begingroup
       \centering
@@ -554,6 +605,9 @@
 
 \section{順伝播}
 \label{sec:06-machine-learning-18}
+
+利用者の質問へ答える推論時には、入力が最初の層から最後の層へ一方向に進みます。各層が前の表現を受け取り、重みと活性化関数で次の表現へ変える計算が順伝播です。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
@@ -585,6 +639,9 @@
 
 \section{勾配降下法}
 \label{sec:06-machine-learning-19}
+
+順伝播で予測と損失を得たら、学習時には損失を小さくする方へ重みを動かします。勾配が示す上り坂と逆へ少しずつ進むのが勾配降下法です。どれだけ進むかが、大きすぎても小さすぎても学習はうまく進みません。
+
 \begingroup
 \begingroup
 \paragraph{基本更新}
@@ -618,6 +675,9 @@
 
 \section{誤差逆伝播}
 \label{sec:06-machine-learning-20}
+
+深いモデルには膨大な重みがあり、それぞれを別々に試すことはできません。出力側で測った誤差を、合成された関数のつながりに沿って後ろから前へ伝え、各重みの勾配を効率よく求めます。順伝播の道を学習時だけ逆にたどります。
+
 \begingroup
 \begingroup
 \paragraph{連鎖律}
@@ -649,6 +709,9 @@
 
 \section{系列データ}
 \label{sec:06-machine-learning-21}
+
+画像の分類と違い、質問文では「明日」「届く」の順序や、離れた位置にある「注文番号1234」と述語の関係が意味を左右します。長さが一定でない列の中で、順序と遠い依存をどう保つかが次の課題です。
+
 \begingroup
 \begingroup
 \paragraph{長距離依存}
@@ -680,6 +743,9 @@
 
 \section{Attention}
 \label{sec:06-machine-learning-22}
+
+系列を左から一語ずつ記憶する代わりに、いま処理している位置が、入力中のどの位置をどれだけ参照するかを計算します。Attentionは内容に応じて情報の集め方を変え、「届く」が「注文番号1234」や「いつ」と結び付く経路を作ります。
+
 \begingroup
 \begingroup
       \centering
@@ -712,6 +778,9 @@
 
 \section{Query・Key・Value}
 \label{sec:06-machine-learning-23}
+
+参照の計算を、探したいもの、各位置が持つ手掛かり、実際に取り出す内容へ分けます。QueryとKeyの似合い方が重みを決め、その重みでValueを混ぜると、現在の位置に必要な文脈が集まります。
+
 \begingroup
 \begingroup
 \paragraph{Query}
@@ -750,6 +819,9 @@
 
 \section{Self-Attention}
 \label{sec:06-machine-learning-24}
+
+同じ系列からQuery、Key、Valueを作ると、質問文の各トークンが互いを参照できます。複数の観点を並行して持つMulti-Head Attentionにより、語の関係、指示先、位置の近さなど異なる結び付き方を同時に表せます。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
@@ -781,6 +853,9 @@
 
 \section{位置情報}
 \label{sec:06-machine-learning-25}
+
+Attentionの重みは内容の関係を見ますが、そのままでは語順を自動的に区別しません。「AIが注文を確認する」と「注文がAIを確認する」を分けるため、各トークンがどこにあるかを表現へ加えます。
+
 \begingroup
 \begingroup
 \paragraph{なぜ必要か}
@@ -807,7 +882,11 @@
 
 \section{Transformerの構成}
 \label{sec:06-machine-learning-26}
+
+Attention、位置情報、各位置での変換、残差接続、正規化を層として重ねるとTransformerになります。前の節までに見た小さな操作が、長い文脈を変換する一つのモデルへまとまります。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     構成 & 参照範囲 & 主な出力 & 代表的な用途\\
@@ -828,6 +907,9 @@
 
 \section{トークン化}
 \label{sec:06-machine-learning-27}
+
+モデルの構造ができても、入力はまだ文字列です。「注文番号1234はいつ届きますか」を語や部分語などの単位へ分け、それぞれを整数IDへ対応づけます。ネットワークが運んだ文字列は、ここでモデルが引ける番号の列になります。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
@@ -858,6 +940,9 @@
 
 \section{次トークン予測}
 \label{sec:06-machine-learning-28}
+
+言語モデルは完成した答えを一度に取り出すのではありません。これまでのトークンを条件に次の一つの確率分布を出し、学習時には実際に続いたトークンの確率が高くなるよう更新します。この単純な課題を大規模な文へ繰り返します。
+
 \begingroup
 \begingroup
 \paragraph{自己回帰分解}
@@ -890,6 +975,9 @@
 
 \section{プロンプトとコンテキスト}
 \label{sec:06-machine-learning-29}
+
+推論時のモデルが参照できるのは、重みに取り込まれた傾向と、今のコンテキストに置かれた情報です。質問だけでなく、注文サービスが返した「到着予定は明日午後」という事実、指示、会話履歴を一つの列へ組み、答えの根拠を渡します。
+
 \begingroup
 \begingroup
 \paragraph{含まれるもの}
@@ -916,6 +1004,9 @@
 
 \section{文章生成}
 \label{sec:06-machine-learning-30}
+
+コンテキストを受けたモデルは、次トークンの分布から一つを選び、そのトークンを列へ足して再び計算します。「明日」「の」「午後」と一歩ずつ進み、停止条件へ達したとき、利用者へ返す一文が完成します。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
@@ -955,6 +1046,9 @@
 
 \section{評価}
 \label{sec:06-machine-learning-31}
+
+応答が自然に読めるだけでは、配送予定として正しいとは言えません。固定した質問群で、注文データとの一致、答えられない場合の扱い、遅延、費用などを測ります。モデルの数字ではなく、アプリで果たす役割に沿って評価します。
+
 \begingroup
 \begingroup
 \paragraph{分類の例}
@@ -981,6 +1075,9 @@
 
 \section{データ漏洩と偏り}
 \label{sec:06-machine-learning-32}
+
+高い評価値が出ても、答えを含むデータが評価側へ漏れていたり、利用者や質問の一部だけが多く含まれていたりすれば、実際の力を表しません。データがどこから来て、どの単位で分かれ、誰を代表するかまで流れをたどります。
+
 \begingroup
 \begingroup
 \paragraph{データ漏洩}
@@ -1007,6 +1104,9 @@
 
 \section{分布変化とハルシネーション}
 \label{sec:06-machine-learning-33}
+
+公開後には、新しい商品、配送規則、言い回しが現れ、入力の分布が変わります。言語モデルは確からしい続きを作る仕組みなので、注文データにない日時を流暢に補うこともあります。事実を取得する部品と文章を作る部品を分けた設計が、ここで安全性へつながります。
+
 \begingroup
 \begingroup
 \paragraph{分布変化}
@@ -1037,8 +1137,11 @@
 \endgroup
 
 
-\section{実習：多項式回帰}
+\section{手を動かす：学習と汎化}
 \label{sec:06-machine-learning-34}
+
+言語モデル全体を訓練しなくても、学習データへ合うことと未知データへ通用することの違いは小さな回帰で観測できます。曲線の次数を変え、訓練誤差が下がってもテスト誤差が上がる地点を探します。
+
 \begingroup
 \begingroup
       \begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{6.8}{8.1}\selectfont]
@@ -1077,37 +1180,21 @@ for degree in [0, 1, 3, 9]:
 \endgroup
 
 
-\section{まとめ}
+\section{応答を返す}
 \label{sec:06-machine-learning-35}
-\begingroup
-\begingroup
-\paragraph{学習}
-        データ上の損失を最適化し、未知データへの汎化を分離した評価集合で測ります。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{表現}
-        線形境界、多層ネット、Attentionは、入力から予測へ使う表現と依存関係が異なります。
+入力文はトークンとベクトルへ変わり、Transformerの層を通って次トークンの分布になりました。モデルは注文サービスから渡された事実を含むコンテキストを参照し、「明日の午後に到着する予定です」と一語ずつ生成します。学習時には損失と勾配が重みを形作り、推論時には固定した重みの上を入力が順方向へ進みます。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{利用}
-        確率と業務損失から判断し、漏洩、偏り、分布変化、生成誤りを運用で管理します。
+ただし、流暢さは事実性の保証ではありません。評価集合、出典との照合、入力と出力の検査、失敗時の代替がアプリ側に必要です。完成した文はHTTP応答へ入り、ネットワークを戻ろうとしています。最終章では、その帰り道を含めて全層を一度につなぎ、問題が起きたときの戻り方を考えます。
 
-\par
-\endgroup
-  \vspace{4mm}
-  \takeaway{高い訓練性能や流暢な出力ではなく、独立した条件での再現可能な評価を根拠に使います。}
-\par
-\endgroup
+\takeaway{モデルの応答は、言葉を直接理解する魔法ではなく、数値表現を層ごとに変換し、文脈に続くトークンを確率的に選ぶ計算の結果です。}
 
 
-\section{確認問題}
+\section{旅をたどり直す}
 \label{sec:06-machine-learning-36}
+
+質問の文字列がトークンになり、数値計算を経て再び文字列になるまでをたどり直します。次の問いでは、学習と推論、予測と判断、流暢さと正しさの境界を混同しないよう説明してください。
+
 \begingroup
   \begin{enumerate}
     \item 勾配と負の勾配は、損失関数上でどの方向を示しますか。

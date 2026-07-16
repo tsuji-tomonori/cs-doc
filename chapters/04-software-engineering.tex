@@ -1,18 +1,19 @@
 % !TEX root = ../main.tex
-\chapter{ソフトウェア設計}
+\chapter{変更を支える設計}
 \label{chap:software-engineering}
 
 \begin{chapterabstract}
-規模が大きくても変更を続けられるように、複雑さを境界の内側へ閉じ込める考え方を学びます。分割統治、情報隠蔽、抽象化、モデリング、オブジェクト指向、関数型の考え方を、変更の影響範囲という共通の軸で整理します。
-\end{chapterabstract}
+実行中の一要求だけを見れば、プログラムは命令とデータの集まりです。しかし、そのAIアプリは翌日にも変更されます。配送会社が増え、注文データの置き場所が変わり、モデルの呼び出し方が更新されます。多くの開発者が触れるコードでは、動くことに加えて、変え続けられることが必要です。
 
-\begin{learninggoals}
-この章では、凝集度、結合度、情報隠蔽を変更の波及という観点から捉えます。インタフェースとモデルが何を示し、何を省くのかを判断し、オブジェクト指向と関数型の考え方を目的に応じて組み合わせます。最後に、具体的な変更要求を使って設計した境界とテストの妥当性を評価します。
-\end{learninggoals}
+ここでは時間を少し巻き戻し、この要求を処理するアプリがどう設計されたかを見ます。注文の事実、HTTPの形式、データベース、AIによる文章化を同じ場所へ混ぜず、変化の理由ごとに境界を引きます。抽象化、情報隠蔽、オブジェクト指向、関数型、テストは別々の流派ではなく、変更の波を小さくするための道具として登場します。
+\end{chapterabstract}
 
 
 \section{ソフトウェア危機}
 \label{sec:04-software-engineering-01}
+
+一件の要求を動かすだけなら、必要な処理を一つの場所へ書くこともできます。難しさが表面化するのは、利用者、機能、開発者、運用年数が増えたときです。まず、規模の拡大がソフトウェアへ何を起こしてきたかを歴史から見ます。
+
 \begingroup
 \begingroup
 \paragraph{1968年NATO会議}
@@ -41,6 +42,9 @@
 
 \section{規模と相互作用}
 \label{sec:04-software-engineering-02}
+
+コード量が二倍になれば難しさも単純に二倍になるわけではありません。部分同士の関係が増え、ある変更が思いがけない場所へ伝わるからです。注文データ、配送規則、HTTP、LLMが互いを直接知るほど、送信処理の全体像はつかみにくくなります。
+
 \begingroup
 \begingroup
       \centering
@@ -73,6 +77,9 @@
 
 \section{分割統治}
 \label{sec:04-software-engineering-03}
+
+全体を一度に理解できないなら、責任を小さな部分へ分けます。ただし、切り分ければ終わりではありません。各部分が解く問いを決め、必要な情報だけを境界越しに渡し、最後に一つの応答へ組み戻せる分け方が必要です。
+
 \begingroup
 \begingroup
 \paragraph{分解}
@@ -104,6 +111,9 @@
 
 \section{凝集度と結合度}
 \label{sec:04-software-engineering-04}
+
+良い分割かどうかは、ファイル数やクラス数では決まりません。同じ理由で変わる処理が一か所へ集まり、異なる理由で変わる部分が必要以上に結び付いていないかを見ます。その二つの向きを、凝集度と結合度で捉えます。
+
 \begingroup
 \begingroup
 \paragraph{凝集度}
@@ -132,6 +142,9 @@
 
 \section{情報隠蔽}
 \label{sec:04-software-engineering-05}
+
+境界を引いても、内部のデータ形式や外部APIの癖がそのまま漏れれば、変更は境界を越えて広がります。変わりやすい判断を内側へ隠し、外からは安定した約束だけを見せることで、波及する範囲を抑えます。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
@@ -171,6 +184,9 @@
 
 \section{構造化}
 \label{sec:04-software-engineering-06}
+
+部品同士の境界だけでなく、一つの部品の中にも読みやすい流れが必要です。制御が任意の場所へ飛ぶと、入力がどの経路を通って応答になるかを追えません。処理の進み方を限られた形へ整え、局所的に理由を説明できるようにします。
+
 \begingroup
 \begingroup
 \paragraph{goto依存の問題}
@@ -204,6 +220,9 @@
 
 \section{抽象化}
 \label{sec:04-software-engineering-07}
+
+構造を整えても、毎回すべての細部を読んでいては大きなシステムを扱えません。注文を「行の集合」ではなく業務上の注文として、モデル呼び出しを「HTTPの手順」ではなく応答生成として扱うため、必要な性質だけを表面へ出します。
+
 \begingroup
 \begingroup
 \paragraph{データ抽象}
@@ -235,6 +254,9 @@
 
 \section{インタフェース}
 \label{sec:04-software-engineering-08}
+
+抽象化した部品を協調させるには、呼び出せる操作だけでなく、受け入れる条件、成功後の状態、失敗の表し方を決める必要があります。その約束が曖昧なら、要求が境界を越えるたびに意味がずれます。
+
 \begingroup
 \begingroup
 \paragraph{事前条件}
@@ -263,6 +285,9 @@
 
 \section{モデル}
 \label{sec:04-software-engineering-09}
+
+コード全体をそのまま見せても、構造を知りたい人と時間順を知りたい人では必要な情報が違います。ある問いに答える要素だけを選び、ほかを省いた表現がモデルです。省略するからこそ、重要な関係が見えるようになります。
+
 \begingroup
 \begingroup
 \paragraph{静的構造}
@@ -290,6 +315,9 @@
 
 \section{クラス図}
 \label{sec:04-software-engineering-10}
+
+まず、実行を止めた状態でアプリの登場人物を並べます。注文、明細、配送予定といった型がどんな情報を持ち、互いにどう結び付くかを示すと、データと責務の静的な地図ができます。
+
 \begingroup
 \begingroup
       \centering
@@ -318,6 +346,9 @@
 
 \section{シーケンス図}
 \label{sec:04-software-engineering-11}
+
+静的な地図だけでは、利用者の質問が誰から誰へ渡るかは分かりません。時間を上から下へ流し、ブラウザ、アプリ、注文リポジトリ、配送サービス、モデルのやり取りを並べると、一要求の物語が設計図になります。
+
 \begingroup
   \centering
   \begin{tikzpicture}[x=0.9mm,y=0.52mm,every node/.append style={font=\scriptsize}]
@@ -352,6 +383,9 @@
 
 \section{オブジェクト指向}
 \label{sec:04-software-engineering-12}
+
+地図に現れた責務をコードへ移す一つの方法が、状態と操作をオブジェクトとしてまとめる考え方です。注文自身が不変条件を守れば、どの呼び出し元も同じ業務規則を使えます。重要なのは名詞をクラスへ変えることではなく、判断の持ち主を定めることです。
+
 \begingroup
 \begingroup
 \paragraph{オブジェクト}
@@ -378,6 +412,9 @@
 
 \section{継承とコンポジション}
 \label{sec:04-software-engineering-13}
+
+既存の振る舞いを再利用するとき、型の上下関係として受け継ぐ方法と、必要な部品を組み合わせる方法があります。配送会社やモデル提供者のように差し替わる相手では、どちらを選ぶかが将来の変更範囲を大きく左右します。
+
 \begingroup
 \begingroup
 \paragraph{継承}
@@ -405,6 +442,9 @@
 
 \section{ポリモーフィズム}
 \label{sec:04-software-engineering-14}
+
+異なる配送サービスが同じ「到着予定を調べる」という約束を満たせば、利用側は個々のAPI形式を知る必要がありません。同じ呼び方の向こうで実装を差し替えられる性質が、外部の変化を境界の外へ押し戻します。
+
 \begingroup
 \begingroup
       \begin{lstlisting}[language=Go,basicstyle=\ttfamily\fontsize{7}{8.3}\selectfont]
@@ -440,6 +480,9 @@ func (c Checkout) Complete(ctx context.Context) error {
 
 \section{関数型の考え方}
 \label{sec:04-software-engineering-15}
+
+オブジェクトへ責務を置いても、状態の変化が多すぎれば一要求の結果を再現しにくくなります。入力から出力を求める純粋な計算と、DBやネットワークへ触れる副作用を分けると、注文の事実を応答材料へ変える部分を安定して検証できます。
+
 \begingroup
 \begingroup
 \paragraph{純粋関数}
@@ -466,6 +509,9 @@ func (c Checkout) Complete(ctx context.Context) error {
 
 \section{高階関数}
 \label{sec:04-software-engineering-16}
+
+計算そのものを値として渡せると、繰り返し、絞り込み、変換といった流れを共通化できます。会話履歴から必要な発言を選び、モデルへ渡す形へ変える処理も、制御の骨格と個々の判断を分けて表せます。
+
 \begingroup
 \begingroup
       \begin{lstlisting}[language=Go]
@@ -505,7 +551,11 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 \section{パラダイムの選択}
 \label{sec:04-software-engineering-17}
+
+ここまでの道具は、互いに排他的な陣営ではありません。寿命を持つ注文にはオブジェクト、値の変換には純粋関数、全体の手順には構造化された制御というように、扱う問題へ合わせて組み合わせます。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     観点 & 手続き型 & オブジェクト指向 & 関数型の考え方\\
@@ -526,6 +576,9 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 \section{テスト}
 \label{sec:04-software-engineering-18}
+
+境界を設計しただけでは、その約束が守られる保証はありません。注文番号が存在しない場合、配送サービスが遅い場合、モデルが失敗した場合を、部品単独と接続後の両方で確かめます。テストは実装の検査であると同時に、境界の具体例です。
+
 \begingroup
 \begingroup
 \paragraph{単体テスト}
@@ -553,6 +606,9 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 \section{品質の維持}
 \label{sec:04-software-engineering-19}
+
+テストが通った時点で設計が完成するわけでもありません。要求が加わるたびに構造は少しずつ崩れ得ます。小さく整え、他者の視点で読み、先送りした判断を見える形へ残すことで、次の変更が安全に通れる道を保ちます。
+
 \begingroup
 \begingroup
 \paragraph{リファクタリング}
@@ -583,16 +639,19 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{ケーススタディ：注文処理}
+\section{ケース：注文確認AI}
 \label{sec:04-software-engineering-20}
+
+ここで冒頭の要求を設計図へ戻します。AIが配送予定を勝手に推測するのではなく、注文と配送の仕組みが事実を返し、モデルはその事実を利用者向けの文へ整えます。この責任分担を、内側の業務規則と外側の技術へ分けます。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\scriptsize}]
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm] (adapter1) {入力アダプタ：HTTP API／バッチ};
-    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of adapter1] (usecase) {ユースケース：注文作成・入力検証・処理順序};
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of usecase] (domain) {ドメイン：Order・Money・割引規則・不変条件};
-    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of domain] (ports) {ポート：OrderRepository・PaymentGateway};
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of ports] (adapter2) {出力アダプタ：PostgreSQL／決済API};
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm] (adapter1) {入力アダプタ：HTTP API／チャット画面};
+    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of adapter1] (usecase) {ユースケース：質問受付・事実取得・応答生成};
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of usecase] (domain) {ドメイン：Order・DeliveryEstimate・業務規則};
+    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of domain] (ports) {ポート：OrderRepository・DeliveryService・ResponseGenerator};
+    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of ports] (adapter2) {出力アダプタ：PostgreSQL／配送API／LLM API};
     \draw[flow] (adapter1)--(usecase);
     \draw[flow] (usecase)--(domain);
     \draw[flow] (domain)--(ports);
@@ -601,14 +660,14 @@ total := Reduce(taxed, 0, func(a, x int) int {
   \vspace{2mm}
 \begingroup
 \paragraph{内側の責務}
-        業務規則と処理の意図を表し、HTTP、SQL、特定ベンダーのSDKを直接知りません。
+        注文と配送予定の事実、質問へ答える処理順序を表し、HTTP、SQL、特定ベンダーのSDKを直接知りません。
 
 \par
 \endgroup
 \medskip
 \begingroup
 \paragraph{外側の責務}
-        外部形式を内側の型へ変換し、内側が定めるポートを具体技術で実装します。
+        外部形式を内側の型へ変換し、注文の保存、配送照会、文章生成を具体技術で実装します。
 
 \par
 \endgroup
@@ -618,15 +677,19 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 \section{変更要求による評価}
 \label{sec:04-software-engineering-21}
+
+境界の良し悪しは、図の整い方ではなく、現実の変更を流したときに分かります。データベース、配送会社、入力経路、モデル提供者を一つずつ変え、業務上の事実まで不必要に揺れないかを確かめます。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
     変更要求 & 主に変える場所 & 変えずに保ちたい場所\\
     \midrule
     DBをPostgreSQLから別製品へ & Repositoryのアダプタ、設定、結合テスト & 注文規則、HTTP契約\\ \addlinespace[.7mm]
-    割引条件を会員ランク別へ & ドメイン規則、単体テスト & DB実装、決済連携\\ \addlinespace[.7mm]
-    RESTへバッチ入力を追加 & 入力アダプタ、組み立て & ユースケース、注文規則\\ \addlinespace[.7mm]
-    決済APIに再試行を追加 & 決済アダプタ、失敗契約、監視 & 注文金額の計算\\
+    配送会社を一社追加 & 配送アダプタ、配送先の選択規則 & 注文の保存、画面の契約\\ \addlinespace[.7mm]
+    RESTへ音声入力を追加 & 入力アダプタ、入力の変換 & ユースケース、注文規則\\ \addlinespace[.7mm]
+    LLM提供者を変更 & 生成アダプタ、出力検査、監視 & 配送予定の事実、注文規則\\
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
@@ -647,47 +710,31 @@ total := Reduce(taxed, 0, func(a, x int) int {
 \endgroup
 
 
-\section{まとめ}
+\section{機械の外へ}
 \label{sec:04-software-engineering-22}
-\begingroup
-\begingroup
-\paragraph{分割}
-        高い凝集と低い結合を目指し、変わりやすい判断を情報隠蔽します。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{表現}
-        構造化、抽象化、モデル、契約で、制御と協調動作を説明可能にします。
+一つのAIアプリは、注文の事実、配送サービス、HTTP、データベース、文章生成を抱えています。変化の理由ごとに責任を分け、インタフェースで約束し、モデルで協調を見渡し、テストで境界を確かめると、どこか一つの変更を局所へ閉じ込められます。オブジェクト指向や関数型は、その目的に応じて使う表現です。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{維持}
-        テスト、レビュー、リファクタリングで、小さな変更を継続的に検証します。
+設計図の中で、要求は入力アダプタからユースケースへ渡るところまで来ました。次に必要なのは、端末とサーバーの間を実際に越えることです。次章では箱と矢印で描いた「HTTP API」の内側へ入り、データが相手へ届くまでの物理的な旅を再開します。
 
-\par
-\endgroup
-  \vspace{4mm}
-  \takeaway{手続き型、オブジェクト指向、関数型は道具です。依存、状態、副作用を制御できる組み合わせを選びます。}
-\par
-\endgroup
+\takeaway{良い設計は複雑さを消すのではなく、変わる理由ごとに置き場所を与え、変更の波が越える境界を少なくします。}
 
 
-\section{確認問題}
+\section{旅をたどり直す}
 \label{sec:04-software-engineering-23}
+
+注文確認AIへ一つ変更が加わる場面を想像し、その波がどこまで届くかをたどります。次の問いでは手法名だけでなく、どの責任を守るために使うのかを説明してください。
+
 \begingroup
   \begin{enumerate}
     \item ソフトウェアの規模が増えると、変更コストが増える理由を説明してください。
-    \item 凝集度と結合度を、注文アプリの例で説明してください。
+    \item 凝集度と結合度を、注文確認AIの例で説明してください。
     \item 情報隠蔽では、何をモジュール内へ隠しますか。
     \item 逐次・選択・反復が制御フローの理解を助ける理由を説明してください。
     \item クラス図とシーケンス図は、それぞれどの問いへ答えますか。
     \item 継承ではなく合成を選ぶべき関係を一つ示してください。
     \item 純粋関数と副作用を分けると、テストへどのような効果がありますか。
-    \item ケーススタディへ配送会社の追加要求を流し、変更箇所を示してください。
+    \item ケースへLLM提供者の追加要求を流し、変更箇所を示してください。
   \end{enumerate}
 \par
 \endgroup

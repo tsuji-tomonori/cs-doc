@@ -1,18 +1,19 @@
 % !TEX root = ../main.tex
-\chapter{ネットワーク}
+\chapter{データが届くまで}
 \label{chap:network}
 
 \begin{chapterabstract}
-送信元から宛先へデータを届ける仕組みを、各層の役割と保証に分けて学びます。IP、DNS、TCP、UDP、QUIC、TLS、HTTPを接続し、URLを入力してから画面が表示されるまでを時系列で説明できるようにします。
-\end{chapterabstract}
+端末の中で組み立てられた要求は、いよいよ外へ出ます。けれども、アプリが知っているのはURLであり、遠くのサーバーへ直結する一本の線ではありません。名前から宛先を探し、いくつもの中継点を越え、相手との通信路を作る必要があります。
 
-\begin{learninggoals}
-この章では、遅延、帯域幅、損失を区別して通信性能を分解します。IPアドレス、経路選択、DNS、ポート番号の役割を整理し、TCP、UDP、QUICが提供する保証と責任範囲を比較します。そのうえで、TLSとHTTPを含むWeb通信を層ごとの準備と処理としてたどります。
-\end{learninggoals}
+「注文番号1234はいつ届きますか」という文は小さなパケットへ分かれ、各層の情報をまとって運ばれます。IPが行き先を、TCPまたはQUICが端点間の運び方を、TLSが安全な通信相手を、HTTPが要求の意味を受け持ちます。ここでは、データが層を下り、ネットワークを渡り、相手側で再び上る時間の流れに沿って追います。
+\end{chapterabstract}
 
 
 \section{通信の要素}
 \label{sec:05-network-01}
+
+設計図の「HTTP API」という一本の矢印を現実へ戻すと、その途中には送信元、宛先、通信路があります。まず、離れた二点の間でデータを運ぶために最低限必要な役割を取り出します。
+
 \begingroup
 \begingroup
       \centering
@@ -45,6 +46,9 @@
 
 \section{通信性能}
 \label{sec:05-network-02}
+
+データが最終的に届くことと、利用者が待てる時間で届くことは別です。要求が通信路を進む間には、送り出す時間、距離を進む時間、中継点で待つ時間、処理する時間が積み重なります。数秒の待ち時間を一つの「ネットが遅い」で済ませずに分けます。
+
 \begingroup
 \begingroup
 \paragraph{一つのリンクで生じる遅延}
@@ -77,6 +81,9 @@
 
 \section{プロトコル}
 \label{sec:05-network-03}
+
+通信路があっても、送信側と受信側が異なる形式や順序を想定すれば会話は成立しません。何をどの形で送り、受け取った側がどう解釈し、次に何をするかを共有する規則がプロトコルです。
+
 \begingroup
 \begingroup
 \paragraph{形式}
@@ -108,6 +115,9 @@
 
 \section{階層化とカプセル化}
 \label{sec:05-network-04}
+
+宛先までの配送、安全な接続、アプリケーション上の質問を一つの巨大な規則へ詰め込むと、どの機器も全事情を知らなければなりません。役割ごとに層を分け、上の層から受け取ったデータへ自分の情報を付けて下へ渡します。
+
 \begingroup
 \begingroup
       \centering
@@ -143,7 +153,11 @@
 
 \section{OSIとTCP/IP}
 \label{sec:05-network-05}
+
+層という見方には、説明のための七層モデルと、インターネットで実際に使うプロトコル群のまとめ方があります。段数を暗記するのではなく、いま見ている問題が配送、端点間通信、アプリのどこにあるかを対応づけます。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}cYcY@{}}
     \toprule
     OSI層 & 主な役割 & TCP/IP & 例\\
@@ -168,6 +182,9 @@
 
 \section{IPアドレスとCIDR}
 \label{sec:05-network-06}
+
+要求を端末の外へ出すには、次に渡す相手を識別しなければなりません。IPアドレスはインターネット層の宛先を示し、CIDRはアドレスの集まりを接頭辞でまとめます。長い旅の住所に当たる情報です。
+
 \begingroup
 \begingroup
 \paragraph{IPアドレス}
@@ -195,6 +212,9 @@
 
 \section{ルーティング}
 \label{sec:05-network-07}
+
+住所が分かっても、端末からサーバーまでの全経路を一台が決めるわけではありません。各中継点は宛先の接頭辞を見て、次に渡す方向を選びます。要求は局所的な判断を何度も受けながら進みます。
+
 \begingroup
 \begingroup
       \centering
@@ -228,6 +248,9 @@
 
 \section{DNS}
 \label{sec:05-network-08}
+
+アプリの設定に現れるのは、多くの場合IPアドレスではなく人が扱いやすいホスト名です。通信を始める前に、その名前から現在利用できる宛先情報を探します。送信ボタンを押してから最初のパケットがAPIへ向かうまでに、別の問い合わせが先行することがあります。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
@@ -269,6 +292,9 @@
 
 \section{ポート番号}
 \label{sec:05-network-09}
+
+一つのサーバーではWeb API、データベース、管理機能など複数の通信が同時に動きます。IPアドレスだけでは機械までしか届かないため、その中のどの通信端点へ渡すかをポート番号で区別します。
+
 \begingroup
 \begingroup
       \centering
@@ -299,6 +325,9 @@
 
 \section{TCP接続}
 \label{sec:05-network-10}
+
+宛先と端点が決まると、アプリはデータを流す準備へ進みます。TCPでは双方が初期状態を交換し、どのバイトから数え始めるかをそろえます。「接続した」という一語の中で、後の再送と順序制御に必要な基準が作られます。
+
 \begingroup
 \begingroup
       \centering
@@ -330,6 +359,9 @@
 
 \section{TCPのデータ転送}
 \label{sec:05-network-11}
+
+接続後、入力文を含むバイト列は複数の区間へ分かれて進みます。途中で失われたり順序が入れ替わったりしても、番号と確認応答を使って受信側へ同じ順序の列を見せます。下位の不確かさを、上位が扱いやすい流れへ変える仕組みです。
+
 \begingroup
 \begingroup
 \paragraph{シーケンス番号}
@@ -356,6 +388,9 @@
 
 \section{フロー制御と輻輳制御}
 \label{sec:05-network-12}
+
+確実に届けたいからといって、送信側が限界まで送り続ければ、受信側か途中のネットワークがあふれます。相手が受け取れる量と、経路全体が運べる量を別々に推定し、速度を調整します。速さは一台だけで決められません。
+
 \begingroup
 \begingroup
 \paragraph{フロー制御}
@@ -383,7 +418,11 @@
 
 \section{UDP}
 \label{sec:05-network-13}
+
+すべての通信がTCPと同じ保証を必要とするわけではありません。メッセージ境界を保ち、最小限の配送だけを担うUDPでは、必要な信頼性や順序を上位が選べます。QUICはこの自由度の上で、安全な接続と複数の流れを組み立てます。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
     観点 & TCP & UDP\\
@@ -407,6 +446,9 @@
 
 \section{HTTP}
 \label{sec:05-network-14}
+
+ここまででバイトを相手へ運ぶ道はできましたが、受信側はそのバイトが質問なのか画像なのかをまだ知りません。HTTPは、メソッド、対象、ヘッダー、内容によって、アプリケーション上の要求と応答を表します。入力文はここで初めてAPIへの依頼になります。
+
 \begingroup
 \begingroup
 \paragraph{リクエスト}
@@ -440,6 +482,9 @@
 
 \section{HTTPメソッドとステータス}
 \label{sec:05-network-15}
+
+HTTPの要求には、何をしたいかという意図が必要です。応答にも、成功したのか、入力が不正なのか、処理側で失敗したのかを示す分類が要ります。共通の語彙があることで、ブラウザとAPIは本文を読む前に扱いを判断できます。
+
 \begingroup
 \begingroup
 \paragraph{代表的なメソッド}
@@ -472,6 +517,9 @@
 
 \section{TLS}
 \label{sec:05-network-16}
+
+注文についての質問には、利用者や業務の情報が含まれます。経路上の誰でも読めたり、別の内容へ書き換えたりできてはなりません。TLSはHTTPを運ぶ前に暗号化の条件をそろえ、機密性、完全性、通信相手の認証を加えます。
+
 \begingroup
 \begingroup
 \paragraph{機密性}
@@ -504,6 +552,9 @@
 
 \section{証明書検証}
 \label{sec:05-network-17}
+
+暗号化されていても、攻撃者との間に安全な通信路を作ってしまえば目的を果たせません。接続先が期待したホストであり、その公開鍵が信頼できる連鎖に結び付くかを証明書で検証します。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
@@ -533,7 +584,11 @@
 
 \section{HTTPの各バージョン}
 \label{sec:05-network-18}
+
+HTTPが表す要求と応答の意味を保ったまま、運び方は改良されてきました。複数要求の待ち方、ヘッダーの表現、TCPとQUICのどちらを使うかが変わっても、上位のアプリは同じ質問と結果を扱えます。層を分けた効果がここに現れます。
+
 \begingroup
+  \noindent
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     & HTTP/1.1 & HTTP/2 & HTTP/3\\
@@ -555,6 +610,9 @@
 
 \section{URLから接続まで}
 \label{sec:05-network-19}
+
+個別の仕組みを学んだので、送信ボタンの時刻へ戻って順番に並べます。URLを分け、名前を引き、端点を選び、安全な通信路を作るまで、まだ質問の本文を送る前にも複数の段階があります。
+
 \begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
@@ -593,6 +651,9 @@
 
 \section{応答から画面表示まで}
 \label{sec:05-network-20}
+
+帰り道も先に見ておきます。サーバーがどんな内容を作るかは次章へ残しますが、完成したHTTP応答は同じ層を逆向きに上り、ブラウザへ届きます。ネットワークは内容の正しさを判断せず、決められた表現と保証の下で運びます。
+
 \begingroup
 \begingroup
 \paragraph{HTTP要求}
@@ -618,8 +679,11 @@
 \endgroup
 
 
-\section{実習：DNSとHTTP}
+\section{手を動かす：通信の時間}
 \label{sec:05-network-21}
+
+普段は一瞬に見える名前解決、接続、TLS、HTTPを、コマンドの出力で別々の出来事として観測します。二回目の経路がキャッシュや接続再利用で変わることも、物語が常に同じ道を通るとは限らない証拠です。
+
 \begingroup
 \begingroup
       \begin{lstlisting}[basicstyle=\ttfamily\fontsize{7}{8.4}\selectfont]
@@ -649,37 +713,21 @@ $ curl --write-out \
 \endgroup
 
 
-\section{まとめ}
+\section{サーバーの内側へ}
 \label{sec:05-network-22}
-\begingroup
-\begingroup
-\paragraph{配送}
-        IPが接頭辞に基づきデータグラムを転送し、DNSが名前を資源レコードへ対応づけます。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{端点間}
-        TCPは順序付きバイト列を提供し、UDPはデータグラムの境界を保って最小限に運びます。
+入力文はHTTP要求の内容となり、TLSで守られ、TCPまたはQUICとIPに運ばれてサーバーへ到着しました。その前にはDNSが名前を宛先へ結び付け、各ルーターが次の区間を選びました。一本の矢印に見えた通信は、異なる保証を持つ層の受け渡しでした。
 
-\par
-\endgroup
-\medskip
-\begingroup
-\paragraph{アプリ}
-        HTTPが要求と応答の意味を定め、TLSが機密性、完全性、認証を加えます。
+ネットワークが届けたのは質問であり、答えではありません。サーバーのアプリは注文と配送の事実を集め、それを言語モデルへ渡します。次章では通信の時間をいったん止め、文字列が数値計算を通って一文の応答になるまでを追います。
 
-\par
-\endgroup
-  \vspace{4mm}
-  \takeaway{障害調査では、名前解決、経路、接続、暗号化、HTTP、表示処理のどの段階かを切り分けます。}
-\par
-\endgroup
+\takeaway{通信は一つの万能な経路ではなく、名前、配送、端点間の流れ、安全性、要求の意味を別々の層が受け持つ協働です。}
 
 
-\section{確認問題}
+\section{旅をたどり直す}
 \label{sec:05-network-23}
+
+端末上のURLからサーバー上のHTTP要求までを、時間の順にたどり直します。次の問いでは、各プロトコルが何を次の層へ渡し、どこから先を保証しないかを意識してください。
+
 \begingroup
   \begin{enumerate}
     \item 伝送遅延と伝搬遅延は、どの量で決まりますか。
