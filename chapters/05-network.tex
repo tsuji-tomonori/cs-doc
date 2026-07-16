@@ -1,8 +1,23 @@
-\chapterframe{第5章　ネットワーク}{異なる役割のプロトコルを重ねて通信する}{送信元から宛先へパケットを届ける仕組みを、階層ごとに追います。IP、DNS、TCP、UDP、HTTP、TLSを接続し、URL入力から画面表示までを時系列で説明します。}
+% !TEX root = ../main.tex
+\chapter{ネットワークを層ごとに理解する}
+\label{chap:network}
 
-\begin{frame}[t]{通信には、宛先・通信路・共有する規則が必要です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
+\begin{chapterabstract}
+送信元から宛先へデータを届ける仕組みを、各層の役割と保証に分けて学びます。IP、DNS、TCP、UDP、QUIC、TLS、HTTPを接続し、URLを入力してから画面が表示されるまでを時系列で説明できるようにします。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item 遅延、帯域幅、損失を区別し、通信性能を分解して説明できます。
+  \item IPアドレス、経路選択、DNS、ポート番号の役割を区別できます。
+  \item TCP、UDP、QUICが提供する保証と責任範囲を比較できます。
+  \item TLSとHTTPを含むWeb通信を、層ごとの準備と処理に分解できます。
+\end{learninggoals}
+
+
+\section{通信には、宛先・通信路・共有する規則が必要です}
+\label{sec:05-network-01}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=12mm,every node/.append style={font=\small}]
         \node[accentbox] (src) {送信元};
@@ -12,23 +27,30 @@
         \draw[flow] (mid)--(dst);
       \end{tikzpicture}
       \vspace{5mm}
-      \begin{block}{識別と配送}
+\paragraph{識別と配送}
         宛先を識別し、中継点が次に送る通信路を選びます。各区間は有線、無線、光など異なる媒体を使えます。
-      \end{block}
-    \column{0.41\textwidth}
-      \begin{block}{回線交換}
-        通信の間、経路上の資源を予約します。一定の容量を得やすい一方、送信しない時間も資源を占有します。
-      \end{block}
-      \begin{block}{パケット交換}
-        データを小さな単位へ分け、複数の通信がリンクを共有します。待ち行列による遅延や損失が生じます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{性能は、帯域幅だけでなく遅延と損失で決まります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{一つのリンクで生じる遅延}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{回線交換}
+        通信の間、経路上の資源を予約します。一定の容量を得やすい一方、送信しない時間も資源を占有します。
+
+\paragraph{パケット交換}
+        データを小さな単位へ分け、複数の通信がリンクを共有します。待ち行列による遅延や損失が生じます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{性能は、帯域幅だけでなく遅延と損失で決まります}
+\label{sec:05-network-02}
+\begingroup
+\begingroup
+\paragraph{一つのリンクで生じる遅延}
         \begin{align*}
           d_{\mathrm{total}} &=
           d_{\mathrm{proc}}+d_{\mathrm{queue}}+
@@ -37,42 +59,59 @@
           d_{\mathrm{prop}} = D/S
         \end{align*}
         $L$はパケット長、$R$は伝送速度、$D$は距離、$S$は信号の伝搬速度です。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{帯域幅とスループット}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{帯域幅とスループット}
         帯域幅は単位時間に送れる量の上限です。実効スループットはボトルネック、共有、制御、相手の処理能力でも低下します。
-      \end{block}
-      \begin{block}{パケット損失}
+
+\paragraph{パケット損失}
         待ち行列が満杯になる、伝送エラーを検出するなどの理由で、パケットが破棄される場合があります。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \takeaway{「回線が速い」は、低遅延、高帯域、低損失のどれを指すか明示します。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{プロトコルは、メッセージの形式・意味・順序を定めます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{形式}
+
+\section{プロトコルは、メッセージの形式・意味・順序を定めます}
+\label{sec:05-network-03}
+\begingroup
+\begingroup
+\paragraph{形式}
         フィールドの並び、長さ、符号化、境界を定めます。受信側が同じ単位へ分解できる必要があります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{意味}
-        各フィールドとメッセージが表す要求、応答、状態変化、エラーを定めます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{進行規則}
-        どちらが先に送るか、応答をいつまで待つか、重複や失敗をどう扱うかを定めます。
-      \end{block}
-  \end{columns}
-  \vspace{4mm}
-  \begin{block}{相互運用性}
-    異なる実装でも、同じ仕様の必須事項と拡張規則を守れば通信できます。実装固有の挙動をプロトコルの保証と取り違えません。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{階層化は、上位データを下位のペイロードへ包みます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{意味}
+        各フィールドとメッセージが表す要求、応答、状態変化、エラーを定めます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{進行規則}
+        どちらが先に送るか、応答をいつまで待つか、重複や失敗をどう扱うかを定めます。
+
+\par
+\endgroup
+  \vspace{4mm}
+\paragraph{相互運用性}
+    異なる実装でも、同じ仕様の必須事項と拡張規則を守れば通信できます。実装固有の挙動をプロトコルの保証と取り違えません。
+
+\par
+\endgroup
+
+
+\section{階層化は、上位データを下位のペイロードへ包みます}
+\label{sec:05-network-04}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=0.85mm,y=0.85mm,every node/.append style={font=\scriptsize}]
         \draw[draw=MutedBlue,fill=PaleBlue] (22,27) rectangle (62,37);
@@ -86,20 +125,27 @@
         \draw[softflow] (42,27)--(42,24);
         \draw[softflow] (42,14)--(42,11);
       \end{tikzpicture}
-    \column{0.42\textwidth}
-      \begin{block}{カプセル化}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{カプセル化}
         各層は制御情報をヘッダーなどへ加え、上位層のデータを自層のペイロードとして扱います。
-      \end{block}
-      \begin{block}{受信側}
+
+\paragraph{受信側}
         下位層から順に宛先や完全性を確認し、自層の制御情報を解釈して上位層へ渡します。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{3mm}
   \takeaway{各層の「データ単位」と、その層が提供する保証を対応づけます。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{OSIは7層、TCP/IPは実装で使う層構造を示します}
-  \footnotesize
+
+\section{OSIは7層、TCP/IPは実装で使う層構造を示します}
+\label{sec:05-network-05}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}cYcY@{}}
     \toprule
     OSI層 & 主な役割 & TCP/IP & 例\\
@@ -114,35 +160,45 @@
     \bottomrule
   \end{tabularx}
   \vspace{3mm}
-  \begin{block}{対応は厳密な同一関係ではありません}
+\paragraph{対応は厳密な同一関係ではありません}
     OSI参照モデルは役割を7層で整理します。インターネットプロトコル群は、RFC 1122ではアプリケーション、トランスポート、インターネット、リンクの4層で整理します。
-  \end{block}
+
   \source{ISO/IEC 7498-1; RFC 1122}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{IPアドレスとCIDRは、端点とネットワーク接頭辞を表します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{IPアドレス}
+
+\section{IPアドレスとCIDRは、端点とネットワーク接頭辞を表します}
+\label{sec:05-network-06}
+\begingroup
+\begingroup
+\paragraph{IPアドレス}
         IPv4は32ビット、IPv6は128ビットのアドレスを使います。インタフェースへ割り当てられ、経路選択の宛先として使われます。
-      \end{block}
-      \begin{block}{ベストエフォート}
-        IPはデータグラムを配送しますが、到着、順序、重複排除、遅延上限を保証しません。必要な保証は上位層が補います。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{CIDR表記}
-        \code{192.0.2.0/24}の\code{/24}は、先頭24ビットがネットワーク接頭辞であることを示します。残り8ビットで範囲内のアドレスを区別します。
-      \end{block}
-      \begin{block}{サブネット}
-        同じ接頭辞へ属する範囲を一つの配送単位として扱えます。割り当てとルーティングを階層化します。
-      \end{block}
-  \end{columns}
-  \source{RFC 8200; RFC 4632}
-\end{frame}
 
-\begin{frame}[t]{ルーターは、最長一致する接頭辞から次の転送先を選びます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.56\textwidth}
+\paragraph{ベストエフォート}
+        IPはデータグラムを配送しますが、到着、順序、重複排除、遅延上限を保証しません。必要な保証は上位層が補います。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{CIDR表記}
+        \code{192.0.2.0/24}の\code{/24}は、先頭24ビットがネットワーク接頭辞であることを示します。残り8ビットで範囲内のアドレスを区別します。
+
+\paragraph{サブネット}
+        同じ接頭辞へ属する範囲を一つの配送単位として扱えます。割り当てとルーティングを階層化します。
+
+\par
+\endgroup
+  \source{RFC 8200; RFC 4632}
+\par
+\endgroup
+
+
+\section{ルーターは、最長一致する接頭辞から次の転送先を選びます}
+\label{sec:05-network-07}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
         \node[box] (host) {端末\\192.168.1.10};
@@ -152,21 +208,29 @@
         \draw[flow] (nat)--node[above]{公開アドレス}(isp);
       \end{tikzpicture}
       \vspace{5mm}
-      \begin{block}{ルーティング}
+\paragraph{ルーティング}
         宛先アドレスに一致する経路表のうち、接頭辞が最も長い項目を優先し、次のルーターまたは出力リンクへ転送します。
-      \end{block}
-    \column{0.40\textwidth}
-      \begin{block}{プライベートアドレス}
-        IPv4では\code{10.0.0.0/8}など、インターネット全体では経路制御しない私設用範囲があります。
-      \end{block}
-      \begin{block}{NAT}
-        境界装置がアドレスやポートを対応表に従って変換します。内向き通信の到達性を変えますが、認証や暗号化の代わりではありません。
-      \end{block}
-  \end{columns}
-  \source{RFC 1812; RFC 1918; RFC 3022}
-\end{frame}
 
-\begin{frame}[t]{DNSは、名前を複数種類の資源レコードへ対応づけます}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{プライベートアドレス}
+        IPv4では\code{10.0.0.0/8}など、インターネット全体では経路制御しない私設用範囲があります。
+
+\paragraph{NAT}
+        境界装置がアドレスやポートを対応表に従って変換します。内向き通信の到達性を変えますが、認証や暗号化の代わりではありません。
+
+\par
+\endgroup
+  \source{RFC 1812; RFC 1918; RFC 3022}
+\par
+\endgroup
+
+
+\section{DNSは、名前を複数種類の資源レコードへ対応づけます}
+\label{sec:05-network-08}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
     \node[box] (app) {アプリ};
@@ -180,26 +244,35 @@
     \draw[flow] (tld)--(auth);
   \end{tikzpicture}
   \vspace{3mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{階層委任}
+\begingroup
+\paragraph{階層委任}
         ルートからトップレベルドメイン、対象ドメインの権威サーバーへ、管理を階層的に委任します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{レコード}
-        A／AAAAはアドレス、CNAMEは別名、MXはメール配送先などを表します。DNSはIP検索だけではありません。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{キャッシュ}
-        リゾルバはTTLの範囲で応答を再利用し、遅延と問い合わせ量を減らします。変更の反映には時間差が生じます。
-      \end{block}
-  \end{columns}
-  \source{RFC 1034; RFC 1035}
-\end{frame}
 
-\begin{frame}[t]{ポート番号は、同じ端末内の通信先を多重化します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{レコード}
+        A／AAAAはアドレス、CNAMEは別名、MXはメール配送先などを表します。DNSはIP検索だけではありません。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{キャッシュ}
+        リゾルバはTTLの範囲で応答を再利用し、遅延と問い合わせ量を減らします。変更の反映には時間差が生じます。
+
+\par
+\endgroup
+  \source{RFC 1034; RFC 1035}
+\par
+\endgroup
+
+
+\section{ポート番号は、同じ端末内の通信先を多重化します}
+\label{sec:05-network-09}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
         \node[box] (p1) {Web\\:443};
@@ -208,21 +281,28 @@
         \draw[flow] (ip)--(p1);
         \draw[flow] (ip)--(p2);
       \end{tikzpicture}
-    \column{0.41\textwidth}
-      \begin{block}{16ビットの番号}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{16ビットの番号}
         TCPとUDPはそれぞれ0から65535のポート番号を持ちます。同じ番号でもトランスポートプロトコルが違えば別の名前空間です。
-      \end{block}
-      \begin{block}{通信の識別}
+
+\paragraph{通信の識別}
         TCPコネクションは、送信元と宛先のIPアドレス・ポート番号・プロトコルの組で区別できます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{0mm}
   \takeaway{サーバーの待受ポートと、クライアントが一時的に使う送信元ポートを区別します。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{TCPは、3ウェイハンドシェイクで双方の状態を作ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.58\textwidth}
+
+\section{TCPは、3ウェイハンドシェイクで双方の状態を作ります}
+\label{sec:05-network-10}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
         \node[box] (c) at (5,0) {クライアント};
@@ -233,58 +313,79 @@
         \draw[flow] (65,-25)--node[above]{SYN+ACK, seq=$y$, ack=$x+1$}(5,-25);
         \draw[flow] (5,-38)--node[above]{ACK, ack=$y+1$}(65,-38);
       \end{tikzpicture}
-    \column{0.38\textwidth}
-      \begin{block}{確立するもの}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{確立するもの}
         双方が到達可能であることを確認し、初期シーケンス番号などコネクションの状態を同期します。
-      \end{block}
-      \begin{block}{確立しないもの}
+
+\paragraph{確立しないもの}
         暗号化や相手の組織名は保証しません。それらはTLSなど別の層で扱います。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \source{RFC 9293, “Transmission Control Protocol”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{TCPは、バイト列を順序どおりアプリへ渡します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{シーケンス番号}
+
+\section{TCPは、バイト列を順序どおりアプリへ渡します}
+\label{sec:05-network-11}
+\begingroup
+\begingroup
+\paragraph{シーケンス番号}
         送ったバイトの位置を表します。受信側は並べ替え、次に必要な位置をACKで通知します。
-      \end{block}
-      \begin{block}{再送}
+
+\paragraph{再送}
         タイムアウトや重複ACKなどから損失を推定し、未確認のデータを再送します。重複したデータは位置情報で除きます。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{バイトストリーム}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{バイトストリーム}
         送信側の\code{write}一回と、受信側の\code{read}一回の境界は一致しません。メッセージ境界は長さや区切りをアプリ側で定めます。
-      \end{block}
-      \begin{block}{ヘッドオブライン待ち}
+
+\paragraph{ヘッドオブライン待ち}
         途中のバイトが欠けると、後続が届いていても、順序どおりのバイト列として上位へ渡せない区間があります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{フロー制御と輻輳制御は、守る対象が異なります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{フロー制御}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{フロー制御と輻輳制御は、守る対象が異なります}
+\label{sec:05-network-12}
+\begingroup
+\begingroup
+\paragraph{フロー制御}
         受信側が処理・保持できる量を受信ウィンドウで知らせ、送信側が受信バッファをあふれさせないようにします。
-      \end{block}
-      \begin{block}{守る対象}
-        コネクションの相手である受信端末です。アプリが読み取る速度も影響します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{輻輳制御}
-        損失、遅延、明示的通知などを手掛かりに送信量を調整し、経路上のネットワークへ過剰に流入させないようにします。
-      \end{block}
-      \begin{block}{守る対象}
-        共有するネットワークです。実際に未確認で送れる量は、受信側と輻輳側の制約をともに受けます。
-      \end{block}
-  \end{columns}
-  \source{Stanford CS144, “TCP Flow Control / Congestion Control”}
-\end{frame}
 
-\begin{frame}[t]{UDPはデータグラムを保ち、追加保証をアプリへ委ねます}
-  \footnotesize
+\paragraph{守る対象}
+        コネクションの相手である受信端末です。アプリが読み取る速度も影響します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{輻輳制御}
+        損失、遅延、明示的通知などを手掛かりに送信量を調整し、経路上のネットワークへ過剰に流入させないようにします。
+
+\paragraph{守る対象}
+        共有するネットワークです。実際に未確認で送れる量は、受信側と輻輳側の制約をともに受けます。
+
+\par
+\endgroup
+  \source{Stanford CS144, “TCP Flow Control / Congestion Control”}
+\par
+\endgroup
+
+
+\section{UDPはデータグラムを保ち、追加保証をアプリへ委ねます}
+\label{sec:05-network-13}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
     観点 & TCP & UDP\\
@@ -297,29 +398,33 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{block}{選択基準}
+\paragraph{選択基準}
     TCPかUDPかを「速さ」だけで決めません。遅延、損失時の扱い、順序、メッセージ境界、輻輳制御、NAT越えを含むプロトコル全体で選びます。
     QUICはUDP上で信頼性、輻輳制御、暗号化などを提供します。
-  \end{block}
-  \source{RFC 768; RFC 9293; RFC 9000}
-\end{frame}
 
-\begin{frame}[t]{HTTPは、要求と応答の意味をアプリケーション層で定めます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
-      \begin{block}{リクエスト}
+  \source{RFC 768; RFC 9293; RFC 9000}
+\par
+\endgroup
+
+
+\section{HTTPは、要求と応答の意味をアプリケーション層で定めます}
+\label{sec:05-network-14}
+\begingroup
+\begingroup
+\paragraph{リクエスト}
         メソッド、対象URI、ヘッダーフィールド、必要に応じた内容で構成します。
-      \end{block}
-      \vspace{-1mm}
-      \begin{block}{レスポンス}
+
+\paragraph{レスポンス}
         ステータスコード、ヘッダーフィールド、必要に応じた内容で構成します。
-      \end{block}
-      \vspace{-1mm}
-      \begin{block}{ステートレスな意味}
+
+\paragraph{ステートレスな意味}
         HTTPメッセージは要求ごとに解釈します。継続状態はCookieやトークン、サーバー側状態で明示的に関連づけます。
-      \end{block}
-    \column{0.42\textwidth}
-      \begin{block}{メッセージ例}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{メッセージ例}
         {\ttfamily\scriptsize
         GET /items/42 HTTP/1.1\\
         Host: example.jp\\
@@ -327,15 +432,19 @@
         HTTP/1.1 200 OK\\
         Content-Type: application/json\\
         Content-Length: 25\par}
-      \end{block}
-  \end{columns}
-  \source{RFC 9110, “HTTP Semantics”; RFC 9112}
-\end{frame}
 
-\begin{frame}[t]{メソッドとステータスは、処理結果の意味を共有します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-      \begin{block}{代表的なメソッド}
+\par
+\endgroup
+  \source{RFC 9110, “HTTP Semantics”; RFC 9112}
+\par
+\endgroup
+
+
+\section{メソッドとステータスは、処理結果の意味を共有します}
+\label{sec:05-network-15}
+\begingroup
+\begingroup
+\paragraph{代表的なメソッド}
         \begin{tabularx}{\linewidth}{@{}lY@{}}
           \toprule
           GET & 資源の表現を取得します。安全かつ冪等です。\\
@@ -344,41 +453,59 @@
           DELETE & 対象との関連を削除します。冪等です。\\
           \bottomrule
         \end{tabularx}
-      \end{block}
-    \column{0.46\textwidth}
-      \begin{block}{ステータスコードの類}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ステータスコードの類}
         1xxは情報、2xxは成功、3xxはリダイレクト、4xxはクライアント側の要求に関する失敗、5xxはサーバー側の失敗を表します。
-      \end{block}
-      \begin{block}{ヘッダーと内容}
+
+\paragraph{ヘッダーと内容}
         キャッシュ、認証、内容形式、圧縮、条件付き要求などのメタデータをヘッダーで伝え、表現本体を内容として送ります。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \takeaway{冪等とは同じ要求を複数回行った意図上の効果が一回と同じことです。応答やログまで同一とは限りません。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{TLSは、機密性・完全性・相手認証を提供します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{機密性}
+
+\section{TLSは、機密性・完全性・相手認証を提供します}
+\label{sec:05-network-16}
+\begingroup
+\begingroup
+\paragraph{機密性}
         通信内容を暗号化し、鍵を持たない観測者が平文を読めないようにします。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{完全性}
-        通信途中の改変を検出します。改変された記録を正しいデータとして受け入れないようにします。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{認証}
-        通常のWebでは証明書を用いてサーバーを認証します。必要ならクライアント証明書も利用できます。
-      \end{block}
-  \end{columns}
-  \vspace{5mm}
-  \begin{block}{保証の外側}
-    TLSは、接続先アプリの正しさ、端末内での安全な保存、可用性、利用者が送信した内容の妥当性までは保証しません。
-  \end{block}
-  \source{RFC 8446, “The Transport Layer Security (TLS) Protocol Version 1.3”}
-\end{frame}
 
-\begin{frame}[t]{証明書検証は、公開鍵を接続先の名前へ結び付けます}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{完全性}
+        通信途中の改変を検出します。改変された記録を正しいデータとして受け入れないようにします。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{認証}
+        通常のWebでは証明書を用いてサーバーを認証します。必要ならクライアント証明書も利用できます。
+
+\par
+\endgroup
+  \vspace{5mm}
+\paragraph{保証の外側}
+    TLSは、接続先アプリの正しさ、端末内での安全な保存、可用性、利用者が送信した内容の妥当性までは保証しません。
+
+  \source{RFC 8446, “The Transport Layer Security (TLS) Protocol Version 1.3”}
+\par
+\endgroup
+
+
+\section{証明書検証は、公開鍵を接続先の名前へ結び付けます}
+\label{sec:05-network-17}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
     \node[box] (root) {信頼するルートCA};
@@ -388,20 +515,26 @@
     \draw[flow] (inter)--node[above]{署名}(leaf);
   \end{tikzpicture}
   \vspace{4mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{検証する事項}
+\begingroup
+\paragraph{検証する事項}
         接続先名との一致、有効期間、署名の連鎖、鍵用途などを検証します。信頼の起点は端末やアプリのストアにあります。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{HTTPS接続}
-        HTTPSはHTTPをTLSで保護します。TCP上のTLSを使う方式と、TLS 1.3を組み込んだQUIC上でHTTP/3を使う方式があります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{HTTPの各版は、意味を保ちつつ転送方法を変えます}
-  \footnotesize
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{HTTPS接続}
+        HTTPSはHTTPをTLSで保護します。TCP上のTLSを使う方式と、TLS 1.3を組み込んだQUIC上でHTTP/3を使う方式があります。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{HTTPの各版は、意味を保ちつつ転送方法を変えます}
+\label{sec:05-network-18}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     & HTTP/1.1 & HTTP/2 & HTTP/3\\
@@ -413,13 +546,17 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{block}{HTTPの意味は共通です}
+\paragraph{HTTPの意味は共通です}
     メソッド、ステータス、ヘッダーフィールドなどの意味はRFC 9110で共通化されています。版は主にメッセージを運ぶ形式と接続管理を変えます。
-  \end{block}
-  \source{RFC 9110; RFC 9112; RFC 9113; RFC 9114}
-\end{frame}
 
-\begin{frame}[t]{URL入力後は、名前解決・接続・暗号化を順に準備します}
+  \source{RFC 9110; RFC 9112; RFC 9113; RFC 9114}
+\par
+\endgroup
+
+
+\section{URL入力後は、名前解決・接続・暗号化を順に準備します}
+\label{sec:05-network-19}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (url) {1 URL解析};
@@ -431,45 +568,61 @@
     \draw[flow] (trans)--(tls); \draw[flow] (tls)--(http);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{URLを分解}
+\begingroup
+\paragraph{URLを分解}
         スキーム、ホスト、ポート、パス、クエリなどを取り出します。既定ポートや安全性ポリシーを適用します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{サーバーを探す}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{サーバーを探す}
         キャッシュを確認し、必要ならDNSでA／AAAAなどを問い合わせます。複数候補から接続先を選びます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{通信路を作る}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{通信路を作る}
         HTTP/1.1・2ならTCPとTLS、HTTP/3ならQUICのハンドシェイクで暗号化された接続を準備します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{応答後は、文書解析と追加資源の取得を繰り返します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{HTTP要求}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{応答後は、文書解析と追加資源の取得を繰り返します}
+\label{sec:05-network-20}
+\begingroup
+\begingroup
+\paragraph{HTTP要求}
         パス、メソッド、受入形式、Cookieなどを送ります。キャッシュが再利用できれば、条件付き要求やネットワーク通信を省ける場合があります。
-      \end{block}
-      \begin{block}{HTTP応答}
-        ステータス、キャッシュ方針、内容形式と文書を受け取ります。リダイレクトなら新しい場所へ要求を作ります。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{表示処理}
-        HTMLを解析して文書構造を作り、CSS、画像、フォント、JavaScriptなどの参照を見つけて追加取得します。
-      \end{block}
-      \begin{block}{画面更新}
-        スタイル計算、レイアウト、描画を行います。JavaScriptや遅れて届く資源により、表示後も状態が変わります。
-      \end{block}
-  \end{columns}
-  \takeaway{実際の経路はキャッシュ、プロキシ、CDN、Service Worker、接続再利用によって短縮・分岐します。}
-\end{frame}
 
-\begin{frame}[t,fragile]{ミニ実習：名前解決とHTTP接続を観察します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.56\textwidth}
+\paragraph{HTTP応答}
+        ステータス、キャッシュ方針、内容形式と文書を受け取ります。リダイレクトなら新しい場所へ要求を作ります。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{表示処理}
+        HTMLを解析して文書構造を作り、CSS、画像、フォント、JavaScriptなどの参照を見つけて追加取得します。
+
+\paragraph{画面更新}
+        スタイル計算、レイアウト、描画を行います。JavaScriptや遅れて届く資源により、表示後も状態が変わります。
+
+\par
+\endgroup
+  \takeaway{実際の経路はキャッシュ、プロキシ、CDN、Service Worker、接続再利用によって短縮・分岐します。}
+\par
+\endgroup
+
+
+\section{ミニ実習：名前解決とHTTP接続を観察します}
+\label{sec:05-network-21}
+\begingroup
+\begingroup
       \begin{lstlisting}[basicstyle=\ttfamily\fontsize{7}{8.4}\selectfont]
 $ dig example.com A
 $ dig example.com AAAA
@@ -480,37 +633,55 @@ $ curl --write-out \
     'tls=%{time_appconnect}\ntotal=%{time_total}\n' \
     --output /dev/null https://example.com/
       \end{lstlisting}
-    \column{0.40\textwidth}
-      \begin{block}{観察する項目}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{観察する項目}
         DNSのレコードとTTL、接続先IP、TLS版、証明書の名前、HTTP版、ステータス、時間内訳を記録します。
-      \end{block}
-      \begin{block}{解釈上の注意と安全}
+
+\paragraph{解釈上の注意と安全}
         2回目はDNS・TLS・HTTPキャッシュや接続再利用の影響を受けます。条件と実行時刻を残します。
         自分が利用を許可されたホストだけを対象にします。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{第5章の要点は、各層の保証を組み合わせることです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{配送}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{第5章の要点は、各層の保証を組み合わせることです}
+\label{sec:05-network-22}
+\begingroup
+\begingroup
+\paragraph{配送}
         IPが接頭辞に基づきデータグラムを転送し、DNSが名前を資源レコードへ対応づけます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{端点間}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{端点間}
         TCPは順序付きバイト列を提供し、UDPはデータグラムの境界を保って最小限に運びます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{アプリ}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{アプリ}
         HTTPが要求と応答の意味を定め、TLSが機密性、完全性、認証を加えます。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{4mm}
   \takeaway{障害調査では、名前解決、経路、接続、暗号化、HTTP、表示処理のどの段階かを切り分けます。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{確認問題では、層ごとの役割と保証を区別します}
+
+\section{確認問題では、層ごとの役割と保証を区別します}
+\label{sec:05-network-23}
+\begingroup
   \begin{enumerate}
     \item 伝送遅延と伝搬遅延は、どの量で決まりますか。
     \item カプセル化では、HTTPメッセージをTCPとIPがどう扱いますか。
@@ -521,4 +692,5 @@ $ curl --write-out \
     \item TLSが保証することと、保証しないことを一つずつ挙げてください。
     \item URL入力から表示までの失敗点を、層ごとに列挙してください。
   \end{enumerate}
-\end{frame}
+\par
+\endgroup

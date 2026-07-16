@@ -1,11 +1,26 @@
-\chapterframe{第6章　機械学習の基礎}{曲線フィッティングからLLMまでを一本につなぐ}{関数、ベクトル、微分、確率を道具として、学習と評価を定義します。多項式、パーセプトロン、ニューラルネット、Transformer、LLMへ進み、利用時の限界を扱います。}
+% !TEX root = ../main.tex
+\chapter{機械学習と大規模言語モデルの基礎}
+\label{chap:machine-learning}
 
-\begin{frame}[t]{関数・ベクトル・行列は、モデルを短く表現します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{関数}
+\begin{chapterabstract}
+関数、ベクトル、微分、確率を道具として、データから予測規則を学ぶ意味を定義します。回帰、分類、ニューラルネット、Transformer、LLMを一本の流れでつなぎ、評価方法と利用時の限界まで扱います。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item 学習データ、モデル、損失、最適化、評価指標の役割を説明できます。
+  \item 過学習とデータ漏洩を区別し、妥当な評価手順を設計できます。
+  \item ニューラルネットの順伝播と逆伝播を、合成関数の計算として説明できます。
+  \item TransformerとLLMの入出力、学習、生成、限界を区別して説明できます。
+\end{learninggoals}
+
+
+\section{関数・ベクトル・行列は、モデルを短く表現します}
+\label{sec:06-machine-learning-01}
+\begingroup
+\begingroup
+\paragraph{関数}
         入力$x$へ出力$y=f(x)$を対応づけます。グラフは入力を動かしたときの出力変化を可視化します。
-      \end{block}
+
       \centering
       \begin{tikzpicture}[x=7mm,y=5mm,every node/.append style={font=\scriptsize}]
         \draw[->,draw=PaleGray] (-2.3,0)--(2.5,0) node[right] {$x$};
@@ -13,34 +28,44 @@
         \draw[draw=MutedBlue,line width=.8pt] plot[smooth] coordinates {(-2,4)(-1.5,2.25)(-1,1)(-.5,.25)(0,0)(.5,.25)(1,1)(1.5,2.25)(2,4)};
         \node[right] at (1.5,3.5) {$x^2$};
       \end{tikzpicture}
-    \column{0.48\textwidth}
-      \begin{block}{ベクトル}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ベクトル}
         複数の特徴量やパラメータを$\mathbf{x}=(x_1,\ldots,x_d)^\top$としてまとめます。
         内積$\mathbf{w}^\top\mathbf{x}$は重み付き和です。
-      \end{block}
-      \begin{block}{行列}
-        複数の線形変換やデータを$W$へまとめます。$W\mathbf{x}$で、入力ベクトルを別の空間へ写します。
-      \end{block}
-      \begin{block}{形状を確認します}
-        $W\in\mathbb{R}^{m\times d}$と$\mathbf{x}\in\mathbb{R}^{d}$なら、出力は$\mathbb{R}^{m}$です。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{勾配は、多変数関数が最も増える局所方向を示します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{微分}
+\paragraph{行列}
+        複数の線形変換やデータを$W$へまとめます。$W\mathbf{x}$で、入力ベクトルを別の空間へ写します。
+
+\paragraph{形状を確認します}
+        $W\in\mathbb{R}^{m\times d}$と$\mathbf{x}\in\mathbb{R}^{d}$なら、出力は$\mathbb{R}^{m}$です。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{勾配は、多変数関数が最も増える局所方向を示します}
+\label{sec:06-machine-learning-02}
+\begingroup
+\begingroup
+\paragraph{微分}
         \[
           f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}
         \]
         一変数関数の局所的な変化率です。接線の傾きとして読めます。
-      \end{block}
-      \begin{block}{偏微分}
+
+\paragraph{偏微分}
         多変数関数で、他の変数を固定して一つの変数だけを変えた変化率です。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{勾配}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{勾配}
         \[
           \nabla L(\boldsymbol{\theta})=
           \left(
@@ -49,40 +74,52 @@
           \right)^\top
         \]
         各パラメータ方向の偏微分を並べます。
-      \end{block}
-      \begin{block}{最小化}
-        勾配は最急上昇方向なので、$-\nabla L$側へ小さく動かすと損失を下げられる局所的な根拠になります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{確率は不確実さを、期待値は長期的な平均を表します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{条件付き確率}
+\paragraph{最小化}
+        勾配は最急上昇方向なので、$-\nabla L$側へ小さく動かすと損失を下げられる局所的な根拠になります。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{確率は不確実さを、期待値は長期的な平均を表します}
+\label{sec:06-machine-learning-03}
+\begingroup
+\begingroup
+\paragraph{条件付き確率}
         \[
           P(A\mid B)=\frac{P(A\cap B)}{P(B)}
           \quad (P(B)>0)
         \]
         $B$が分かった後の、$A$への不確実さを表します。
-      \end{block}
-      \begin{block}{独立との違い}
+
+\paragraph{独立との違い}
         $P(A\mid B)=P(A)$なら、$B$を知っても$A$の確率は変わりません。一般には成立しません。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{離散変数の期待値}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{離散変数の期待値}
         \[
           \mathbb{E}[X]=\sum_x xP(X=x)
         \]
         起こり得る値を確率で重み付けした平均です。必ずしも実際に取る値ではありません。
-      \end{block}
-      \begin{block}{分布を明示します}
-        確率はデータ生成過程や信念のモデルに依存します。標本で推定した量と真の分布の量を区別します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{機械学習は、データから予測規則のパラメータを求めます}
+\paragraph{分布を明示します}
+        確率はデータ生成過程や信念のモデルに依存します。標本で推定した量と真の分布の量を区別します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{機械学習は、データから予測規則のパラメータを求めます}
+\label{sec:06-machine-learning-04}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
     \node[box] (data) {訓練データ\\$(\mathbf{x},y)$};
@@ -94,44 +131,57 @@
     \draw[flow] (model)--(pred);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{ルールを書く処理}
+\begingroup
+\paragraph{ルールを書く処理}
         開発者が条件と処理を直接記述します。要件が明確で、例外を列挙できる処理に適します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{データから学ぶ処理}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{データから学ぶ処理}
         損失を小さくするパラメータを例から推定します。規則を手で列挙しにくい認識や予測に使います。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \takeaway{実システムでは、明示的なルールと学習モデルを組み合わせる場合があります。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{特徴量・ラベル・モデルを、学習と推論で使い分けます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{特徴量 $\mathbf{x}$}
+
+\section{特徴量・ラベル・モデルを、学習と推論で使い分けます}
+\label{sec:06-machine-learning-05}
+\begingroup
+\begingroup
+\paragraph{特徴量 $\mathbf{x}$}
         予測に使う入力表現です。数値、カテゴリ、画像の画素、文のトークン表現などがあります。
-      \end{block}
-      \begin{block}{正解ラベル $y$}
-        教師あり学習で目標とする値です。測定誤差、注釈者差、将来情報の混入を確認します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{学習}
-        訓練例を使い、損失が小さくなるようパラメータ$\boldsymbol{\theta}$を更新します。
-      \end{block}
-      \begin{block}{推論}
-        学習済みパラメータを固定し、新しい$\mathbf{x}$から予測$\hat{y}=f_{\boldsymbol{\theta}}(\mathbf{x})$を計算します。
-      \end{block}
-  \end{columns}
-  \vspace{4mm}
-  \begin{block}{モデルはデータそのものではありません}
-    モデルは入力から出力を計算する構造とパラメータです。訓練データの性質を反映しますが、事実を完全に保存・再現するものではありません。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{訓練・検証・テストは、役割ごとに分離します}
-  \footnotesize
+\paragraph{正解ラベル $y$}
+        教師あり学習で目標とする値です。測定誤差、注釈者差、将来情報の混入を確認します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{学習}
+        訓練例を使い、損失が小さくなるようパラメータ$\boldsymbol{\theta}$を更新します。
+
+\paragraph{推論}
+        学習済みパラメータを固定し、新しい$\mathbf{x}$から予測$\hat{y}=f_{\boldsymbol{\theta}}(\mathbf{x})$を計算します。
+
+\par
+\endgroup
+  \vspace{4mm}
+\paragraph{モデルはデータそのものではありません}
+    モデルは入力から出力を計算する構造とパラメータです。訓練データの性質を反映しますが、事実を完全に保存・再現するものではありません。
+
+\par
+\endgroup
+
+
+\section{訓練・検証・テストは、役割ごとに分離します}
+\label{sec:06-machine-learning-06}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
     分割 & 使い方 & 避けること\\
@@ -142,40 +192,50 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{block}{分割単位が重要です}
+\paragraph{分割単位が重要です}
     同じ利用者、時系列の未来、ほぼ重複する文書などが分割をまたぐと、運用時には使えない情報が評価へ漏れます。
     独立性と運用時の時間順を反映して分けます。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{損失関数は誤りを数値化し、最適化の目的を作ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{経験損失}
+\par
+\endgroup
+
+
+\section{損失関数は誤りを数値化し、最適化の目的を作ります}
+\label{sec:06-machine-learning-07}
+\begingroup
+\begingroup
+\paragraph{経験損失}
         \[
           \hat{R}(\boldsymbol{\theta})=
           \frac{1}{n}\sum_{i=1}^{n}
           \ell\bigl(f_{\boldsymbol{\theta}}(\mathbf{x}_i),y_i\bigr)
         \]
         訓練例上の誤りを平均します。
-      \end{block}
-      \begin{block}{例}
-        回帰では二乗誤差、分類では交差エントロピーなどを使います。目的に合う誤りの重みを選びます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{最適化}
-        解析解、勾配法、確率的最適化などで目的関数を小さくします。非凸な問題では大域最適解を得る保証がない場合があります。
-      \end{block}
-      \begin{block}{指標との違い}
-        学習しやすい損失と、業務で重視する評価指標が異なることがあります。両者の関係を検証します。
-      \end{block}
-  \end{columns}
-  \source{MIT 6.390, “Machine Learning” notes}
-\end{frame}
 
-\begin{frame}[t]{多項式は、次数を変えて曲線の複雑さを調整できます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
+\paragraph{例}
+        回帰では二乗誤差、分類では交差エントロピーなどを使います。目的に合う誤りの重みを選びます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{最適化}
+        解析解、勾配法、確率的最適化などで目的関数を小さくします。非凸な問題では大域最適解を得る保証がない場合があります。
+
+\paragraph{指標との違い}
+        学習しやすい損失と、業務で重視する評価指標が異なることがあります。両者の関係を検証します。
+
+\par
+\endgroup
+  \source{MIT 6.390, “Machine Learning” notes}
+\par
+\endgroup
+
+
+\section{多項式は、次数を変えて曲線の複雑さを調整できます}
+\label{sec:06-machine-learning-08}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=6.5mm,y=6.5mm,every node/.append style={font=\scriptsize}]
         \draw[->,draw=PaleGray] (-.2,0)--(6.5,0) node[right] {$x$};
@@ -185,44 +245,58 @@
         }
         \draw[draw=MutedBlue,line width=.8pt] plot[smooth] coordinates {(.3,.55)(1,1.15)(2,1.85)(3,2.25)(4,2.75)(5,3.35)(6,3.85)};
       \end{tikzpicture}
-    \column{0.44\textwidth}
-      \begin{block}{モデル}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{モデル}
         {\centering$\displaystyle f(x;\mathbf{w})=\sum_{j=0}^{M}w_jx^j$\par}
         次数$M$を増やすほど、多様な曲線を表せます。
-      \end{block}
-      \begin{block}{線形モデルでもあります}
-        $x$には多項式ですが、$\mathbf{w}$には線形です。特徴を$(1,x,\ldots,x^M)$と見ます。
-      \end{block}
-  \end{columns}
-  \takeaway{表現力を増やすことと、未知データを正しく予測することは同じではありません。}
-\end{frame}
 
-\begin{frame}[t]{最小二乗法は、残差の二乗和を最小化します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-      \begin{block}{目的関数}
+\paragraph{線形モデルでもあります}
+        $x$には多項式ですが、$\mathbf{w}$には線形です。特徴を$(1,x,\ldots,x^M)$と見ます。
+
+\par
+\endgroup
+  \takeaway{表現力を増やすことと、未知データを正しく予測することは同じではありません。}
+\par
+\endgroup
+
+
+\section{最小二乗法は、残差の二乗和を最小化します}
+\label{sec:06-machine-learning-09}
+\begingroup
+\begingroup
+\paragraph{目的関数}
         \[
           E(\mathbf{w})=
           \frac{1}{2}\sum_{i=1}^{n}
           \left(f(x_i;\mathbf{w})-y_i\right)^2
         \]
         正負の残差が相殺しないよう二乗し、大きな誤差を強く罰します。
-      \end{block}
-      \begin{block}{行列表現}
-        設計行列$\Phi$を使うと、$E(\mathbf{w})=\frac12\lVert\Phi\mathbf{w}-\mathbf{y}\rVert^2$です。
-      \end{block}
-    \column{0.46\textwidth}
-      \begin{block}{解き方}
-        フルランクなら正規方程式が得られます。ただし数値計算では、逆行列を明示的に作らずQR分解やSVDなどを使う方法があります。
-      \end{block}
-      \begin{block}{仮定を確認します}
-        二乗誤差は外れ値へ敏感です。誤差分布、測定精度、目的に応じて別の損失も検討します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{未学習と過学習は、訓練誤差だけでは区別できません}
-  \footnotesize
+\paragraph{行列表現}
+        設計行列$\Phi$を使うと、$E(\mathbf{w})=\frac12\lVert\Phi\mathbf{w}-\mathbf{y}\rVert^2$です。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{解き方}
+        フルランクなら正規方程式が得られます。ただし数値計算では、逆行列を明示的に作らずQR分解やSVDなどを使う方法があります。
+
+\paragraph{仮定を確認します}
+        二乗誤差は外れ値へ敏感です。誤差分布、測定精度、目的に応じて別の損失も検討します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{未学習と過学習は、訓練誤差だけでは区別できません}
+\label{sec:06-machine-learning-10}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     状態 & 訓練データ & 未知データ & 主な兆候\\
@@ -233,90 +307,117 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{複雑さは次数だけではありません}
+\begingroup
+\paragraph{複雑さは次数だけではありません}
         パラメータ数、正則化、特徴量、データ量、最適化、学習回数が実効的な複雑さへ影響します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{学習曲線}
-        訓練と検証の誤差をデータ量や学習回数に対して描き、両者の差と推移を確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{正則化は、訓練誤差とモデルの複雑さを同時に制御します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.50\textwidth}
-      \begin{block}{L2正則化の例}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{学習曲線}
+        訓練と検証の誤差をデータ量や学習回数に対して描き、両者の差と推移を確認します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{正則化は、訓練誤差とモデルの複雑さを同時に制御します}
+\label{sec:06-machine-learning-11}
+\begingroup
+\begingroup
+\paragraph{L2正則化の例}
         \[
           E_{\lambda}(\mathbf{w})=
           E(\mathbf{w})+\frac{\lambda}{2}\lVert\mathbf{w}\rVert_2^2
         \]
         大きな係数へ罰則を加え、データの小さな変動に対する曲線の過敏さを抑えます。
-      \end{block}
-      \begin{block}{ハイパーパラメータ}
-        $\lambda$は訓練で直接求める重みではなく、検証データなどで選びます。
-      \end{block}
-    \column{0.46\textwidth}
-      \begin{block}{汎化性能}
-        訓練に使っていない、運用時と同じ分布の例へ、どれだけ良く予測できるかです。
-      \end{block}
-      \begin{block}{正則化だけでは足りません}
-        データ漏洩、分布差、誤ったラベル、評価指標の不一致があれば、正則化しても妥当な評価にはなりません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{ベイズの式は、観測後の確率を分解して表します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
-      \begin{block}{ベイズの式}
+\paragraph{ハイパーパラメータ}
+        $\lambda$は訓練で直接求める重みではなく、検証データなどで選びます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{汎化性能}
+        訓練に使っていない、運用時と同じ分布の例へ、どれだけ良く予測できるかです。
+
+\paragraph{正則化だけでは足りません}
+        データ漏洩、分布差、誤ったラベル、評価指標の不一致があれば、正則化しても妥当な評価にはなりません。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{ベイズの式は、観測後の確率を分解して表します}
+\label{sec:06-machine-learning-12}
+\begingroup
+\begingroup
+\paragraph{ベイズの式}
         \[
           P(C\mid\mathbf{x})=
           \frac{P(\mathbf{x}\mid C)P(C)}
                {P(\mathbf{x})}
         \]
         $P(C)$は事前確率、$P(\mathbf{x}\mid C)$は尤度、$P(C\mid\mathbf{x})$は事後確率です。
-      \end{block}
-      \begin{block}{不確実さの表現}
-        分類結果を一つのラベルだけでなく、条件付き確率として表すと、しきい値や損失を後から組み合わせられます。
-      \end{block}
-    \column{0.42\textwidth}
-      \begin{block}{例：検査}
-        まれな事象では、検査の感度・特異度が高くても、陽性後の確率は事前確率に強く影響されます。
-      \end{block}
-      \begin{block}{確率の品質}
-        出力値が真の頻度と対応するとは限りません。校正を別に評価します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{意思決定は、確率と誤りの損失を組み合わせます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{期待損失}
+\paragraph{不確実さの表現}
+        分類結果を一つのラベルだけでなく、条件付き確率として表すと、しきい値や損失を後から組み合わせられます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{例：検査}
+        まれな事象では、検査の感度・特異度が高くても、陽性後の確率は事前確率に強く影響されます。
+
+\paragraph{確率の品質}
+        出力値が真の頻度と対応するとは限りません。校正を別に評価します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{意思決定は、確率と誤りの損失を組み合わせます}
+\label{sec:06-machine-learning-13}
+\begingroup
+\begingroup
+\paragraph{期待損失}
         入力$\mathbf{x}$で行動$a$を選ぶ損失を$L(a,C)$とすると、条件付き期待損失
         \[
           R(a\mid\mathbf{x})=
           \sum_C L(a,C)P(C\mid\mathbf{x})
         \]
         が小さい行動を選びます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{しきい値}
-        見逃しと誤警報の損失が違えば、確率0.5が最適なしきい値とは限りません。
-      \end{block}
-      \begin{block}{決定境界}
-        特徴空間で選ぶクラスが切り替わる点の集合です。モデル出力に加え、しきい値や損失で位置が変わります。
-      \end{block}
-  \end{columns}
-  \takeaway{予測モデルと、その出力を使う業務判断を分けて評価します。}
-\end{frame}
 
-\begin{frame}[t]{線形識別関数は、超平面のどちら側かで分類します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{しきい値}
+        見逃しと誤警報の損失が違えば、確率0.5が最適なしきい値とは限りません。
+
+\paragraph{決定境界}
+        特徴空間で選ぶクラスが切り替わる点の集合です。モデル出力に加え、しきい値や損失で位置が変わります。
+
+\par
+\endgroup
+  \takeaway{予測モデルと、その出力を使う業務判断を分けて評価します。}
+\par
+\endgroup
+
+
+\section{線形識別関数は、超平面のどちら側かで分類します}
+\label{sec:06-machine-learning-14}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=10mm,y=9mm,every node/.append style={font=\scriptsize}]
         \draw[->,draw=PaleGray] (0,0)--(5.5,0) node[right] {$x_1$};
@@ -326,47 +427,61 @@
         \draw[draw=DeepNavy,line width=.8pt] (.8,.5)--(4.4,4.3);
         \node[rotate=46] at (3.6,4.15) {$\mathbf{w}^\top\mathbf{x}+b=0$};
       \end{tikzpicture}
-    \column{0.44\textwidth}
-      \begin{block}{2クラス分類}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{2クラス分類}
         \[
           g(\mathbf{x})=\mathbf{w}^\top\mathbf{x}+b,\qquad
           \hat{y}=\operatorname{sign}(g(\mathbf{x}))
         \]
         $\mathbf{w}$は境界の法線、$b$は位置を定めます。
-      \end{block}
-      \begin{block}{線形分離可能}
-        一つの直線または超平面で、訓練例を誤りなく二群へ分けられる状態です。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{パーセプトロンは、誤分類した例の方向へ重みを直します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{更新則}
+\paragraph{線形分離可能}
+        一つの直線または超平面で、訓練例を誤りなく二群へ分けられる状態です。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{パーセプトロンは、誤分類した例の方向へ重みを直します}
+\label{sec:06-machine-learning-15}
+\begingroup
+\begingroup
+\paragraph{更新則}
         ラベル$y_i\in\{-1,+1\}$の例で$y_i(\mathbf{w}^\top\mathbf{x}_i+b)\le0$なら、
         \[
           \mathbf{w}\leftarrow\mathbf{w}+\eta y_i\mathbf{x}_i,\qquad
           b\leftarrow b+\eta y_i
         \]
         と更新します。
-      \end{block}
-      \begin{block}{直観}
-        正例を正側へ、負例を負側へ動かす方向に境界を調整します。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{収束の条件}
-        訓練データが線形分離可能なら、例を繰り返し提示するパーセプトロンは有限回の更新で分離する重みへ到達します。
-      \end{block}
-      \begin{block}{条件外}
-        分離できないデータでは更新が続き得ます。停止条件、平均化、別の損失やモデルを検討します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{XORは、一つの直線では分離できません}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
+\paragraph{直観}
+        正例を正側へ、負例を負側へ動かす方向に境界を調整します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{収束の条件}
+        訓練データが線形分離可能なら、例を繰り返し提示するパーセプトロンは有限回の更新で分離する重みへ到達します。
+
+\paragraph{条件外}
+        分離できないデータでは更新が続き得ます。停止条件、平均化、別の損失やモデルを検討します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{XORは、一つの直線では分離できません}
+\label{sec:06-machine-learning-16}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[x=24mm,y=20mm,every node/.append style={font=\scriptsize}]
         \draw[->,draw=PaleGray] (-.1,0)--(1.4,0) node[right] {$x_1$};
@@ -380,22 +495,29 @@
         \node[below left] at (0,0) {0};
         \node[above right] at (1,1) {0};
       \end{tikzpicture}
-    \column{0.48\textwidth}
-      \begin{block}{排他的論理和}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{排他的論理和}
         入力が異なるときだけ1です。対角に同じクラスが置かれるため、どの一本の直線でも両群を分けられません。
-      \end{block}
-      \begin{block}{必要な表現}
-        非線形な特徴変換、複数の線形境界、多層ネットワークなどで、中間表現を作る必要があります。
-      \end{block}
-      \begin{block}{教訓}
-        学習則を長く回すだけでは、モデルが表現できない境界を学べません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{ニューロンは、重み付き和へ非線形変換を適用します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
+\paragraph{必要な表現}
+        非線形な特徴変換、複数の線形境界、多層ネットワークなどで、中間表現を作る必要があります。
+
+\paragraph{教訓}
+        学習則を長く回すだけでは、モデルが表現できない境界を学べません。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{ニューロンは、重み付き和へ非線形変換を適用します}
+\label{sec:06-machine-learning-17}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=7mm,every node/.append style={font=\scriptsize}]
         \node[box] (x) {$\mathbf{x}$};
@@ -405,20 +527,28 @@
         \draw[flow] (z)--(a);
       \end{tikzpicture}
       \vspace{5mm}
-      \begin{block}{活性化関数}
+\paragraph{活性化関数}
         ReLU、シグモイド、tanhなどが非線形性を加えます。用途と層の役割に応じて選びます。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{多層化}
-        前の層の出力を次の層へ渡し、複数の変換を合成します。隠れ層が入力から中間表現を作ります。
-      \end{block}
-      \begin{block}{非線形性の必要}
-        線形変換だけを何層重ねても、全体は一つの線形変換にまとめられます。非線形活性化が表現を広げます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{順伝播は予測を計算し、損失へ接続します}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{多層化}
+        前の層の出力を次の層へ渡し、複数の変換を合成します。隠れ層が入力から中間表現を作ります。
+
+\paragraph{非線形性の必要}
+        線形変換だけを何層重ねても、全体は一つの線形変換にまとめられます。非線形活性化が表現を広げます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{順伝播は予測を計算し、損失へ接続します}
+\label{sec:06-machine-learning-18}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
     \node[box] (x) {入力$\mathbf{x}$};
@@ -430,22 +560,28 @@
     \draw[flow] (h2)--(out); \draw[flow] (out)--(loss);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{順伝播}
+\begingroup
+\paragraph{順伝播}
         入力から層を順に計算し、最終出力を得ます。学習時も推論時も予測計算の向きは同じです。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{損失計算}
-        予測と目標の差をスカラーへまとめます。ミニバッチでは例ごとの損失を平均するなどして目的を作ります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{勾配降下法は、損失の局所的な下り方向へ更新します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{基本更新}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{損失計算}
+        予測と目標の差をスカラーへまとめます。ミニバッチでは例ごとの損失を平均するなどして目的を作ります。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{勾配降下法は、損失の局所的な下り方向へ更新します}
+\label{sec:06-machine-learning-19}
+\begingroup
+\begingroup
+\paragraph{基本更新}
         \[
           \boldsymbol{\theta}_{t+1}
           =\boldsymbol{\theta}_{t}
@@ -453,68 +589,92 @@
           L(\boldsymbol{\theta}_{t})
         \]
         $\eta$は学習率です。大き過ぎると発散し、小さ過ぎると進行が遅くなります。
-      \end{block}
-      \begin{block}{確率的勾配}
-        全訓練例ではなく、無作為に選んだミニバッチで勾配を近似し、計算量とばらつきを調整します。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{実用的な最適化}
-        Momentum、Adamなどは過去の勾配や二次モーメントの推定を使って更新を調整します。
-      \end{block}
-      \begin{block}{監視する量}
-        訓練・検証損失、勾配の大きさ、学習率、計算時間を追い、発散、停滞、過学習を切り分けます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{誤差逆伝播は、連鎖律で全パラメータの勾配を再利用計算します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
-      \begin{block}{連鎖律}
+\paragraph{確率的勾配}
+        全訓練例ではなく、無作為に選んだミニバッチで勾配を近似し、計算量とばらつきを調整します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{実用的な最適化}
+        Momentum、Adamなどは過去の勾配や二次モーメントの推定を使って更新を調整します。
+
+\paragraph{監視する量}
+        訓練・検証損失、勾配の大きさ、学習率、計算時間を追い、発散、停滞、過学習を切り分けます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{誤差逆伝播は、連鎖律で全パラメータの勾配を再利用計算します}
+\label{sec:06-machine-learning-20}
+\begingroup
+\begingroup
+\paragraph{連鎖律}
         $z=f(x)$、$L=g(z)$なら、
         \[
           \frac{dL}{dx}
           =\frac{dL}{dz}\frac{dz}{dx}
         \]
         です。計算グラフの局所微分を出力側から掛け合わせます。
-      \end{block}
-      \begin{block}{逆向きの計算}
+
+\paragraph{逆向きの計算}
         順伝播で中間値を保存し、損失から入力側へ勾配を伝えます。共通する部分計算を再利用します。
-      \end{block}
-    \column{0.42\textwidth}
-      \begin{block}{役割の区別}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{役割の区別}
         逆伝播は勾配を計算する方法です。その勾配を使ってパラメータをどう変えるかは、勾配降下法などの最適化器が決めます。
-      \end{block}
-      \begin{block}{数値上の課題}
+
+\paragraph{数値上の課題}
         深い計算では勾配消失・爆発が起こり得ます。初期化、正規化、残差接続などで学習を安定化します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{系列では、依存関係・順序・長さを同時に扱います}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{長距離依存}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{系列では、依存関係・順序・長さを同時に扱います}
+\label{sec:06-machine-learning-21}
+\begingroup
+\begingroup
+\paragraph{長距離依存}
         文頭の主語や定義が、離れた位置の解釈へ影響します。必要な情報を長く保持する必要があります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{可変長}
-        文や時系列の長さは一定ではありません。バッチ化にはパディングやマスクが必要です。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{順序}
-        同じ要素でも並び順が変われば意味が変わります。各位置の情報を表現へ入れます。
-      \end{block}
-  \end{columns}
-  \vspace{5mm}
-  \begin{block}{逐次計算との違い}
-    RNNは前時刻の状態へ依存するため、時刻方向の並列化が難しくなります。TransformerはAttentionで位置間を直接結び、訓練時の並列計算を増やします。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{Attentionは、参照先ごとの重み付き和を作ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{可変長}
+        文や時系列の長さは一定ではありません。バッチ化にはパディングやマスクが必要です。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{順序}
+        同じ要素でも並び順が変われば意味が変わります。各位置の情報を表現へ入れます。
+
+\par
+\endgroup
+  \vspace{5mm}
+\paragraph{逐次計算との違い}
+    RNNは前時刻の状態へ依存するため、時刻方向の並列化が難しくなります。TransformerはAttentionで位置間を直接結び、訓練時の並列計算を増やします。
+
+\par
+\endgroup
+
+
+\section{Attentionは、参照先ごとの重み付き和を作ります}
+\label{sec:06-machine-learning-22}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
         \node[accentbox] (q) {現在位置};
@@ -525,46 +685,64 @@
         \draw[flow,line width=1.1pt] (q)--(v2);
         \draw[softflow] (q)--(v3);
       \end{tikzpicture}
-    \column{0.42\textwidth}
-      \begin{block}{内容に応じた参照}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{内容に応じた参照}
         現在の表現と各位置の適合度を計算し、softmaxで合計1の重みへ変換します。
-      \end{block}
-      \begin{block}{出力}
+
+\paragraph{出力}
         各位置が持つValueを重み付き和にします。固定幅の表現へ、必要な位置の情報を集約します。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{4mm}
   \takeaway{重みはモデル内部の計算結果です。人間の説明や因果関係と常に一致するとは限りません。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{Query・Key・Valueは、検索条件・索引・内容を分けます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{Query}
+
+\section{Query・Key・Valueは、検索条件・索引・内容を分けます}
+\label{sec:06-machine-learning-23}
+\begingroup
+\begingroup
+\paragraph{Query}
         現在位置が「どの情報を必要とするか」を表すベクトルです。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{Key}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{Key}
         各位置が「どのQueryと合うか」を比較するためのベクトルです。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{Value}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{Value}
         適合した位置から実際に集約する内容のベクトルです。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{5mm}
-  \begin{block}{Scaled Dot-Product Attention}
+\paragraph{Scaled Dot-Product Attention}
     \[
       \operatorname{Attention}(Q,K,V)
       =\operatorname{softmax}
       \left(\frac{QK^\top}{\sqrt{d_k}}+M\right)V
     \]
     $1/\sqrt{d_k}$は内積の尺度を調整し、$M$は参照してよい位置を制限するマスクです。
-  \end{block}
-  \source{Vaswani et al., “Attention Is All You Need”, 2017}
-\end{frame}
 
-\begin{frame}[t]{Self-Attentionは、同じ系列からQ・K・Vを作ります}
+  \source{Vaswani et al., “Attention Is All You Need”, 2017}
+\par
+\endgroup
+
+
+\section{Self-Attentionは、同じ系列からQ・K・Vを作ります}
+\label{sec:06-machine-learning-24}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
     \node[box] (x) {入力$X$};
@@ -576,39 +754,52 @@
     \draw[flow] (q)--(attn); \draw[flow] (k)--(attn); \draw[flow] (v)--(attn);
   \end{tikzpicture}
   \vspace{4mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{Multi-Head Attention}
+\begingroup
+\paragraph{Multi-Head Attention}
         異なる射影で複数のAttentionを計算し、結合します。異なる関係や表現部分を同時に扱えます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{計算量}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{計算量}
         標準的な全位置間Attentionは、系列長$n$に対してスコア行列が$O(n^2)$です。長い文脈では計算・メモリが課題になります。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{位置情報は、同じトークン集合の並び順を区別します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{なぜ必要か}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{位置情報は、同じトークン集合の並び順を区別します}
+\label{sec:06-machine-learning-25}
+\begingroup
+\begingroup
+\paragraph{なぜ必要か}
         位置表現を持たないSelf-Attentionは、入力の並べ替えに応じて出力も同様に並べ替わる性質を持ちます。語順自体を区別する情報が必要です。
-      \end{block}
-      \begin{block}{入力へ加える方式}
-        元論文は正弦・余弦の位置エンコーディングをトークン表現へ加えます。学習可能な位置埋め込みも使われます。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{相対位置}
-        二位置の距離や順序をAttentionスコアへ反映する方式があります。回転位置埋め込みなど、モデルごとに実装は異なります。
-      \end{block}
-      \begin{block}{長さの外挿}
-        学習時より長い系列へそのまま一般化できるとは限りません。位置方式と学習条件を確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{Encoder・Decoder・Decoder-onlyは、参照できる情報が異なります}
-  \footnotesize
+\paragraph{入力へ加える方式}
+        元論文は正弦・余弦の位置エンコーディングをトークン表現へ加えます。学習可能な位置埋め込みも使われます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{相対位置}
+        二位置の距離や順序をAttentionスコアへ反映する方式があります。回転位置埋め込みなど、モデルごとに実装は異なります。
+
+\paragraph{長さの外挿}
+        学習時より長い系列へそのまま一般化できるとは限りません。位置方式と学習条件を確認します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{Encoder・Decoder・Decoder-onlyは、参照できる情報が異なります}
+\label{sec:06-machine-learning-26}
+\begingroup
   \begin{tabularx}{\textwidth}{@{}lYYY@{}}
     \toprule
     構成 & 参照範囲 & 主な出力 & 代表的な用途\\
@@ -619,13 +810,17 @@
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
-  \begin{block}{名称だけで能力は決まりません}
+\paragraph{名称だけで能力は決まりません}
     学習目的、データ、規模、位置表現、推論方法によって性質は変わります。現代の実装には各構成の変種があります。
-  \end{block}
-  \source{Stanford CS224N, “Transformers” lecture}
-\end{frame}
 
-\begin{frame}[t]{トークン化は、文字列を有限語彙のID列へ変換します}
+  \source{Stanford CS224N, “Transformers” lecture}
+\par
+\endgroup
+
+
+\section{トークン化は、文字列を有限語彙のID列へ変換します}
+\label{sec:06-machine-learning-27}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (text) {「情報工学を学ぶ」};
@@ -635,63 +830,84 @@
     \draw[flow] (pieces)--(ids);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{単位は単語とは限りません}
+\begingroup
+\paragraph{単位は単語とは限りません}
         頻出する文字列片、文字、バイトなどを組み合わせます。日本語の語境界とも一致しない場合があります。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{影響}
-        同じ文字数でもトークン数は言語や文字列で変わります。文脈長、料金、生成可能な単位へ影響します。
-      \end{block}
-  \end{columns}
-  {\scriptsize 図の分割とIDは説明用です。実際の語彙と分割はモデルごとに異なります。}
-\end{frame}
 
-\begin{frame}[t]{次トークン予測は、系列の条件付き確率を学習します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.52\textwidth}
-      \begin{block}{自己回帰分解}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{影響}
+        同じ文字数でもトークン数は言語や文字列で変わります。文脈長、料金、生成可能な単位へ影響します。
+
+\par
+\endgroup
+  {\scriptsize 図の分割とIDは説明用です。実際の語彙と分割はモデルごとに異なります。}
+\par
+\endgroup
+
+
+\section{次トークン予測は、系列の条件付き確率を学習します}
+\label{sec:06-machine-learning-28}
+\begingroup
+\begingroup
+\paragraph{自己回帰分解}
         \[
           P(t_1,\ldots,t_n)
           =\prod_{i=1}^{n}
           P(t_i\mid t_1,\ldots,t_{i-1})
         \]
         各位置で、それ以前のトークンから正解トークンの確率を高くします。
-      \end{block}
-      \begin{block}{学習信号}
+
+\paragraph{学習信号}
         一つの系列から多数の「文脈→次トークン」の例を作れます。交差エントロピーで予測分布を学習します。
-      \end{block}
-    \column{0.44\textwidth}
-      \begin{block}{大規模事前学習}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{大規模事前学習}
         多様な文書やコードで共通の予測目的を最適化し、言語パターンや知識をパラメータへ統計的に反映します。
-      \end{block}
-      \begin{block}{事実データベースではありません}
+
+\paragraph{事実データベースではありません}
         記憶、一般化、混同が同じ生成過程に現れます。学習目的は個々の出力の真偽を直接保証しません。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{プロンプトとコンテキストは、その推論で参照する入力です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{含まれるもの}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{プロンプトとコンテキストは、その推論で参照する入力です}
+\label{sec:06-machine-learning-29}
+\begingroup
+\begingroup
+\paragraph{含まれるもの}
         指示、利用者の質問、会話履歴、例、取得文書、ツール結果などをトークン列としてモデルへ渡します。
-      \end{block}
-      \begin{block}{重みとの違い}
-        通常のプロンプトは推論時の条件を変えますが、学習済みパラメータ自体を書き換えません。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{有限の文脈長}
-        入力と出力に使えるトークン数には上限があります。長い文書では選択、要約、検索、分割が必要です。
-      \end{block}
-      \begin{block}{指示の競合}
-        複数の指示や取得文書が矛盾すると、期待する優先順位で処理されない場合があります。入力境界と信頼元を管理します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{文章生成は、確率分布から一トークンずつ選びます}
+\paragraph{重みとの違い}
+        通常のプロンプトは推論時の条件を変えますが、学習済みパラメータ自体を書き換えません。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{有限の文脈長}
+        入力と出力に使えるトークン数には上限があります。長い文書では選択、要約、検索、分割が必要です。
+
+\paragraph{指示の競合}
+        複数の指示や取得文書が矛盾すると、期待する優先順位で処理されない場合があります。入力境界と信頼元を管理します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{文章生成は、確率分布から一トークンずつ選びます}
+\label{sec:06-machine-learning-30}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
     \node[accentbox] (ctx) {文脈};
@@ -704,85 +920,118 @@
     \draw[softflow] (next.south) to[bend left=25] node[below]{文脈へ追加して反復} (ctx.south);
   \end{tikzpicture}
   \vspace{5mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{貪欲選択}
+\begingroup
+\paragraph{貪欲選択}
         毎回最大確率を選びます。再現しやすい一方、局所的な選択へ固定されます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{サンプリング}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{サンプリング}
         温度、top-$k$、top-$p$などで分布を調整し、確率的に選びます。同じ入力でも変わり得ます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{停止}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{停止}
         終了トークン、最大長、停止文字列などで生成を終えます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{評価指標は、業務上の誤りとベースラインから選びます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{分類の例}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{評価指標は、業務上の誤りとベースラインから選びます}
+\label{sec:06-machine-learning-31}
+\begingroup
+\begingroup
+\paragraph{分類の例}
         Accuracyだけでなく、Precision、Recall、F1、ROC-AUC、PR-AUC、校正などを、クラス比率と誤りコストに応じて選びます。
-      \end{block}
-      \begin{block}{生成の例}
+
+\paragraph{生成の例}
         正解一致、引用の裏付け、事実性、課題達成率、人手評価、応答時間、費用など、複数の軸を使います。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{ベースライン}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ベースライン}
         多数派予測、単純な規則、既存システム、小さなモデルと比べ、複雑さに見合う改善かを確認します。
-      \end{block}
-      \begin{block}{評価集合}
+
+\paragraph{評価集合}
         実運用の頻度だけでなく、重要な失敗、境界条件、攻撃的入力を含めます。指標の信頼区間や標本数も確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{データ漏洩と偏りは、評価をゆがめます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{データ漏洩}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{データ漏洩と偏りは、評価をゆがめます}
+\label{sec:06-machine-learning-32}
+\begingroup
+\begingroup
+\paragraph{データ漏洩}
         予測時には得られない未来情報、ラベルから作った特徴、重複例、前処理で見たテスト統計が学習へ入ることです。
-      \end{block}
-      \begin{block}{防止}
-        分割後に前処理を学習し、利用者・時系列・原資料の単位で重複を排除します。生成AIでは評価問題の混入も調べます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{データの偏り}
-        収集対象、測定方法、注釈基準、過去の判断が、集団や状況ごとの代表性と誤りへ影響します。
-      \end{block}
-      \begin{block}{分解評価}
-        全体平均だけでなく、利用条件、言語、期間、重要な集団ごとに性能と不確実性を確認します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{分布変化とハルシネーションを前提に、利用境界を設けます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{分布変化}
+\paragraph{防止}
+        分割後に前処理を学習し、利用者・時系列・原資料の単位で重複を排除します。生成AIでは評価問題の混入も調べます。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{データの偏り}
+        収集対象、測定方法、注釈基準、過去の判断が、集団や状況ごとの代表性と誤りへ影響します。
+
+\paragraph{分解評価}
+        全体平均だけでなく、利用条件、言語、期間、重要な集団ごとに性能と不確実性を確認します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{分布変化とハルシネーションを前提に、利用境界を設けます}
+\label{sec:06-machine-learning-33}
+\begingroup
+\begingroup
+\paragraph{分布変化}
         季節、製品、利用者行動、入力装置が変わると、訓練時の関係が崩れます。入力と性能を継続監視します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{ハルシネーション}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ハルシネーション}
         流暢でも根拠のない内容、存在しない引用、矛盾を生成し得ます。検索を加えても無条件には防げません。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{人間の確認}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{人間の確認}
         医療、法務、金融、安全、個人情報、不可逆な操作など、誤りの影響が大きい判断では権限ある人が検証します。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{5mm}
-  \begin{block}{運用上の制御}
+\paragraph{運用上の制御}
     出典の照合、入力・出力検査、権限分離、操作前確認、監査ログ、停止手段、代替手順を組み合わせます。
     モデルの確信表現だけを検証の代わりにしません。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t,fragile]{ミニ実習：次数ごとの訓練誤差とテスト誤差を比べます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.57\textwidth}
+\par
+\endgroup
+
+
+\section{ミニ実習：次数ごとの訓練誤差とテスト誤差を比べます}
+\label{sec:06-machine-learning-34}
+\begingroup
+\begingroup
       \begin{lstlisting}[language=Python,basicstyle=\ttfamily\fontsize{6.8}{8.1}\selectfont]
 import numpy as np
 
@@ -803,37 +1052,54 @@ for degree in [0, 1, 3, 9]:
     print(degree, mse(train_y, train_pred),
           mse(test_y, test_pred))
       \end{lstlisting}
-    \column{0.39\textwidth}
-      \begin{block}{記録と考察}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{記録と考察}
         次数、訓練MSE、テストMSE、曲線を記録します。乱数シードと分割を固定し、テスト誤差が増える次数を探します。
-      \end{block}
-      \begin{block}{追加課題}
-        Ridge回帰を加え、同じ次数で正則化係数を検証データから選びます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{第6章の要点は、予測・学習・判断・評価を分けることです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{学習}
+\paragraph{追加課題}
+        Ridge回帰を加え、同じ次数で正則化係数を検証データから選びます。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{第6章の要点は、予測・学習・判断・評価を分けることです}
+\label{sec:06-machine-learning-35}
+\begingroup
+\begingroup
+\paragraph{学習}
         データ上の損失を最適化し、未知データへの汎化を分離した評価集合で測ります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{表現}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{表現}
         線形境界、多層ネット、Attentionは、入力から予測へ使う表現と依存関係が異なります。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{利用}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{利用}
         確率と業務損失から判断し、漏洩、偏り、分布変化、生成誤りを運用で管理します。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \vspace{4mm}
   \takeaway{高い訓練性能や流暢な出力ではなく、独立した条件での再現可能な評価を根拠に使います。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{確認問題では、数式と運用上の意味を対応づけます}
-  \small
+
+\section{確認問題では、数式と運用上の意味を対応づけます}
+\label{sec:06-machine-learning-36}
+\begingroup
   \begin{enumerate}
     \item 勾配と負の勾配は、損失関数上でどの方向を示しますか。
     \item 検証データとテストデータの用途を分ける理由を説明してください。
@@ -846,4 +1112,5 @@ for degree in [0, 1, 3, 9]:
     \item 次トークン予測が、出力の事実性を保証しない理由を説明してください。
     \item 生成AIを高影響の操作へ使う際の制御を三つ挙げてください。
   \end{enumerate}
-\end{frame}
+\par
+\endgroup

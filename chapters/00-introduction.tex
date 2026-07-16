@@ -1,86 +1,78 @@
-\section{序章}
+% !TEX root = ../main.tex
+\chapter{はじめに}
 
-\begin{frame}[t]
-  \vspace{4mm}
-  {\fontsize{26}{31}\selectfont\bfseries 情報工学の基礎\par}
-  \vspace{1mm}
-  {\large 新卒アプリケーションエンジニア向け・社内研修教材\par}
-  \vspace{2mm}
-  \includegraphics[width=\textwidth,height=25mm,keepaspectratio]{assets/cover-progression.png}
-  \vspace{1mm}
-  \small
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{下から積み上げる}
-        電気信号からCPU、言語、OSへ進みます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{実務へ接続する}
-        メモリ、設計、通信を原理から説明します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{AIまで見通す}
-        数学と学習からLLMまでを一つの流れで扱います。
-      \end{block}
-  \end{columns}
-\end{frame}
+\section{この本の目的}
 
-\begin{frame}[t]{研修の到達点は、現象を階層に分けて説明できることです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{読了後に説明できること}
-        \begin{itemize}
-          \item ソースコードがCPU命令として実行される流れ
-          \item データ構造と計算量、メモリ使用量の関係
-          \item HTTP通信が複数プロトコルを通る仕組み
-          \item 機械学習モデルが学習と推論を分ける理由
-        \end{itemize}
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{対象と前提}
-        対象は、新卒のアプリケーションエンジニアです。
-        高校数学と、短いプログラムを読んだ経験を前提にします。
-        回路設計や機械学習の実装経験は必要ありません。
-      \end{block}
-      \begin{block}{扱わない範囲}
-        データベース、クラウド固有サービス、分散システム、認証・認可の詳細は後続研修へ分離します。
-      \end{block}
-  \end{columns}
-\end{frame}
+アプリケーションのコードは、単独では動きません。
+ソースコードは命令へ変換され、OSが用意したプロセスの中でCPUに実行されます。
+処理中の値はメモリへ置かれ、ネットワークを通じて別の計算機とやり取りします。
+機械学習を利用する場合も、モデルの推論は同じ実行環境と通信経路の上にあります。
 
-\begin{frame}[t]{一つ下の階層を知ると、不具合を切り分けやすくなります}
+本書の目的は、これらの仕組みを用語として暗記することではありません。
+目の前の現象を適切な階層へ分け、観測できる事実から原因の候補を絞り、他者へ説明できるようになることです。
+新卒のアプリケーションエンジニアが、実装・レビュー・障害調査で必要になる基礎を、一つの流れとして学べるように構成しています。
+
+\begin{chapterabstract}
+本書は、電気信号からCPU、プログラミング言語、OS、データ構造、ソフトウェア設計、ネットワーク、機械学習までを扱います。
+各分野を独立した知識として並べるのではなく、Webアプリケーションの一つの要求が各層を通る過程へ結び付けます。
+\end{chapterabstract}
+
+\section{一つ下の階層を知る理由}
+
+アプリケーションから見えるAPIは、下位の仕組みを使いやすい形へまとめた抽象化です。
+抽象化によって、通常は電圧、命令形式、ページ表、パケットの細部を意識せずに開発できます。
+一方で、性能低下、資源不足、通信失敗のような問題は、抽象化の境界を越えて現れます。
+
+例えば、APIの応答が遅いという事実だけでは、原因を特定できません。
+CPUでの計算、メモリ割り当て、ディスクI/O、DNS、接続確立、再送、下流サービスの待ち時間を分けて観測する必要があります。
+一つ下の階層を知っていれば、どの値を測り、どの仮説を先に反証するかを決められます。
+
+ただし、すべての実装詳細を常に追う必要はありません。
+重要なのは、現在使っている抽象化が何を保証し、何を保証しないかを知ることです。
+保証の外側で問題が起きたときにだけ、必要な深さまで降ります。
+
+\section{本書の全体像}
+
+本書は、下位の物理的な表現から上位の応用へ進みます。
+前半では、値がどのように表現され、命令として実行され、データ構造として操作されるかを扱います。
+後半では、その仕組みの上で変更しやすいソフトウェアを設計し、ネットワーク越しに協調させ、データから予測規則を学ぶ方法を扱います。
+
+\begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[node distance=1.5mm,every node/.append style={minimum height=6.5mm,inner sep=1mm}]
-    \node[accentbox,minimum width=112mm] (ai) {機械学習・生成AI：確率的な予測と評価};
-    \node[box,minimum width=112mm,below=of ai] (app) {アプリケーション：要件、設計、データ構造};
-    \node[box,minimum width=112mm,below=of app] (net) {ネットワーク：HTTP、TLS、TCP／QUIC、IP};
-    \node[box,minimum width=112mm,below=of net] (runtime) {言語・ランタイム・OS：型、プロセス、仮想メモリ};
-    \node[box,minimum width=112mm,below=of runtime] (cpu) {CPU・メモリ・論理回路：命令と0／1};
-    \draw[softflow] (cpu.east) -- ++(12mm,0) |- (ai.east);
-  \end{tikzpicture}
-  \vspace{1.5mm}
-  \takeaway{各階層は下位層の機能を利用し、上位層へ抽象化された機能を提供します。}
-\end{frame}
+  \includegraphics[width=0.95\linewidth]{assets/cover-progression.png}
+  \caption{電気信号からアプリケーションと機械学習までの学習経路}
+  \label{fig:learning-progression}
+\end{figure}
 
-\begin{frame}[t]{読む、確かめる、説明するの三段階で学びます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{1　要点を読む}
-        定義、前提、例、帰結の順に読みます。
-        用語を暗記する前に、何を区別する語かを確認します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{2　図とコードで確かめる}
-        小さな入力を手で追い、値・状態・パケットがどこへ移るかを記録します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{3　自分の言葉で説明する}
-        章末問題と実習では、結果だけでなく、成立条件と例外も説明します。
-      \end{block}
-  \end{columns}
-  \vspace{3mm}
-  \begin{block}{章の共通構成}
-    本編の説明の後に「要点整理」「確認問題」「小さな実習」を置きます。
-    実習コードは学習用の最小例であり、本番運用の完全な実装例ではありません。
-  \end{block}
-\end{frame}
+図\ref{fig:learning-progression}の各層は、完全に独立しているわけではありません。
+プログラミング言語の型は値の扱い方を制約し、OSはその値を置く仮想メモリを提供します。
+ネットワークライブラリはOSの機能を利用し、機械学習モデルの推論もCPUやメモリの制約を受けます。
+本書では、章を進むたびに前の章との接続を確認します。
+
+\section{想定する読者と前提知識}
+
+主な読者は、アプリケーション開発へ配属される新卒エンジニアです。
+変数、条件分岐、関数を使った短いプログラムを読んだ経験を想定しますが、電子回路、OS、ネットワーク、機械学習の専門知識は前提にしません。
+
+例にはGo、Python、シェルコマンドを使います。
+構文を覚えることより、値の共有、計算量、通信の段階、評価条件を読み取ることを重視します。
+使用言語が異なる場合も、同じ観点を担当する言語や実行環境へ置き換えてください。
+
+\section{読み進め方}
+
+各章の冒頭には、その章で説明できるようになる事項を示します。
+本文では、用語の定義、仕組み、成立条件、実務での観測方法の順に読み進めます。
+図表は本文から参照し、図だけを見ても意味が分かるようにキャプションを付けています。
+
+章末の確認問題には、本文中の語句をそのまま答える問題だけでなく、条件を比較し、原因を説明する問題があります。
+回答するときは、結論だけでなく「どの前提から、なぜその結論になるのか」を文章または図で示してください。
+
+学習は次の三段階で進めます。
+
+\begin{enumerate}
+  \item 本文を読み、用語と因果関係を自分の言葉で要約します。
+  \item コード、コマンド、図の値を変え、結果が説明と一致するか確かめます。
+  \item 実務の現象を一つ選び、どの階層で何を観測するかを他者へ説明します。
+\end{enumerate}
+
+\takeaway{暗記する対象は個別の数値や製品名ではなく、現象を分解する軸と、説明を検証する方法です。}

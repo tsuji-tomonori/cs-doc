@@ -1,17 +1,35 @@
-\chapterframe{第1章　コンピュータはいかにして0と1を扱うのか}{電気信号から命令実行まで}{電圧の範囲を0と1に対応させ、論理ゲート、記憶回路、CPUへ積み上げます。加算命令を例に、回路とソフトウェアの境界を追います。}
+% !TEX root = ../main.tex
+\chapter{コンピュータはいかにして0と1を扱うのか}
+\label{chap:digital-computer}
 
-\begin{frame}[t]{0と1は電圧そのものではなく、電圧範囲の解釈です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{デジタル抽象化}
+\begin{chapterabstract}
+電圧の範囲を0と1として解釈するところから始め、論理ゲート、加算器、記憶回路、メモリ、CPUへと抽象化を積み上げます。加算命令を例に、電気的な状態変化がソフトウェアから見える計算へ変わるまでを追います。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item ビット列と、それを整数・文字・実数として読む規則を区別できます。
+  \item 論理ゲートから加算器と記憶回路が構成される流れを説明できます。
+  \item メモリ階層が速度・容量・コストの差から生じる理由を説明できます。
+  \item CPUのフェッチ、デコード、実行を、データ経路と制御信号に対応づけられます。
+\end{learninggoals}
+
+
+\section{0と1は電圧そのものではなく、電圧範囲の解釈です}
+\label{sec:01-digital-computer-01}
+\begingroup
+\begingroup
+\paragraph{デジタル抽象化}
         回路は連続量である電圧を、LowとHighの二つの状態として解釈します。
         「Lowは必ず0 V、Highは必ず5 V」という固定値ではありません。
-      \end{block}
-      \begin{block}{しきい値}
+
+\paragraph{しきい値}
         入力電圧が $V_{IL}$ 以下ならLow、$V_{IH}$ 以上ならHighと判定します。
         二つのしきい値の間は、論理値を保証しない領域です。
-      \end{block}
-    \column{0.48\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[x=0.75mm,y=0.75mm]
         \draw[->,draw=DeepNavy] (0,0) -- (65,0) node[right] {電圧};
@@ -25,31 +43,38 @@
         \draw[draw=MutedBlue] (43,3) -- (43,22) node[above] {$V_{IH}$};
       \end{tikzpicture}
       \vspace{4mm}
-      \begin{block}{ノイズ耐性}
+\paragraph{ノイズ耐性}
         出力がしきい値から十分離れるように設計すると、小さな電圧変動が論理値の反転につながりにくくなります。
-      \end{block}
-  \end{columns}
-  \source{MIT 6.004, “The Digital Abstraction”}
-\end{frame}
 
-\begin{frame}[t]{2進数は、各桁に2の累乗という重みを与えます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
-      \begin{block}{ビット、バイト、ワード}
+\par
+\endgroup
+  \source{MIT 6.004, “The Digital Abstraction”}
+\par
+\endgroup
+
+
+\section{2進数は、各桁に2の累乗という重みを与えます}
+\label{sec:01-digital-computer-02}
+\begingroup
+\begingroup
+\paragraph{ビット、バイト、ワード}
         \begin{itemize}
           \item \term{ビット}は0または1の一桁です。
           \item \term{バイト}は通常8ビットです。
           \item \term{ワード}はCPUが基本単位として扱うビット幅で、命令セットに依存します。
         \end{itemize}
-      \end{block}
-      \begin{block}{同じ値を異なる基数で表す例}
+
+\paragraph{同じ値を異なる基数で表す例}
         \[
           45_{10}=0010\,1101_2=2\mathrm{D}_{16}
         \]
         16進数一桁は4ビットに対応するため、ビット列を短く記述できます。
-      \end{block}
-    \column{0.41\textwidth}
-      \begin{block}{桁の重み}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{桁の重み}
         \centering
         \begin{tabular}{c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c}
           桁 & 5 & 4 & 3 & 2 & 1 & 0\\
@@ -58,76 +83,97 @@
           \bottomrule
           \multicolumn{7}{c}{$32+8+4+1=45$}
         \end{tabular}
-      \end{block}
-      \begin{block}{変換の確認}
+
+\paragraph{変換の確認}
         10進数から2進数へは2で割った余りを逆順に並べます。
         2進数から10進数へは、1になっている桁の重みを加えます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{2の補数は、加算回路を共有したまま負数を表せます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{符号なし整数}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{2の補数は、加算回路を共有したまま負数を表せます}
+\label{sec:01-digital-computer-03}
+\begingroup
+\begingroup
+\paragraph{符号なし整数}
         $n$ビットの範囲は $0$ から $2^n-1$ です。
         8ビットなら $0$ から $255$ までを表します。
-      \end{block}
-      \begin{block}{2の補数}
+
+\paragraph{2の補数}
         $n$ビットで $-x$ を表すビット列は、$2^n-x$ の下位$n$ビットです。
         範囲は $-2^{n-1}$ から $2^{n-1}-1$ です。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{8ビットで $-5$ を作る}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{8ビットで $-5$ を作る}
         \begin{enumerate}
           \item $5=0000\,0101_2$ と表します。
           \item 各ビットを反転して $1111\,1010_2$ にします。
           \item 1を加えて $1111\,1011_2$ を得ます。
         \end{enumerate}
         $0000\,0101_2+1111\,1011_2$ の下位8ビットは0です。
-      \end{block}
-      \begin{block}{オーバーフロー}
+
+\paragraph{オーバーフロー}
         固定幅を超えた桁は表現できません。
         符号なし加算の桁上がりと、符号付き加算のオーバーフローは別の条件です。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{同じビット列でも、文字と実数では解釈規則が異なります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{文字コード}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{同じビット列でも、文字と実数では解釈規則が異なります}
+\label{sec:01-digital-computer-04}
+\begingroup
+\begingroup
+\paragraph{文字コード}
         Unicodeは文字にコードポイントを割り当てます。
         UTF-8は、そのコードポイントを1〜4バイトの列へ符号化する方式です。
-      \end{block}
-      \begin{block}{区別する三つの値}
+
+\paragraph{区別する三つの値}
         文字「A」、コードポイント \code{U+0041}、UTF-8のバイト \code{0x41} は、この例では対応します。
         ただし、すべての文字が1バイトになるわけではありません。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{浮動小数点数}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{浮動小数点数}
         代表的な形式は、符号、指数部、仮数部にビットを分けます。
         限られたビット数で広い範囲を表せる一方、表現できる値は離散的です。
-      \end{block}
-      \begin{block}{丸め誤差}
+
+\paragraph{丸め誤差}
         10進小数の0.1は、2進数では有限桁に収まりません。
         そのため、\code{0.1 + 0.2} を厳密な10進数の0.3として比較すると失敗する処理系があります。
-      \end{block}
-  \end{columns}
-  \takeaway{ビット列だけでは意味が決まりません。型と符号化方式が解釈を決めます。}
-\end{frame}
 
-\begin{frame}[t]{トランジスタは、電気信号で導通状態を切り替える素子です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.47\textwidth}
-      \begin{block}{スイッチとしての抽象化}
+\par
+\endgroup
+  \takeaway{ビット列だけでは意味が決まりません。型と符号化方式が解釈を決めます。}
+\par
+\endgroup
+
+
+\section{トランジスタは、電気信号で導通状態を切り替える素子です}
+\label{sec:01-digital-computer-05}
+\begingroup
+\begingroup
+\paragraph{スイッチとしての抽象化}
         MOSトランジスタでは、ゲートへ加える電圧が端子間の導通を制御します。
         デジタル回路では、この連続的な特性をオン／オフのスイッチとして抽象化します。
-      \end{block}
-      \begin{block}{CMOS回路}
+
+\paragraph{CMOS回路}
         特性の異なるnMOSとpMOSを組み合わせると、入力に応じて出力をLowまたはHighへ駆動できます。
-      \end{block}
-    \column{0.49\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
         \node[box,minimum width=22mm,minimum height=15mm] (sw) {制御される\\スイッチ};
@@ -139,18 +185,22 @@
         \draw[flow] (gate) -- (sw);
       \end{tikzpicture}
       \vspace{1mm}
-      \begin{block}{回路設計で残る現実}
+\paragraph{回路設計で残る現実}
         遅延、消費電力、発熱、しきい値、配線容量は消えません。
         論理回路は、これらの物理特性が仕様範囲内にあることを前提にします。
-      \end{block}
-  \end{columns}
-  \source{MIT 6.004, computation structures lecture notes}
-\end{frame}
 
-\begin{frame}[t]{論理ゲートは、入力ビットから出力ビットを決める規則です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.55\textwidth}
-      \begin{block}{基本ゲートの真理値表}
+\par
+\endgroup
+  \source{MIT 6.004, computation structures lecture notes}
+\par
+\endgroup
+
+
+\section{論理ゲートは、入力ビットから出力ビットを決める規則です}
+\label{sec:01-digital-computer-06}
+\begingroup
+\begingroup
+\paragraph{基本ゲートの真理値表}
         \centering
         \begin{tabular}{ccccc}
           \toprule
@@ -162,75 +212,92 @@
           1 & 1 & 0 & 1 & 1\\
           \bottomrule
         \end{tabular}
-      \end{block}
-      \begin{block}{組み合わせ回路}
+
+\paragraph{組み合わせ回路}
         現在の出力が現在の入力だけで決まる回路です。
         同じ入力には同じ出力が対応します。
-      \end{block}
-    \column{0.41\textwidth}
-      \begin{block}{NAND}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{NAND}
         NANDはANDの結果を反転します。
         \[
           A\mathbin{\mathrm{NAND}}B=\overline{A\land B}
         \]
-      \end{block}
-      \begin{block}{真理値表の役割}
-        回路記号の見た目ではなく、すべての入力組合せに対する出力を仕様として固定します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{NANDだけでNOT、AND、ORを構成できます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.47\textwidth}
-      \begin{block}{NOTを作る}
+\paragraph{真理値表の役割}
+        回路記号の見た目ではなく、すべての入力組合せに対する出力を仕様として固定します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{NANDだけでNOT、AND、ORを構成できます}
+\label{sec:01-digital-computer-07}
+\begingroup
+\begingroup
+\paragraph{NOTを作る}
         同じ信号を二つの入力へ入れます。
         \[
           \overline{A}=A\mathbin{\mathrm{NAND}}A
         \]
-      \end{block}
-      \begin{block}{ANDを作る}
+
+\paragraph{ANDを作る}
         NANDの出力を、NANDで再び反転します。
         \[
           A\land B=\overline{\overline{A\land B}}
         \]
-      \end{block}
-    \column{0.49\textwidth}
-      \begin{block}{ORを作る}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ORを作る}
         De Morganの法則を使います。
         \[
           A\lor B=\overline{\overline{A}\land\overline{B}}
         \]
-      \end{block}
-      \begin{block}{万能ゲートという意味}
+
+\paragraph{万能ゲートという意味}
         NOT、AND、ORで任意のブール関数を表せます。
         それらをNANDで置き換えられるため、NANDだけでも任意の組み合わせ論理を構成できます。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{加算器は、真理値表を段階的に回路へ変換した例です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{半加算器}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{加算器は、真理値表を段階的に回路へ変換した例です}
+\label{sec:01-digital-computer-08}
+\begingroup
+\begingroup
+\paragraph{半加算器}
         1ビットの$A$と$B$を加えます。
         \[
           S=A\oplus B,\qquad C=A\land B
         \]
         $S$は和、$C$は上位桁への桁上がりです。
-      \end{block}
-      \begin{block}{不足する入力}
+
+\paragraph{不足する入力}
         半加算器は、下位桁から届く桁上がり$C_{in}$を扱えません。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{全加算器}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{全加算器}
         \[
           S=A\oplus B\oplus C_{in}
         \]
         \[
           C_{out}=(A\land B)\lor(C_{in}\land(A\oplus B))
         \]
-      \end{block}
+
       \centering
       \begin{tikzpicture}[node distance=7mm]
         \node[accentbox] (fa) {全加算器};
@@ -239,10 +306,15 @@
         \draw[flow] (inputs) -- (fa);
         \draw[flow] (fa) -- (outputs);
       \end{tikzpicture}
-  \end{columns}
-\end{frame}
+\par
+\endgroup
+\par
+\endgroup
 
-\begin{frame}[t]{全加算器を桁ごとに連結すると、複数ビットを加算できます}
+
+\section{全加算器を桁ごとに連結すると、複数ビットを加算できます}
+\label{sec:01-digital-computer-09}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=5mm]
     \node[box] (f0) {FA 0};
@@ -258,30 +330,39 @@
     \node[below=5mm of f3,font=\scriptsize] {$A_3,B_3\rightarrow S_3$};
   \end{tikzpicture}
   \vspace{4mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{リップルキャリー加算器}
+\begingroup
+\paragraph{リップルキャリー加算器}
         下位桁の$C_{out}$を次の桁の$C_{in}$へ渡します。
         単純ですが、桁数が増えると桁上がりの伝播遅延が増えます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{ALU}
-        算術論理演算装置（ALU）は、加算、減算、論理演算、比較などを選択信号に応じて実行します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{記憶には、過去の状態を次の時刻へ戻す経路が必要です}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.46\textwidth}
-      \begin{block}{組み合わせ回路の限界}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{ALU}
+        算術論理演算装置（ALU）は、加算、減算、論理演算、比較などを選択信号に応じて実行します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{記憶には、過去の状態を次の時刻へ戻す経路が必要です}
+\label{sec:01-digital-computer-10}
+\begingroup
+\begingroup
+\paragraph{組み合わせ回路の限界}
         出力が現在の入力だけで決まるため、入力が消えると過去の値を保持できません。
-      \end{block}
-      \begin{block}{順序回路}
+
+\paragraph{順序回路}
         出力を回路へ戻すフィードバックによって状態を保持します。
         出力は、現在の入力と直前までの状態で決まります。
-      \end{block}
-    \column{0.50\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=9mm]
         \node[accentbox] (state) {状態記憶};
@@ -292,24 +373,31 @@
         \draw[softflow] (output.south) -- ++(0,-8mm) -| (state.south);
       \end{tikzpicture}
       \vspace{4mm}
-      \begin{block}{フリップフロップ}
+\paragraph{フリップフロップ}
         SRフリップフロップはセットとリセットで状態を変えます。
         Dフリップフロップはクロックの有効なエッジで入力$D$を取り込み、次のエッジまで保持します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{クロックは、回路全体が状態を更新する基準時刻を作ります}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{クロック同期}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{クロックは、回路全体が状態を更新する基準時刻を作ります}
+\label{sec:01-digital-computer-11}
+\begingroup
+\begingroup
+\paragraph{クロック同期}
         組み合わせ回路が次の値を計算し、フリップフロップがクロックエッジで一斉に取り込みます。
         エッジ間には、信号が安定する時間が必要です。
-      \end{block}
-      \begin{block}{レジスタ}
+
+\paragraph{レジスタ}
         複数のDフリップフロップを並べると、複数ビットを同時に保持するレジスタになります。
-      \end{block}
-    \column{0.48\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[x=7mm,y=7mm]
         \draw[draw=DeepNavy] (0,0) -- (1,0) -- (1,1) -- (2,1) -- (2,0) -- (3,0) -- (3,1) -- (4,1) -- (4,0) -- (5,0);
@@ -318,27 +406,34 @@
         \node[box,minimum width=20mm] at (2.5,-2) {状態更新};
       \end{tikzpicture}
       \vspace{3mm}
-      \begin{block}{状態機械}
+\paragraph{状態機械}
         レジスタが現在状態を保持し、組み合わせ回路が入力と現在状態から次状態を計算します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{メモリは、記憶素子をアドレスで選べる配列にしたものです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.44\textwidth}
-      \begin{block}{三つの信号群}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{メモリは、記憶素子をアドレスで選べる配列にしたものです}
+\label{sec:01-digital-computer-12}
+\begingroup
+\begingroup
+\paragraph{三つの信号群}
         \begin{itemize}
           \item \term{アドレス}：読み書きする位置を指定します。
           \item \term{データ}：読み出す値、または書き込む値です。
           \item \term{制御}：読み出しか書き込みか、動作時刻などを指定します。
         \end{itemize}
-      \end{block}
-      \begin{block}{バス}
+
+\paragraph{バス}
         複数ビットの信号線をまとめた伝送路です。
         複数装置で共有する構成もあります。
-      \end{block}
-    \column{0.52\textwidth}
+
+\par
+\endgroup
+\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=1.5mm,every node/.append style={font=\small}]
         \node[accentbox,minimum width=27mm,minimum height=18mm] (mem) {メモリセル配列};
@@ -351,35 +446,47 @@
         \draw[<->,draw=MutedBlue] (mem) -- (data);
         \draw[flow] (ctrl) -- (dec);
       \end{tikzpicture}
-  \end{columns}
+\par
+\endgroup
   \source{MIT 6.111, “Memory Devices: SRAM / DRAM”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{SRAMは保持回路を使い、DRAMは電荷を定期的に再生します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{SRAM}
+
+\section{SRAMは保持回路を使い、DRAMは電荷を定期的に再生します}
+\label{sec:01-digital-computer-13}
+\begingroup
+\begingroup
+\paragraph{SRAM}
         代表的なSRAMセルは、トランジスタで構成したラッチに状態を保持します。
         電源がある間は定期的なリフレッシュを必要としません。
-      \end{block}
-      \begin{block}{用途の傾向}
+
+\paragraph{用途の傾向}
         高速なキャッシュなど、容量当たりの回路規模よりアクセス時間を重視する場所に使われます。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{DRAM}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{DRAM}
         セル内のコンデンサに蓄えた電荷で状態を表します。
         電荷が漏れるため、読み出しと再書き込みによるリフレッシュが必要です。
-      \end{block}
-      \begin{block}{用途の傾向}
+
+\paragraph{用途の傾向}
         高密度化しやすいため、主記憶に使われます。
         制御はSRAMより複雑です。
-      \end{block}
-  \end{columns}
+
+\par
+\endgroup
   \takeaway{「SRAMは速い、DRAMは遅い」だけでなく、保持原理と密度の違いを押さえます。}
   \source{MIT 6.111, “Memory Devices: SRAM / DRAM”}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{速さ、容量、コストの差がメモリ階層を作ります}
+
+\section{速さ、容量、コストの差がメモリ階層を作ります}
+\label{sec:01-digital-computer-14}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=1mm,scale=0.82,transform shape]
     \node[accentbox,minimum width=35mm] (reg) {レジスタ：最小・最速};
@@ -389,22 +496,28 @@
     \node[box,minimum width=130mm,below=of ram] (storage) {SSD／ストレージ：大容量・高遅延};
   \end{tikzpicture}
   \vspace{1mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{局所性}
+\begingroup
+\paragraph{局所性}
         直近に使ったデータや、その近くのデータを再び使う傾向を利用します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{キャッシュミス}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{キャッシュミス}
         上位層にデータがなければ、下位層からまとまり単位で取得します。
         この待ち時間が実行性能へ影響します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{ノイマン型コンピュータは、命令とデータをメモリに置きます}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.58\textwidth}
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{ノイマン型コンピュータは、命令とデータをメモリに置きます}
+\label{sec:01-digital-computer-15}
+\begingroup
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\small}]
         \node[accentbox,minimum width=48mm,minimum height=20mm] (cpu) {CPU\\制御装置・レジスタ・ALU};
@@ -413,18 +526,26 @@
         \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- node[above,font=\scriptsize] {アドレス・データ・制御} (mem);
         \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- (io);
       \end{tikzpicture}
-    \column{0.38\textwidth}
-      \begin{block}{プログラム内蔵方式}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{プログラム内蔵方式}
         命令を数値としてメモリへ格納します。
         CPUは命令を順に読み出して処理します。
-      \end{block}
-      \begin{block}{境界の意味}
-        ハードウェアは命令セットの動作を実装し、ソフトウェアはその命令列で処理を記述します。
-      \end{block}
-  \end{columns}
-\end{frame}
 
-\begin{frame}[t]{CPUはフェッチ、デコード、実行を繰り返します}
+\paragraph{境界の意味}
+        ハードウェアは命令セットの動作を実装し、ソフトウェアはその命令列で処理を記述します。
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{CPUはフェッチ、デコード、実行を繰り返します}
+\label{sec:01-digital-computer-16}
+\begingroup
   \centering
   \begin{tikzpicture}[node distance=7mm]
     \node[accentbox] (fetch) {1　フェッチ};
@@ -437,26 +558,31 @@
     \draw[softflow] (write.south) -- ++(0,-8mm) -| node[below,pos=0.25,font=\scriptsize] {PCを更新} (fetch.south);
   \end{tikzpicture}
   \vspace{6mm}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.48\textwidth}
-      \begin{block}{フェッチとデコード}
+\begingroup
+\paragraph{フェッチとデコード}
         プログラムカウンタ（PC）が示すアドレスから命令を読みます。
         制御装置は命令の演算種別とオペランドを解釈します。
-      \end{block}
-    \column{0.48\textwidth}
-      \begin{block}{実行と書き戻し}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{実行と書き戻し}
         ALU、レジスタ、メモリ、分岐回路を動かし、結果を保存します。
         実際のCPUはパイプラインなどで複数命令を重ねて処理できます。
-      \end{block}
-  \end{columns}
-  \source{東京大学「コンピュータハードウェア」第7回}
-\end{frame}
 
-\begin{frame}[t]{加算命令は、制御信号がデータ経路を選んで実行します}
-  \framesubtitle{例：\code{ADD R3, R1, R2} はR1とR2を加え、R3へ保存します}
-  \small
-  \begin{columns}[T,onlytextwidth]
-    \column{0.58\textwidth}
+\par
+\endgroup
+  \source{東京大学「コンピュータハードウェア」第7回}
+\par
+\endgroup
+
+
+\section{加算命令は、制御信号がデータ経路を選んで実行します}
+\label{sec:01-digital-computer-17}
+\begingroup
+\noindent{\sffamily\bfseries\color{MutedBlue}例：\code{ADD R3, R1, R2} はR1とR2を加え、R3へ保存します}\par\medskip
+\begingroup
       \centering
       \begin{tikzpicture}[node distance=5mm]
         \node[box] (r1) {R1};
@@ -469,7 +595,10 @@
         \node[box,above=of alu] (ctrl) {制御装置};
         \draw[softflow] (ctrl) -- node[right,font=\scriptsize] {演算選択} (alu);
       \end{tikzpicture}
-    \column{0.38\textwidth}
+\par
+\endgroup
+\medskip
+\begingroup
       \begin{enumerate}
         \item 命令をメモリから読みます。
         \item 命令形式からR1、R2、R3を特定します。
@@ -478,32 +607,47 @@
         \item 結果をR3へ書き戻します。
         \item PCを次の命令へ進めます。
       \end{enumerate}
-  \end{columns}
+\par
+\endgroup
   \takeaway{命令は、データ移動と回路選択を同期させた処理です。}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t]{第1章の要点は、抽象化を一段ずつ積み上げることです}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.31\textwidth}
-      \begin{block}{表現}
+
+\section{第1章の要点は、抽象化を一段ずつ積み上げることです}
+\label{sec:01-digital-computer-18}
+\begingroup
+\begingroup
+\paragraph{表現}
         電圧範囲を0／1として解釈し、ビット列を整数、文字、浮動小数点数として読み分けます。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{回路}
-        トランジスタから論理ゲート、加算器、フリップフロップ、メモリを構成します。
-      \end{block}
-    \column{0.31\textwidth}
-      \begin{block}{実行}
-        CPUはメモリ中の命令をフェッチ、デコード、実行し、状態を更新します。
-      \end{block}
-  \end{columns}
-  \vspace{4mm}
-  \begin{block}{実務との接続}
-    整数オーバーフロー、浮動小数点の比較、キャッシュミス、メモリアクセスは、アプリケーションの正しさと性能に現れます。
-  \end{block}
-\end{frame}
 
-\begin{frame}[t]{確認問題では、値と状態の変化を説明します}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{回路}
+        トランジスタから論理ゲート、加算器、フリップフロップ、メモリを構成します。
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{実行}
+        CPUはメモリ中の命令をフェッチ、デコード、実行し、状態を更新します。
+
+\par
+\endgroup
+  \vspace{4mm}
+\paragraph{実務との接続}
+    整数オーバーフロー、浮動小数点の比較、キャッシュミス、メモリアクセスは、アプリケーションの正しさと性能に現れます。
+
+\par
+\endgroup
+
+
+\section{確認問題では、値と状態の変化を説明します}
+\label{sec:01-digital-computer-19}
+\begingroup
   \begin{enumerate}
     \item Highを「5 Vそのもの」と説明すると不正確なのはなぜですか。
     \item $1011\,0110_2$を16進数へ変換してください。
@@ -513,11 +657,14 @@
     \item SRAMとDRAMは、状態の保持方法がどのように異なりますか。
     \item \code{ADD R3, R1, R2} の実行で、レジスタとALUはどの順に使われますか。
   \end{enumerate}
-\end{frame}
+\par
+\endgroup
 
-\begin{frame}[t,fragile]{小さな実習：固定幅整数と浮動小数点数を観察します}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.54\textwidth}
+
+\section{小さな実習：固定幅整数と浮動小数点数を観察します}
+\label{sec:01-digital-computer-20}
+\begingroup
+\begingroup
       \begin{lstlisting}[language=Python]
 def u8(x):
     return x & 0xff
@@ -528,17 +675,22 @@ for x in [127, 128, 255, 256, -1, -5]:
 print(0.1 + 0.2)
 print((0.1 + 0.2) == 0.3)
       \end{lstlisting}
-    \column{0.42\textwidth}
-      \begin{block}{観察する項目}
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{観察する項目}
         \begin{itemize}
           \item 256の下位8ビット
           \item $-1$と$-5$のビット列
           \item 0.1と0.2の加算結果
           \item 厳密な等値比較の結果
         \end{itemize}
-      \end{block}
-      \begin{block}{説明課題}
+
+\paragraph{説明課題}
         出力を記録し、各結果を「固定幅」と「2進表現」の二語を使って説明してください。
-      \end{block}
-  \end{columns}
-\end{frame}
+
+\par
+\endgroup
+\par
+\endgroup
