@@ -19,14 +19,17 @@ pdf:
 
 verify: pdf
 	@if grep -En 'Overfull|Underfull|LaTeX (Font )?Warning|Package .* Warning|Undefined control sequence|Missing character' $(LOG); then exit 1; fi
-	@pages=$$(pdfinfo $(PUBLIC_PDF) | awk '/^Pages:/ {print $$2}'); test "$$pages" -ge 90
+	@pages=$$(pdfinfo $(PUBLIC_PDF) | awk '/^Pages:/ {print $$2}'); test "$$pages" -ge 100
 	@pdfinfo $(PUBLIC_PDF) | grep -q 'Page size:.*A4'
 	@urls=$$(pdfinfo -url $(PUBLIC_PDF) | awk 'NR > 1 {print $$3}' | sort -u | wc -l); test "$$urls" -ge 35
 	@if grep -ERn '\\begin\{frame\}|\\begin\{columns\}|\\chapterframe' main.tex chapters tex; then exit 1; fi
 	@if grep -En '^\\(chapter|section)\{.*(です|ます|ません)\}' chapters/*.tex; then exit 1; fi
+	@if grep -En '\\begin\{learninggoals\}' chapters/0[1-7]-*.tex; then exit 1; fi
+	@abstracts=$$(grep -h '^\\begin{chapterabstract}' chapters/0[1-7]-*.tex | wc -l); test "$$abstracts" -eq 7
+	@story=$$(grep -h '注文番号1234' chapters/00-introduction.tex chapters/0[1-7]-*.tex | wc -l); test "$$story" -ge 5
 	@itemize=$$(grep -h '^[[:space:]]*\\begin{itemize}' chapters/0[1-7]-*.tex | wc -l); test "$$itemize" -le 1
 	@sections=$$(grep -h '^\\section{' chapters/*.tex | wc -l); test "$$sections" -ge 160
-	@chars=$$(pdftotext $(PUBLIC_PDF) - | wc -m); test "$$chars" -ge 60000
+	@chars=$$(pdftotext $(PUBLIC_PDF) - | wc -m); test "$$chars" -ge 80000
 	@pdffonts $(PUBLIC_PDF) | awk 'NR > 2 && $$(NF-4) != "yes" {exit 1}'
 	@printf '読み物版検証完了: %sページ、本文%s文字、外部リンク%s件\n' \
 	  "$$(pdfinfo $(PUBLIC_PDF) | awk '/^Pages:/ {print $$2}')" \
