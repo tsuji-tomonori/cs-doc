@@ -41,6 +41,13 @@ jobs:
       - name: 組版結果を検証
         run: make verify
 
+      - name: PR確認用PDFを保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: information-engineering-basics-${{ github.sha }}
+          path: build/information-engineering-basics.pdf
+          if-no-files-found: error
+
       - name: Pagesを設定
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5

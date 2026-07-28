@@ -87,6 +87,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \endgroup
 \medskip
 \begingroup
+\begin{samepage}
 \paragraph{桁の重み}
         \term{桁の重み}は、その桁に1があると全体へいくつ加わるかを表す値です。10進数では右から1、10、100と十倍になり、2進数では1、2、4、8と二倍になります。6ビットの各桁へ重みを対応づけると、値45を次のように確認できます。
         \par\smallskip
@@ -99,6 +100,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
           \multicolumn{7}{c}{$32+8+4+1=45$}
         \end{tabular}
         \end{center}
+\end{samepage}
 
 \paragraph{変換の確認}
         10進数から2進数へは2で割った余りを逆順に並べます。
@@ -246,6 +248,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 
 \begingroup
 \begingroup
+\begin{samepage}
 \paragraph{基本ゲートの真理値表}
         \term{NOT}は一つの入力を反対にし、0を1へ、1を0へ変えます。\term{AND}は二つとも1のときだけ1を返します。\term{OR}は少なくとも一つが1なら1を返します。\term{XOR}はexclusive OR、すなわち「排他的OR」の略で、二つが異なるときだけ1を返します。
 
@@ -263,6 +266,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
           \bottomrule
         \end{tabular}
         \end{center}
+\end{samepage}
 
 \paragraph{組み合わせ回路}
         現在の出力が現在の入力だけで決まり、過去の入力を覚えない回路を\term{組み合わせ回路}といいます。
@@ -347,6 +351,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \endgroup
 \medskip
 \begingroup
+\begin{samepage}
 \paragraph{全加算器}
         下位桁から入ってくる桁上がりまで扱う回路が\term{全加算器}です。入力$A$、$B$と下位桁からの桁上がり$C_{in}$に対し、和と次の桁上がりは次式で求められます。添字のinは「入る」、outは「出る」を意味します。
         \[
@@ -366,6 +371,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
         \draw[flow] (fa) -- (outputs);
       \end{tikzpicture}
       \end{center}
+\end{samepage}
 \par
 \endgroup
 \par

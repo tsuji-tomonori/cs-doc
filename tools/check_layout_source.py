@@ -28,9 +28,20 @@ def starts_fresh_block(content: str) -> bool:
 
 def main() -> int:
     failures: list[tuple[Path, int, int, str]] = []
+    unsplittable_failures: list[tuple[Path, int]] = []
     for path in sorted((ROOT / "chapters").glob("*.tex")):
         lines = path.read_text(encoding="utf-8").splitlines()
+        samepage_depth = 0
         for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == r"\begin{samepage}":
+                samepage_depth += 1
+            elif stripped == r"\end{samepage}":
+                samepage_depth -= 1
+
+            if stripped == r"\begin{center}" and samepage_depth == 0:
+                unsplittable_failures.append((path.relative_to(ROOT), index + 1))
+
             if line.strip() != r"\centering":
                 continue
             previous = previous_content(lines, index)
@@ -42,19 +53,28 @@ def main() -> int:
                     (path.relative_to(ROOT), index + 1, previous_line, content)
                 )
 
-    if failures:
+    if failures or unsplittable_failures:
         print(
             "layout source check failed: "
-            f"{len(failures)} centered blocks continue an open paragraph"
+            f"{len(failures)} centered blocks continue an open paragraph; "
+            f"{len(unsplittable_failures)} prose-centered blocks can split across pages"
         )
         for path, line, previous_line, content in failures:
             print(
                 f"- {path}:{line}: add \\\\par before \\\\centering "
                 f"(previous content at line {previous_line}: {content})"
             )
+        for path, line in unsplittable_failures:
+            print(
+                f"- {path}:{line}: wrap the prose and centered block "
+                "in a samepage environment"
+            )
         return 1
 
-    print("layout source check passed: centered blocks start in fresh paragraphs")
+    print(
+        "layout source check passed: centered blocks start in fresh paragraphs "
+        "and prose-centered blocks stay on one page"
+    )
     return 0
 
 
