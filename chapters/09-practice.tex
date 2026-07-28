@@ -260,6 +260,9 @@ HTTP応答が成功しても、画面が更新されるとは限りません。
 
 出来事を時刻と説明付きで残した記録が\term{ログ}です。一つの要求が複数の処理やサービスを通る区間を時系列でつないだ記録が\term{トレース}です。件数、時間、使用量などを継続して数値化したものが\term{メトリクス}です。三者は答える問いが異なり、組み合わせて使います。
 
+図\ref{fig:ch09-evidence-correlation}は、三種類の観測を同じ時点へそろえ、広いシステムから疑う境界を絞る流れを示します。
+\sectionimage{ch09-evidence-correlation.png}{ログ、トレース、メトリクスを対応付け、異常がある境界を絞り込むイメージ}{fig:ch09-evidence-correlation}
+
 \begingroup
   \noindent
   \begin{tabularx}{\textwidth}{@{}>{\bfseries}p{19mm}YY@{}}
