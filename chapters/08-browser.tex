@@ -1,0 +1,138 @@
+% !TEX root = ../main.tex
+\chapter{応答が画面になるまで}
+\label{chap:browser}
+
+\begin{chapterabstract}
+HTTP応答が端末へ届いても、利用者が読む画面はまだ完成していません。
+ブラウザは文書構造、スタイル、座標、画素を順に計算します。
+JavaScriptによる更新はイベントループを通り、必要な部分の再計算を引き起こします。
+\end{chapterabstract}
+
+\begin{learninggoals}
+  \item HTMLからDOM、CSSからCSSOMが作られる流れを説明できます。
+  \item スタイル計算、レイアウト、描画、合成を別々の段階として説明できます。
+  \item 非同期処理とDOM更新を、イベントループと再描画へ対応づけられます。
+\end{learninggoals}
+
+\chapterimage{ch08-browser.png}{応答から文書木、スタイル木、配置、描画層、画面へ進む概念図}{fig:ch08-browser}
+
+\section{応答を受け取るブラウザ}
+
+\term{ブラウザ}は、Web資源を取得し、解析し、実行し、表示するアプリケーションです。
+ブラウザもOS上で動く\term{プロセス}であり、CPU時間とメモリを使います。
+\term{タブ}は利用者から見える閲覧単位ですが、プロセスとの対応はブラウザ実装や設定によって異なります。
+\term{レンダリングエンジン}は、文書とスタイルから表示内容を組み立てる主要部分です。
+
+\section{HTML解析とDOM}
+
+\term{HTML}はHyperText Markup Languageの略で、文書の構造と意味を記述します。
+\term{HTMLパーサ}は、HTMLの文字列を解析する処理系です。
+\term{トークン化}は、文字列を開始タグ、終了タグ、文字などの単位へ分けます。
+\term{DOM}はDocument Object Modelの略で、文書をプログラムから操作できる木として表します。
+
+\term{ノード}は、DOM木を構成する一単位です。
+\term{要素}は、タグに対応する種類のノードです。
+\term{属性}は、要素へ追加情報を与えます。
+\term{テキストノード}は、要素内の文字列を保持します。
+第2章のASTと同じく木構造ですが、文書操作の規則と保持する情報は異なります。
+\source{\href{https://html.spec.whatwg.org/}{HTML Living Standard}、\href{https://dom.spec.whatwg.org/}{DOM Standard}}
+
+\section{CSSOMとスタイル計算}
+
+\term{CSS}はCascading Style Sheetsの略で、要素の見た目と配置条件を記述します。
+\term{CSSOM}はCSS Object Modelの略で、スタイル規則をプログラムから扱うモデルです。
+\term{セレクタ}は、スタイルを適用する要素の条件です。
+\term{カスケード}は、複数の宣言から適用値を決める規則です。
+
+\term{スタイル計算}は、DOM上の各要素へ最終的な値を割り当てます。
+計算後の値を\term{computed style}と呼びます。
+\term{render tree}は、表示へ関係する文書要素とスタイルを結び付けた概念的な木です。
+仕様や実装で内部表現は異なるため、本書では描画工程を説明するモデルとして使います。
+\source{\href{https://www.w3.org/TR/cssom-1/}{CSS Object Model}}
+
+\section{レイアウト}
+
+\term{レイアウト}は、各ボックスの大きさと位置を計算する段階です。
+\term{box model}は、内容、余白、境界、外側余白で要素の矩形を捉えます。
+\term{viewport}は、ページを表示するための見える領域です。
+親要素の幅やフォントサイズが変わると、子孫の位置まで再計算される場合があります。
+
+\term{reflow}は、配置に関係する変更によってレイアウトを再計算することを指す慣用語です。
+仕様上の一つの命令名ではなく、開発者向けの性能説明で使われます。
+
+\section{描画と合成}
+
+\term{paint}は、背景、文字、境界などを描く命令へ変換する段階です。
+\term{rasterize}は、図形や文字を画素へ変換する処理です。
+\term{layer}は、独立して扱える描画面です。
+\term{compositing}は、複数の描画面を順序どおり重ねて最終画像を作ります。
+\term{GPU}はGraphics Processing Unitの略で、画素処理や合成を支援します。
+
+すべての変更が全段階をやり直すわけではありません。
+変更したプロパティ、要素範囲、ブラウザ実装によって必要な再計算が変わります。
+
+\section{JavaScriptエンジン}
+
+\term{JavaScriptエンジン}は、JavaScriptの解析と実行を担います。
+\term{V8}は、Chromium系ブラウザやNode.jsなどで使われるJavaScriptエンジンです。
+\term{インタプリタ}は、実行時に命令を解釈して処理します。
+\term{JIT}はJust-In-Time compilationの略で、実行中の情報を使って機械語へ変換します。
+\term{ガベージコレクション}は、到達できなくなったオブジェクトのメモリを回収します。
+回収処理のタイミングは、応答性へ影響する場合があります。
+\source{\href{https://v8.dev/docs}{V8 documentation}}
+
+\section{イベントループと非同期処理}
+
+\term{イベントループ}は、実行可能な仕事を選び、JavaScriptの処理を順に進める仕組みです。
+\term{タスク}は、クリックやタイマーなどを契機に実行される仕事の単位です。
+\term{マイクロタスク}は、現在の処理後に優先して消化される小さな仕事の列です。
+
+\term{コールバック}は、処理完了時などに呼び出す関数です。
+\term{Promise}は、将来完了する処理の結果を表すオブジェクトです。
+\term{async/await}は、Promiseを使う処理を逐次的に読める構文で記述します。
+\term{非同期処理}は、待ち時間中に呼び出し元を占有し続けず、完了後に続きの仕事を登録します。
+非同期は自動的な並列実行と同じ意味ではありません。
+
+\section{fetchとDOM更新}
+
+\term{fetch}は、JavaScriptからネットワーク要求を開始し、Promiseで結果を受け取るAPIです。
+\term{DOM更新}は、取得した応答に基づいてノードや属性を変更する操作です。
+更新内容によって\term{再スタイル計算}が必要になります。
+寸法や位置へ影響する場合は\term{再レイアウト}が起きます。
+画素が変わる場合は\term{再描画}が必要です。
+
+注文確認AIでは、クリックのタスクがfetchを開始します。
+応答後のマイクロタスクが文をDOMへ設定し、その後の描画機会で画面へ反映されます。
+
+\section{初回表示とその後の更新}
+
+\term{First Contentful Paint}は、最初の文字や画像などが描画された時点を表す指標です。
+\term{Largest Contentful Paint}は、表示領域内の主要コンテンツが描画された時点を表す指標です。
+\term{FPS}はframes per secondの略で、1秒あたりのフレーム数です。
+\term{jank}は、処理が描画期限へ間に合わず、動きが引っ掛かって見える現象を指します。
+
+初回表示の指標と、操作後の応答性は同じ評価ではありません。
+対象となる利用者操作、測定環境、ブラウザ版を記録して比較します。
+
+\section{手を動かす：開発者ツールで描画を観測する}
+
+\term{DevTools}は、ブラウザの動作を観測する開発者向け機能です。
+\term{Network}は、要求と応答の順序や時間を表示します。
+\term{Performance}は、JavaScript、スタイル、レイアウト、描画の時間を記録します。
+\term{Elements}は、DOMと適用されたスタイルを確認します。
+
+注文確認画面を開き、次の順に観測してください。
+
+\begin{enumerate}
+  \item Networkでfetch要求の開始と完了を確認します。
+  \item Elementsで応答前後のDOM差分を確認します。
+  \item Performanceでstyle、layout、paintの発生箇所を確認します。
+  \item 記録時刻、ブラウザ版、操作手順を残します。
+\end{enumerate}
+
+\section{旅をたどり直す}
+
+HTTP応答はブラウザのメモリへ入り、JavaScriptまたはHTMLパーサが処理します。
+DOMとCSSOMからスタイルと配置を計算し、描画命令を画素へ変え、層を合成します。
+画素は第1章で扱った電気信号によってディスプレイへ送られます。
+\takeaway{応答の到着と画面更新は別の段階です。ネットワーク、JavaScript、スタイル、レイアウト、描画を分けて観測します。}

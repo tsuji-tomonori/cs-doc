@@ -30,7 +30,7 @@
 \par
 \endgroup
   \vspace{4mm}
-  \takeaway{すべてのWeb資料の最終参照日は、2026年7月15日です。リンク切れ時は資料名と著者名で公式サイトを検索してください。}
+  \takeaway{すべてのWeb資料の最終参照日は、2026年7月28日です。リンク切れ時は資料名と著者名で公式サイトを検索してください。}
 \par
 \endgroup
 
@@ -110,7 +110,7 @@
 \endgroup
 
 
-\section{第5章：データが届くまで}
+\section{第5章：インターネットという分散網}
 \label{sec:99-references-05}
 \begingroup
 \begingroup
@@ -136,7 +136,7 @@
 \endgroup
 
 
-\section{第5章：プロトコル標準}
+\section{第6章：要求が届くまで}
 \label{sec:99-references-06}
 \begingroup
 \begingroup
@@ -160,7 +160,7 @@
 \endgroup
 
 
-\section{第6章：言葉が応答になるまで}
+\section{第7章：言葉が応答になるまで}
 \label{sec:99-references-07}
 \begingroup
 \begingroup
@@ -176,6 +176,55 @@
 \paragraph{AttentionとTransformer}
         \materialref{https://papers.neurips.cc/paper/7181-attention-is-all-you-need.pdf}{Vaswani et al.: Attention Is All You Need}{Transformer、Multi-Head Attention、位置エンコーディングの原論文。}
         \materialref{https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1244/slides/cs224n-2024-lecture08-transformers.pdf}{Stanford CS224N: Transformers}{Self-Attention、Query・Key・Value、Encoder・Decoderの講義資料。}
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{第8章：応答が画面になるまで}
+\label{sec:99-references-08}
+\begingroup
+\begingroup
+\paragraph{文書とスタイル}
+        \materialref{https://html.spec.whatwg.org/}{WHATWG: HTML Living Standard}{HTMLの解析、文書、スクリプト、イベントループの規範的な定義。}
+        \materialref{https://dom.spec.whatwg.org/}{WHATWG: DOM Standard}{ノード、文書木、変更操作、イベントの公式仕様。}
+        \materialref{https://www.w3.org/TR/cssom-1/}{W3C: CSS Object Model}{スタイルシートとCSSOMを操作する境界。}
+        \materialref{https://www.w3.org/TR/cssom-view-1/}{W3C: CSSOM View Module}{画面上の位置、寸法、ビューポートを扱う仕様。}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{描画と性能}
+        \materialref{https://web.dev/articles/rendering-performance}{web.dev: Rendering performance}{スタイル計算、レイアウト、ペイント、合成の観測。}
+        \materialref{https://web.dev/articles/vitals}{web.dev: Web Vitals}{LCP、INP、CLSによる利用者中心の性能指標。}
+        \materialref{https://v8.dev/docs}{V8 documentation}{JavaScriptエンジンの解析、実行、最適化に関する公式資料。}
+
+\par
+\endgroup
+\par
+\endgroup
+
+
+\section{第9章：一つの応答をたどる}
+\label{sec:99-references-09}
+\begingroup
+\begingroup
+\paragraph{観測可能性}
+        \materialref{https://opentelemetry.io/docs/concepts/observability-primer/}{OpenTelemetry: Observability primer}{メトリクス、ログ、トレースを関連付ける基本概念。}
+        \materialref{https://opentelemetry.io/docs/concepts/signals/traces/}{OpenTelemetry: Traces}{トレース、スパン、コンテキスト伝搬の公式解説。}
+        \materialref{https://sre.google/sre-book/service-level-objectives/}{Google SRE: Service Level Objectives}{SLI、SLO、エラーバジェットによる信頼性目標。}
+
+\par
+\endgroup
+\medskip
+\begingroup
+\paragraph{障害対応}
+        \materialref{https://sre.google/sre-book/monitoring-distributed-systems/}{Google SRE: Monitoring Distributed Systems}{分散システムで観測する信号と症状。}
+        \materialref{https://sre.google/sre-book/postmortem-culture/}{Google SRE: Postmortem Culture}{再発防止へつなぐ非難しない事後検証。}
+        \materialref{https://go.dev/doc/diagnostics}{Go diagnostics}{プロファイル、トレース、実行時統計を使う調査方法。}
 
 \par
 \endgroup

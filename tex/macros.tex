@@ -1,13 +1,27 @@
 % 章の導入
 \newenvironment{chapterabstract}{%
   \begin{chapterabstractbox}
-  {\sffamily\bfseries\color{MutedBlue}現在地}\par\smallskip
+  {\sffamily\bfseries\color{MutedBlue}はじめに}\par\smallskip
 }{%
   \end{chapterabstractbox}
 }
 
-\newcommand{\term}[1]{\textbf{#1}}
+\newcommand{\BookIndex}[2]{\index{#1@#2}}
+\newcommand{\term}[1]{\textbf{#1}\index{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\chapterimage}[3]{%
+  \begin{figure}[htbp]
+    \centering
+    \IfFileExists{assets/#1}{%
+      \includegraphics[width=0.96\linewidth]{assets/#1}%
+    }{%
+      \PackageError{cs-doc}{Required image `assets/#1' is missing}{Add the generated chapter image.}%
+    }
+    \caption{#2}
+    \label{#3}
+  \end{figure}
+}
 
 \newcommand{\takeaway}[1]{%
   \begin{takeawaybox}
