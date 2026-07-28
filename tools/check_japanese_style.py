@@ -56,7 +56,7 @@ def strip_non_prose(text: str) -> str:
     text = re.sub(r"\\\[.*?\\\]", "", text, flags=re.DOTALL)
     text = re.sub(
         r"(?m)^\s*\\(?:chapter|section|subsection|label|input|source|"
-        r"chapterimage|begin|end|takeaway)\b.*$",
+        r"chapterimage|sectionimage|begin|end|takeaway)\b.*$",
         "",
         text,
     )
