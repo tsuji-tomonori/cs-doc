@@ -14,7 +14,7 @@
   \item DNSの委任とキャッシュを、\code{dig +trace}の結果へ対応づけられます。
 \end{learninggoals}
 
-\chapterimage{ch05-internet.png}{異なる管理主体の網が複数の経路で相互接続する概念図。右側の木は階層的な名前解決を表します。}{fig:ch05-internet}
+\chapterimage[端末 → ルーター → 自律システム → 相互接続 → 複数経路 ／ DNS：名前を階層的に解決]{ch05-internet.png}{異なる管理主体の網が複数の経路で相互接続する概念図。右側の木は階層的な名前解決を表します。}{fig:ch05-internet}
 
 \section{通信の要素}
 
@@ -75,6 +75,42 @@ IPv4では途中の分割があり得ますが、IPv6では送信元側のサイ
 \term{TCP/IPモデル}は、インターネットで使われるプロトコル群を中心に層を整理します。
 両者は厳密な一対一対応ではありません。
 本書では、役割を説明する地図として使い、実装をモデルへ無理に当てはめません。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
+    \node[sffamily\bfseries,text=DeepNavy] at (29,57) {OSI参照モデル};
+    \node[sffamily\bfseries,text=DeepNavy] at (93,57) {TCP/IPモデル};
+    \foreach \y/\n/\labeltext/\example in {
+      48/7/アプリケーション層/HTTP・DNS,
+      40/6/プレゼンテーション層/表現変換,
+      32/5/セッション層/対話管理,
+      24/4/トランスポート層/TCP・UDP,
+      16/3/ネットワーク層/IP,
+      8/2/データリンク層/Ethernet,
+      0/1/物理層/電気・光・無線
+    } {
+      \node[box,minimum width=54mm,minimum height=7mm,anchor=south west] at (0,\y) {\n：\labeltext\quad{\tiny \example}};
+    }
+    \node[accentbox,minimum width=54mm,minimum height=23mm,anchor=south west] (app) at (66,32) {アプリケーション層\\{\tiny HTTP・DNSなど}};
+    \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (trans) at (66,24) {トランスポート層\quad{\tiny TCP・UDP}};
+    \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (internet) at (66,16) {インターネット層\quad{\tiny IP}};
+    \node[accentbox,minimum width=54mm,minimum height=15mm,anchor=south west] (link) at (66,0) {リンク層\\{\tiny Ethernet・無線LANなど}};
+    \draw[softflow] (54,51.5) -- (app.west);
+    \draw[softflow] (54,43.5) -- (app.west);
+    \draw[softflow] (54,35.5) -- (app.west);
+    \draw[softflow] (54,27.5) -- (trans.west);
+    \draw[softflow] (54,19.5) -- (internet.west);
+    \draw[softflow] (54,11.5) -- (link.west);
+    \draw[softflow] (54,3.5) -- (link.west);
+  \end{tikzpicture}
+  \caption{OSI参照モデルの7層とTCP/IPモデルの概念的な対応。対応は説明用であり、厳密な一対一ではありません。}
+  \label{fig:osi-tcpip-models}
+\end{figure}
+
+OSIの第7層から第5層は、アプリケーション間の機能、データ表現、対話の管理を分けます。TCP/IPモデルでは、これらをアプリケーション層の内部で扱うことが一般的です。第4層は端点間の配送、第3層はネットワークをまたぐ配送、第2層と第1層は隣接機器間の転送と信号を扱います。
+
+\source{\href{https://www.itu.int/rec/T-REC-X.200}{ITU-T X.200 / ISO/IEC 7498-1: OSI Basic Reference Model}、\href{https://www.rfc-editor.org/rfc/rfc1122.html}{RFC 1122: Requirements for Internet Hosts}}
 
 \section{IPアドレスとCIDR}
 

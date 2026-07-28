@@ -65,9 +65,16 @@
 \label{sec:99-references-03}
 \begingroup
 \begingroup
-\paragraph{実行環境とメモリ}
+\paragraph{OS、プロセス、スレッド}
         \materialref{https://pages.cs.wisc.edu/~remzi/OSTEP/}{Arpaci-Dusseau: OSTEP, version 1.10}{プロセス、仮想メモリ、並行性、永続化を体系化した公開教科書。}
+        \materialref{https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf}{OSTEP: Concurrency, An Introduction}{スレッドの状態、共有アドレス空間、競合、並行処理の導入。}
+        \materialref{https://pubs.opengroup.org/onlinepubs/9799919799/functions/V2_chap02.html}{POSIX.1-2024: General Information}{プロセスとスレッド、スケジューリング、同期に関する標準仕様。}
+        \materialref{https://go.dev/ref/mem}{The Go Memory Model}{共有メモリへ並行にアクセスするときのデータ競合と同期の公式定義。}
+
+\paragraph{メモリとGC}
         \materialref{https://web.stanford.edu/class/archive/cs/cs107/cs107.1222/lectures/07/Lecture07.pdf}{Stanford CS107: Stack and Heap}{スタックフレーム、ポインタ、ヒープ割り当て。}
+        \materialref{https://gchandbook.org/}{Jones, Hosking, Moss: The Garbage Collection Handbook, 2nd ed.}{追跡、参照カウント、世代別、並行・並列GCを体系化した専門書。}
+        \materialref{https://go.dev/doc/gc-guide}{A Guide to the Go Garbage Collector}{到達可能性、マークスイープ、GCのCPU・メモリ費用を説明する公式資料。}
         \materialref{https://docs.python.org/3/reference/datamodel.html}{Python: Data model}{オブジェクト、型、同一性、値、参照の公式定義。}
 
 \par
@@ -124,6 +131,8 @@
 \medskip
 \begingroup
 \paragraph{名前とインターネット層}
+        \materialref{https://www.itu.int/rec/T-REC-X.200}{ITU-T X.200 / ISO/IEC 7498-1}{OSI参照モデルの7層、層間サービス、プロトコルを定める基本モデル。}
+        \materialref{https://www.rfc-editor.org/rfc/rfc1122.html}{RFC 1122: Requirements for Internet Hosts}{TCP/IPモデルのアプリケーション、トランスポート、インターネット、リンクの各層。}
         \materialref{https://www.rfc-editor.org/rfc/rfc1034.html}{RFC 1034 / RFC 1035: DNS}{\href{https://www.rfc-editor.org/rfc/rfc1035.html}{DNSの概念、実装、メッセージ形式。}}
         \materialref{https://www.rfc-editor.org/rfc/rfc8200.html}{RFC 8200: IPv6}{IPv6データグラムと拡張ヘッダー。}
 
