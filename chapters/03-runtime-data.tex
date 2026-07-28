@@ -84,7 +84,7 @@
 \begin{figure}[htbp]
   \centering
   \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[sffamily\bfseries,text=DeepNavy] (ptitle) {マルチプロセス};
+    \node[font=\sffamily\bfseries,text=DeepNavy] (ptitle) {マルチプロセス};
     \node[box,minimum width=34mm,minimum height=26mm,below left=4mm and 1mm of ptitle] (p1) {};
     \node[box,minimum width=34mm,minimum height=26mm,below right=4mm and 1mm of ptitle] (p2) {};
     \node at ([yshift=8mm]p1.center) {プロセスA};
@@ -95,7 +95,7 @@
     \node[font=\tiny] at ([yshift=-9mm]p2.center) {独立したアドレス空間};
     \draw[{Latex[length=2mm]}-{Latex[length=2mm]},draw=MutedBlue,line width=0.5pt] (p1.east) -- node[above,font=\tiny]{プロセス間通信} (p2.west);
 
-    \node[sffamily\bfseries,text=DeepNavy,right=18mm of ptitle] (ttitle) {マルチスレッド};
+    \node[font=\sffamily\bfseries,text=DeepNavy,right=18mm of ptitle] (ttitle) {マルチスレッド};
     \node[box,minimum width=62mm,minimum height=32mm,below=4mm of ttitle] (proc) {};
     \node at ([yshift=11mm]proc.center) {一つのプロセス};
     \node[accentbox,minimum width=14mm] (t1) at ([xshift=-20mm,yshift=1mm]proc.center) {スレッド1};
