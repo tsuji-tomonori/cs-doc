@@ -89,7 +89,8 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \begingroup
 \paragraph{桁の重み}
         \term{桁の重み}は、その桁に1があると全体へいくつ加わるかを表す値です。10進数では右から1、10、100と十倍になり、2進数では1、2、4、8と二倍になります。6ビットの各桁へ重みを対応づけると、値45を次のように確認できます。
-        \centering
+        \par\smallskip
+        \begin{center}
         \begin{tabular}{c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c@{\quad}c}
           桁 & 5 & 4 & 3 & 2 & 1 & 0\\
           重み & 32 & 16 & 8 & 4 & 2 & 1\\
@@ -97,6 +98,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
           \bottomrule
           \multicolumn{7}{c}{$32+8+4+1=45$}
         \end{tabular}
+        \end{center}
 
 \paragraph{変換の確認}
         10進数から2進数へは2で割った余りを逆順に並べます。
@@ -248,7 +250,8 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
         \term{NOT}は一つの入力を反対にし、0を1へ、1を0へ変えます。\term{AND}は二つとも1のときだけ1を返します。\term{OR}は少なくとも一つが1なら1を返します。\term{XOR}はexclusive OR、すなわち「排他的OR」の略で、二つが異なるときだけ1を返します。
 
         入力の全組合せと、それぞれに対応する出力を並べた表を\term{真理値表}といいます。AとBは二つの入力につけた名前です。
-        \centering
+        \par\smallskip
+        \begin{center}
         \begin{tabular}{cccccc}
           \toprule
           $A$ & $B$ & NOT $A$ & $A$ AND $B$ & $A$ OR $B$ & $A$ XOR $B$\\
@@ -259,6 +262,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
           1 & 1 & 0 & 1 & 1 & 0\\
           \bottomrule
         \end{tabular}
+        \end{center}
 
 \paragraph{組み合わせ回路}
         現在の出力が現在の入力だけで決まり、過去の入力を覚えない回路を\term{組み合わせ回路}といいます。
@@ -352,7 +356,8 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
           C_{out}=(A\land B)\lor(C_{in}\land(A\oplus B))
         \]
 
-      \centering
+      \par\smallskip
+      \begin{center}
       \begin{tikzpicture}[node distance=7mm]
         \node[accentbox] (fa) {全加算器};
         \node[box,left=of fa] (inputs) {$A,B,C_{in}$};
@@ -360,6 +365,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
         \draw[flow] (inputs) -- (fa);
         \draw[flow] (fa) -- (outputs);
       \end{tikzpicture}
+      \end{center}
 \par
 \endgroup
 \par

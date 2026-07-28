@@ -195,12 +195,11 @@ HTTPの本文が届くと、ただのバイト列は文字列、入力型、注�
 \begingroup
 \paragraph{使用量の見積もり}
         同時実行数$C$と一件当たりの平均使用量$m$から、合計使用量の目安を求めます。
-        \centering
-        $
+        \[
           M_{\mathrm{total}} \approx
           M_{\mathrm{base}} + N_{\mathrm{concurrent}}M_{\mathrm{request}}
           + M_{\mathrm{cache}}
-        $\par
+        \]
         要素本体だけでなく、参照、型情報、容量の余り、一時コピーも含めます。
 
 \paragraph{観測する量}
