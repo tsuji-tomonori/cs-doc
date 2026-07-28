@@ -21,3 +21,59 @@ Color palette: deep navy #2B3A4A, muted blue #5E7E96, pale gray #9AA4AD, very li
 Constraints: no text, no letters, no numbers, no logos, no watermark; no gradients; no shadows; no glow; no 3D; no decorative dots, bubbles, waves, patterns, border ornaments, or background motifs; scientifically recognizable simplified objects; high visual clarity at small print size
 Avoid: dense infographic, photographic realism, colorful accents, purple, pink, orange, strong primary colors, decorative background
 ```
+
+## 2026年7月28日改訂の章扉画像
+
+次の画像は、Codex 組み込み `image_gen` の既定モードで生成しました。
+いずれも16:9、文字なし、人物なしの章扉用概念イラストです。
+本文中の厳密な回路、木構造、プロトコル順序は、画像生成の解釈に依存させずTeXまたは表で示します。
+
+| ファイル | 用途 |
+| --- | --- |
+| `ch00-overview.png` | 一要求を九つの場面で追う全体像 |
+| `ch01-signals.png` | 信号、論理回路、記憶、CPU |
+| `ch02-code.png` | ソースコードから命令への変換 |
+| `ch03-runtime.png` | OS、プロセス、仮想メモリ、データ構造 |
+| `ch04-design.png` | モジュール、境界、テスト、変更 |
+| `ch05-internet.png` | 分散網、複数経路、名前解決 |
+| `ch06-delivery.png` | 接続、暗号化、HTTP、キャッシュ |
+| `ch07-language-model.png` | 学習、Attention、生成、評価 |
+| `ch08-browser.png` | DOM、CSSOM、レイアウト、描画 |
+| `ch09-observability.png` | 観測点、仮説、切り分け |
+
+共通プロンプトは次の形式です。
+
+```text
+Use case: scientific-educational
+Asset type: 16:9 chapter opener for a Japanese computer science textbook
+Primary request: [章ごとの概念を、左から右へつながる構成で表現]
+Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
+Style/medium: clean editorial vector-style technology illustration, soft SaaS presentation aesthetic
+Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
+Constraints: no words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
+```
+
+## 2026年7月28日改訂の本文挿絵
+
+次の画像は、Codex組み込み`image_gen`の既定モードで生成しました。
+長い章の途中で概念を整理し、読者が文章から厳密な図へ進むための足場として使います。
+短い章とTikZ図が十分にある箇所には追加せず、視覚的な区切りが有効な5箇所に限定しました。
+
+| ファイル | 挿入箇所 | 主なプロンプト |
+| --- | --- | --- |
+| `ch03-data-structures.png` | 第3章「データ構造の選択」 | 同じデータを連続領域、参照の鎖、キーによる格納へ分け、操作の違いを示す |
+| `ch04-change-safety.png` | 第4章「テスト」 | 変更を一つのモジュールへ局所化し、複数の検査を通して全体へ戻す |
+| `ch07-training-inference.png` | 第7章「学習と推論」 | 多くの例で内部を調整する学習と、固定したモデルを一度使う推論を対比する |
+| `ch07-attention-generation.png` | 第7章「文章生成」 | 文脈内を異なる強さで参照し、新しい要素を列へ加えて生成を反復する |
+| `ch09-evidence-correlation.png` | 第9章「観測と仮説」 | ログ、トレース、メトリクスを同じ時点へそろえ、異常境界を絞り込む |
+
+共通指定は次のとおりです。
+
+```text
+Use case: scientific-educational
+Asset type: 16:9 mid-chapter editorial illustration for a Japanese computer science textbook
+Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
+Style/medium: clean editorial vector-style technology illustration, soft SaaS presentation aesthetic
+Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
+Constraints: no words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
+```

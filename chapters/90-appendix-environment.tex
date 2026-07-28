@@ -1,0 +1,49 @@
+% !TEX root = ../main.tex
+\chapter{付録A　環境構築}
+
+\section{対象環境と前提}
+
+本文の演習は、Windows 11のWSL、macOS、または一般的なLinux環境を想定します。
+\term{環境構築}は、演習に必要な実行環境とコマンドを準備する作業です。
+\term{OS別手順}は、OSごとに異なるインストール方法を分けて示す手順です。
+組織が管理する端末では、ソフトウェアを追加する前に管理規則を確認してください。
+
+\section{GoとPython}
+
+\term{Go}は、静的型付けとコンパイルを特徴とするプログラミング言語です。
+\term{Python}は、動的型付けのインタプリタ型言語です。
+\term{pip}は、Pythonパッケージを管理するコマンドです。
+\term{venv}は、Pythonパッケージの導入先をプロジェクトごとに分離する仕組みです。
+
+\begin{lstlisting}[language=bash]
+go version
+python3 --version
+python3 -m venv .venv
+\end{lstlisting}
+
+\term{バージョン確認}は、再現条件として実行環境の版を記録する操作です。
+\term{インストール}は、実行可能なプログラムと必要なファイルを端末へ配置する作業です。
+\term{PATH}は、コマンド名から実行ファイルを探すディレクトリの並びです。
+
+\section{通信観測コマンド}
+
+\term{dig}はDNS応答を確認します。
+\term{traceroute}は宛先までの中継点を応答可能な範囲で観測します。
+\term{curl}はURLを指定して通信します。
+\term{ブラウザ開発者ツール}は、Network、Performance、Elementsなどの観測画面を提供します。
+
+WSLまたはDebian系Linuxでは、権限と組織規則を確認したうえで必要なパッケージを導入します。
+\term{WSL}はWindows Subsystem for Linuxの略で、Windows上にLinux環境を提供します。
+\term{Windows}はMicrosoftが提供するオペレーティングシステムです。
+\term{macOS}はAppleがMac向けに提供するオペレーティングシステムです。
+\term{Linux}はLinuxカーネルを中心に構成するオペレーティングシステム群です。
+これらの環境では、コマンド名や導入方法が異なる場合があります。
+
+\section{期待出力とトラブルシュート}
+
+\term{期待出力}は、操作が成功したと判断するための結果です。
+\term{エラー}は、処理を通常どおり続けられない状態と、その通知です。
+\term{トラブルシュート}は、症状を観測し、原因候補を切り分け、復旧を確認する作業です。
+\term{サンプルコード}は、概念や操作を確認するための最小限の例です。
+
+\source{\href{https://go.dev/doc/install}{Go installation docs}、\href{https://docs.python.org/3/using/}{Python setup and usage}、\href{https://bind9.readthedocs.io/}{BIND 9 documentation}、\href{https://everything.curl.dev/}{everything curl}}
