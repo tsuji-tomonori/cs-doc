@@ -1,40 +1,262 @@
 % !TEX root = ../main.tex
-\chapter{付録B　「手を動かす」の解答例と期待出力}
+\chapter{付録B　「手を動かす」の解答例と期待出力}\setcounter{table}{0}\renewcommand{\thetable}{B.\arabic{table}}
 
-\section{解答例の読み方}
+\section{解答例の使い方}
 
-\term{解答例}は、唯一の書き方ではなく、入力、処理、出力を確認する基準です。
-実行結果が異なる場合は、OS、言語版、入力、時刻、通信先を記録します。
-各章の演習は、答えを写すことより、観測結果を説明できることを到達条件にします。
+\term{解答例}は、唯一の正解ではなく、入力、処理、出力を照合するための一例です。
+コードの版、OS、CPU、時刻、通信先によって変わる値は、完全一致ではなく判定条件を示します。
+答えを写すだけでなく、「何を観測し、どの結果なら説明が成り立つか」を自分の記録へ添えてください。
 
-\section{第1章から第4章}
+\section{第1章：数の表現}
 
-第1章では、10進数、2進数、16進数の値が一致することを確認します。
-同じビット列を符号なし整数、符号付き整数、文字として読むと、意味が変わることを説明します。
+本文のPythonコードを実行すると、次の出力になります。
 
-第2章では、式をトークン列とASTへ変換し、後順走査で評価します。
-第3章では、配列、スライス、マップの操作時間とメモリ共有を観測します。
-第4章では、一つの変更要求が越える境界を数え、責務分割の根拠を示します。
+\begin{lstlisting}[language=bash]
+127 01111111 127
+128 10000000 128
+255 11111111 255
+256 00000000 0
+-1 11111111 255
+-5 11111011 251
+0.30000000000000004
+False
+\end{lstlisting}
 
-\section{第5章から第8章}
+\begin{table}[htbp]
+  \par
+  \centering
+  \caption{第1章の判定条件}
+  \begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}X@{}}
+    \toprule
+    観測 & 説明に含めること \\
+    \midrule
+    256が0になる & \code{0xff}とのANDで下位8ビットだけを残すため、$256 \bmod 256=0$となる。 \\
+    $-1$が\code{11111111}になる & 固定幅8ビットで見ると、2の補数表現の下位8ビットが255と同じ並びになる。 \\
+    小数の比較が偽になる & 0.1と0.2は2進浮動小数点で有限桁に表せず、丸められた値を加算する。 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-第5章の\code{dig +trace}では、ルート、TLD、権威DNSへ問い合わせ先が移ることを確認します。
-第6章の\code{curl -w}では、DNS、接続、TLS、最初の1バイト、全体の時間を分けます。
-第7章では、学習データと検証データの損失を比較し、過学習の有無を説明します。
-第8章では、Network、Elements、Performanceを同じ操作時刻へ対応づけます。
+\section{第2章：式を木にする}
 
-\section{第9章}
+次は、本文のASTへ実行部分とエラー処理を加えた全体例です。
 
-総合演習では、正常系と異常系の観測表を作ります。
-症状ごとに、観測点、仮説、反証条件、次の操作を一行ずつ対応づけます。
-未確認の原因は断定せず、観測によって候補から外せる形にします。
+\begin{lstlisting}[language=Go,basicstyle=\ttfamily\fontsize{7.0}{8.3}\selectfont]
+package main
 
-\section{資料と索引の用語}
+import (
+    "errors"
+    "fmt"
+)
 
-\term{索引}は、用語の初出や関連箇所を探すための一覧です。
-\term{参考文献}は、本文の根拠や追加学習へ使った資料の一覧です。
-\term{DOI}はDigital Object Identifierの略で、論文などを持続的に識別します。
+type Node struct {
+    Op          string
+    Value       int
+    Left, Right *Node
+}
+
+func Eval(n *Node) (int, error) {
+    if n == nil { return 0, errors.New("missing node") }
+    if n.Op == "" { return n.Value, nil }
+    l, err := Eval(n.Left)
+    if err != nil { return 0, err }
+    r, err := Eval(n.Right)
+    if err != nil { return 0, err }
+    switch n.Op {
+    case "+": return l + r, nil
+    case "-": return l - r, nil
+    case "*": return l * r, nil
+    case "/":
+        if r == 0 { return 0, errors.New("division by zero") }
+        return l / r, nil
+    default:
+        return 0, fmt.Errorf("unknown operator %q", n.Op)
+    }
+}
+
+func number(v int) *Node { return &Node{Value: v} }
+
+func main() {
+    ast := &Node{Op: "*",
+        Left: &Node{Op: "-", Left: number(8), Right: number(2)},
+        Right: &Node{Op: "+", Left: number(3), Right: number(1)}}
+    value, err := Eval(ast)
+    fmt.Println("value:", value, "error:", err)
+    _, err = Eval(&Node{Op: "/", Left: number(1), Right: number(0)})
+    fmt.Println("division:", err)
+    _, err = Eval(&Node{Op: "%", Left: number(5), Right: number(2)})
+    fmt.Println("operator:", err)
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash]
+$ go run ast.go
+value: 24 error: <nil>
+division: division by zero
+operator: unknown operator "%"
+\end{lstlisting}
+
+葉の値を先に求めてから親の演算へ戻るため、評価順序は後順走査です。
+0除算と未知演算子を戻り値で報告でき、呼び出し側が失敗を処理できれば追加課題も達成です。
+
+\section{第3章：置き方と速さ}
+
+本文の二つの関数を\code{lookup\_test.go}へ保存し、先頭へ次を加えます。
+
+\begin{lstlisting}[language=Go]
+package lookup
+
+import "testing"
+\end{lstlisting}
+
+同じ端末で次を5回実行します。
+
+\begin{lstlisting}[language=bash]
+go test -bench=. -benchmem -count=5
+\end{lstlisting}
+
+代表的な出力の形は次のとおりです。数値の完全一致は求めません。
+
+\begin{lstlisting}[language=bash]
+BenchmarkSliceIndex-8  1000000000  0.8 ns/op  0 B/op  0 allocs/op
+BenchmarkMapLookup-8    100000000  12.4 ns/op  0 B/op  0 allocs/op
+\end{lstlisting}
+
+判定では、CPU、Go版、要素数、キー分布、事前確保を同じにします。
+5回の中央値を比べ、配列の添字アクセスとハッシュ表の検索では定数係数が異なることを説明します。
+一方の測定だけから、すべての入力で必ず速いとは結論しません。
+
+追加課題では、\code{make([]int, 0)}と\code{make([]int, 0, n)}を分けてベンチマークします。
+事前容量を与えた方で\code{allocs/op}と\code{B/op}が減ることを確かめれば達成です。
+
+\section{第4章：変更要求を境界へ流す}
+
+第4章末の問いに対する記入例を、変更要求ごとに示します。
+
+\begin{table}[htbp]
+  \par
+  \centering
+  \caption{変更の波を局所化する例}
+  \begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}p{0.29\textwidth}X@{}}
+    \toprule
+    変更要求 & 主に変える場所 & 保つ境界と確認 \\
+    \midrule
+    LLM提供者を追加する & 新しい出力ポート実装と設定 & ユースケースは共通インタフェースだけを使い、既存提供者の契約テストを再実行する。 \\
+    配送日時の形式を変える & 入力アダプタと表示用変換 & 注文モデルでは時刻の意味を保ち、HTTPのスナップショットテストを更新する。 \\
+    応答へ根拠を付ける & ユースケースの出力型と応答アダプタ & 配送事実の取得と文章生成を分離し、根拠がない応答を拒否するテストを加える。 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+変更箇所を列挙するだけでなく、変えない場所を言えることが判定条件です。
+小さな処理へ不要な層を増やしていないことと、依存方向がユースケース側へ向いていることも確認します。
+
+\section{第5章：DNSと経路}
+
+\code{dig +trace example.com}では、応答の中に次の順序が現れます。
+
+\begin{enumerate}
+  \item ルートのNS情報が次の問い合わせ先を示します。
+  \item \code{com.}の権威DNSが\code{example.com.}の委任先を示します。
+  \item \code{example.com.}の権威DNSが最終的なレコードを返します。
+\end{enumerate}
+
+サーバー名、IPアドレス、TTLは時点や場所で変わるため、順序と役割を判定します。
+途中でタイムアウトしても、最後に応答した段階、時刻、利用したリゾルバを記録できれば観測は有効です。
+
+\code{traceroute example.com}の各行はTTLを一つ増やした試行に対応します。
+\code{*}は、その試行への応答を観測できなかったことを意味します。
+\code{*}の先で宛先が応答する場合もあるため、途中の\code{*}だけで通信断とは判定しません。
+
+\section{第6章：通信時間}
+
+本文の\code{curl -w}は、次のような1行を返します。
+
+\begin{lstlisting}[language=bash]
+dns=0.012 connect=0.031 tls=0.084 ttfb=0.142 total=0.143
+\end{lstlisting}
+
+各値は開始時点からの累積時刻です。
+通常は\code{dns <= connect <= tls <= ttfb <= total}の順になります。
+段階の所要時間を求めるときは、隣り合う値の差を取ります。
+たとえば上の例では、接続後からTLS完了までがおよそ0.053秒です。
+
+最低5回測定し、時刻、URL、プロキシの有無、HTTP版を残します。
+最初の1回だけが遅い場合は、DNS、接続、TLS、キャッシュのどこに差が出たかを比べます。
+一つの段階だけを見て全体遅延の原因を断定しないことが判定条件です。
+
+\section{第7章：学習と汎化}
+
+本文のデータ生成と乱数シードを変えずに実行すると、次の値になります。
+
+\begin{lstlisting}[language=bash]
+0 0.559948 0.520170
+1 0.322496 0.195771
+3 0.039028 0.011542
+9 0.005280 0.029639
+\end{lstlisting}
+
+次数0は訓練データにも十分合わず、過少適合の例です。
+次数3は訓練MSEとテストMSEがともに小さいため、この比較では最もよく汎化しています。
+次数9は訓練MSEがさらに下がる一方、テストMSEが増えるため、過学習の兆候があります。
+
+Ridge回帰では、次数と正則化係数を訓練データだけで決めません。
+訓練、検証、テストへ分け、検証MSEで係数を選んだ後にテストMSEを一度だけ確認できれば達成です。
+
+\section{第8章：画面更新}
+
+同じ一回の操作について、三つの観測画面を次のように対応づけます。
+
+\begin{table}[htbp]
+  \par
+  \centering
+  \caption{第8章の観測対応表}
+  \begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}p{0.34\textwidth}X@{}}
+    \toprule
+    画面 & 記録するもの & 成立する説明 \\
+    \midrule
+    Network & fetchの開始、状態、応答完了時刻 & 応答の到着と画面更新を別の時点として示せる。 \\
+    Elements & 操作前後のDOM差分とcomputed style & どのノードやスタイル値が変わったかを示せる。 \\
+    Performance & タスク、マイクロタスク、style、layout、paint & JavaScript実行後に必要な描画工程だけが走ったかを示せる。 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+LCPは初回表示の大きな候補が描画された時刻を見ます。
+INPは利用中の操作から次の描画までの応答性を見ます。
+両者を同じ意味の「表示速度」としてまとめず、対象、ブラウザ版、記録時刻を残せれば達成です。
+
+\section{第9章：総合演習}
+
+提出物には、正常系の図と、異常系ごとの調査表を含めます。
+遅延に対する一行の記入例は次のとおりです。
+
+\begin{table}[htbp]
+  \par
+  \centering
+  \caption{反証可能な調査計画の例}
+  \begin{tabularx}{\textwidth}{@{}p{0.18\textwidth}X@{}}
+    \toprule
+    項目 & 記入例 \\
+    \midrule
+    事実 & p99だけが5秒を超え、p50は800ミリ秒である。 \\
+    仮説 & 同時要求が多い時間帯に、外部モデル待ちのキューが伸びる。 \\
+    支持する観測 & キュー待ちと外部依存時間が同じ要求のトレースで増える。 \\
+    反証する観測 & 待ち時間が小さい要求でも同じ遅延が発生する。 \\
+    最初の検証 & 本番設定を変えず、遅い要求のトレースと同時数を照合する。 \\
+    確認指標 & 修正後に同じ負荷条件でp99、失敗率、キュー長を比較する。 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+100点満点の評価表では、80点以上に加え、技術的正確さと調査計画がそれぞれ配点の60\%以上であることを合格条件にします。
+原因を断定していても反証条件がない答案は、調査計画の達成とはしません。
+図の矢印に渡すデータと保証が書かれ、文章が同じ順序で読めることも確認します。
+
+\section{根拠資料を追うための語}
+
+\term{DOI}はDigital Object Identifierの略で、論文などの対象を持続的に識別する文字列です。
 \term{RFC}は、インターネット技術の仕様や知見を公開する文書系列です。
-\term{標準仕様}は、実装間で共有する要件や意味を定める文書です。
-\term{ライセンス}は、著作物やソフトウェアを利用できる条件です。
-\term{リンク切れ}は、記載したURLから資料へ到達できない状態です。
+\term{標準仕様}は、複数の実装が共有する要件や意味を定めた文書です。
+\term{ライセンス}は、著作物やソフトウェアを利用、変更、再配布できる条件を示します。
+本文の説明を確かめるときは、まず仕様、言語リファレンス、標準化団体の資料を開き、版と参照日を記録してください。

@@ -1,49 +1,185 @@
 % !TEX root = ../main.tex
-\chapter{付録A　環境構築}
+\chapter{付録A　環境構築}\setcounter{table}{0}\renewcommand{\thetable}{A.\arabic{table}}
 
-\section{対象環境と前提}
+\section{この付録の到達点}
 
-本文の演習は、Windows 11のWSL、macOS、または一般的なLinux環境を想定します。
-\term{環境構築}は、演習に必要な実行環境とコマンドを準備する作業です。
-\term{OS別手順}は、OSごとに異なるインストール方法を分けて示す手順です。
+\term{環境構築}は、演習に必要なプログラムを導入し、同じ操作を繰り返せる状態にする作業です。
+この付録を終えると、GoとPythonのコードを実行し、DNS、経路、HTTPをコマンドで観測できます。
 組織が管理する端末では、ソフトウェアを追加する前に管理規則を確認してください。
 
-\section{GoとPython}
+\term{OS別手順}は、OSごとに異なる導入操作を分けて示した手順です。
+本書では、Windows 11上のWSL、macOS、DebianまたはUbuntu系Linuxを対象にします。
 
-\term{Go}は、静的型付けとコンパイルを特徴とするプログラミング言語です。
-\term{Python}は、動的型付けのインタプリタ型言語です。
-\term{pip}は、Pythonパッケージを管理するコマンドです。
-\term{venv}は、Pythonパッケージの導入先をプロジェクトごとに分離する仕組みです。
+\section{最初に作業場所を作る}
+
+端末を開き、演習だけを置くディレクトリを作ります。
+
+\begin{lstlisting}[language=bash]
+mkdir -p cs-doc-exercises
+cd cs-doc-exercises
+\end{lstlisting}
+
+\term{PATH}は、入力したコマンド名に対応する実行ファイルを探すディレクトリの並びです。
+この後の確認で\code{command not found}と表示された場合は、導入の失敗かPATHの設定を疑います。
+
+\section{Windows 11ではWSLを用意する}
+
+\term{Windows}はMicrosoftが提供するオペレーティングシステムです。
+\term{WSL}はWindows Subsystem for Linuxの略で、Windows上でLinux環境を使う仕組みです。
+管理者としてPowerShellを開き、次を実行します。
+
+\begin{lstlisting}[language=bash]
+wsl --install -d Ubuntu
+\end{lstlisting}
+
+再起動後にUbuntuを開き、Linux側の利用者名とパスワードを設定します。
+以後のWindows向けコマンドは、PowerShellではなくUbuntuの端末で実行します。
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install -y golang-go python3 python3-venv python3-pip \
+  dnsutils traceroute curl
+\end{lstlisting}
+
+\section{DebianまたはUbuntu系Linuxで用意する}
+
+\term{Linux}はLinuxカーネルを中心に構成されたオペレーティングシステム群です。
+DebianまたはUbuntu系では、次のコマンドで本文に必要な道具を導入します。
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install -y golang-go python3 python3-venv python3-pip \
+  dnsutils traceroute curl
+\end{lstlisting}
+
+別のLinuxディストリビューションでは、同名のパッケージをその環境のパッケージ管理コマンドで導入してください。
+
+\section{macOSで用意する}
+
+\term{macOS}はAppleがMac向けに提供するオペレーティングシステムです。
+Goは\url{https://go.dev/dl/}からmacOS用パッケージを取得し、案内に従って導入します。
+Pythonは\url{https://www.python.org/downloads/macos/}からmacOS用インストーラを取得し、案内に従って導入します。
+\code{dig}、\code{traceroute}、\code{curl}は通常のmacOSに含まれています。
+
+\section{GoとPythonの版を確認する}
+
+\term{Go}は、静的型付けを採用し、実行可能ファイルへコンパイルできるプログラミング言語です。
+\term{Python}は、動的型付けを採用するプログラミング言語です。
+代表的なPython実装であるCPythonは、ソースコードをバイトコードへコンパイルしてから仮想マシンで実行します。
+したがって、言語そのものを一律に「インタプリタ型」と分類せず、言語仕様と実装方式を分けて捉えます。
+
+\term{バージョン確認}は、結果を再現する条件として実行環境の版を記録する操作です。
+次を実行し、表示された行を演習記録へ貼り付けます。
 
 \begin{lstlisting}[language=bash]
 go version
 python3 --version
-python3 -m venv .venv
+curl --version
 \end{lstlisting}
 
-\term{バージョン確認}は、再現条件として実行環境の版を記録する操作です。
-\term{インストール}は、実行可能なプログラムと必要なファイルを端末へ配置する作業です。
-\term{PATH}は、コマンド名から実行ファイルを探すディレクトリの並びです。
+\term{期待出力}は、操作が成功したと判定するために照合する結果です。
+版番号は環境によって異なりますが、次の形で3行とも表示されれば先へ進めます。
 
-\section{通信観測コマンド}
+\begin{lstlisting}[language=bash]
+go version go1.x.y ...
+Python 3.x.y
+curl 8.x.y ...
+\end{lstlisting}
 
-\term{dig}はDNS応答を確認します。
-\term{traceroute}は宛先までの中継点を応答可能な範囲で観測します。
-\term{curl}はURLを指定して通信します。
-\term{ブラウザ開発者ツール}は、Network、Performance、Elementsなどの観測画面を提供します。
+\section{Pythonの仮想環境とNumPy}
 
-WSLまたはDebian系Linuxでは、権限と組織規則を確認したうえで必要なパッケージを導入します。
-\term{WSL}はWindows Subsystem for Linuxの略で、Windows上にLinux環境を提供します。
-\term{Windows}はMicrosoftが提供するオペレーティングシステムです。
-\term{macOS}はAppleがMac向けに提供するオペレーティングシステムです。
-\term{Linux}はLinuxカーネルを中心に構成するオペレーティングシステム群です。
-これらの環境では、コマンド名や導入方法が異なる場合があります。
+\term{venv}は、Pythonパッケージの導入先を演習ごとに分離する仕組みです。
+次のコマンドで仮想環境を作り、有効にしてからNumPyを導入します。
 
-\section{期待出力とトラブルシュート}
+\begin{lstlisting}[language=bash]
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install numpy
+python -c "import sys, numpy; print(sys.executable); print(numpy.__version__)"
+\end{lstlisting}
 
-\term{期待出力}は、操作が成功したと判断するための結果です。
+\term{pip}は、Pythonパッケージを導入・更新するためのツールです。
+\term{インストール}は、プログラムと必要なファイルを端末へ配置し、利用可能にする作業です。
+最後のコマンドで\code{.venv}内のPythonへのパスとNumPyの版番号が表示されれば成功です。
+作業を終えるときは\code{deactivate}を実行します。
+
+\section{通信観測コマンドを確認する}
+
+\term{dig}は、DNSへ問い合わせ、名前解決の応答を表示するコマンドです。
+\term{traceroute}は、TTLを段階的に変え、宛先までの中継点から返る応答を観測するコマンドです。
+途中の機器が応答しない場合は\code{*}が表示されるため、表示された経路が完全な物理経路だとは限りません。
+\term{curl}は、URLを指定してデータを送受信するコマンドです。
+
+\begin{lstlisting}[language=bash]
+dig example.com
+traceroute example.com
+curl -I https://example.com/
+\end{lstlisting}
+
+DNSの\code{status}、経路の応答行、HTTPの状態行が順に確認できれば準備完了です。
+ネットワーク制限で応答しない場合は、失敗時刻と表示内容を保存し、付録Bではその事実を観測結果として扱います。
+
+\section{ブラウザの観測画面を開く}
+
+\term{ブラウザ開発者ツール}は、通信、DOM、スタイル、処理時間などを観測するブラウザ内蔵機能です。
+ChromeまたはEdgeでは\code{F12}、macOSでは\code{Option+Command+I}で開けます。
+Firefoxでも\code{F12}で開けます。
+Safariは「設定」からWeb開発者向け機能を有効にした後、「開発」メニューから開きます。
+
+第8章ではNetwork、Elements、Performanceの各画面を使います。
+ブラウザの版と、記録を開始した時刻も一緒に残してください。
+
+\section{最小の実行確認}
+
+\term{サンプルコード}は、概念や操作を小さな入力で確認するための例です。
+Pythonは次の1行で確認します。
+
+\begin{lstlisting}[language=bash]
+python -c "print(6 * 7)"
+\end{lstlisting}
+
+\code{42}と表示されれば、仮想環境内のPythonを実行できています。
+Goは作業場所に\code{hello.go}を作り、次を保存します。
+
+\begin{lstlisting}[language=go]
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(6 * 7)
+}
+\end{lstlisting}
+
+同じディレクトリで次を実行します。
+
+\begin{lstlisting}[language=bash]
+go run hello.go
+\end{lstlisting}
+
+こちらも\code{42}と表示されれば準備完了です。
+
+\section{症状から切り分ける}
+
 \term{エラー}は、処理を通常どおり続けられない状態と、その通知です。
-\term{トラブルシュート}は、症状を観測し、原因候補を切り分け、復旧を確認する作業です。
-\term{サンプルコード}は、概念や操作を確認するための最小限の例です。
+\term{トラブルシュート}は、症状を記録し、原因候補を一つずつ確かめて復旧する作業です。
 
-\source{\href{https://go.dev/doc/install}{Go installation docs}、\href{https://docs.python.org/3/using/}{Python setup and usage}、\href{https://bind9.readthedocs.io/}{BIND 9 documentation}、\href{https://everything.curl.dev/}{everything curl}}
+\begin{table}[htbp]
+  \par
+  \centering
+  \caption{環境構築で起きやすい症状と確認順}
+  \begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}X X@{}}
+    \toprule
+    症状 & 最初の確認 & 次の操作 \\
+    \midrule
+    \code{command not found} & コマンド名と導入結果 & 端末を開き直し、版確認を再実行する。 \\
+    \code{No module named numpy} & \code{which python}が\code{.venv}を指すか & 仮想環境を有効にし、\code{python -m pip install numpy}を実行する。 \\
+    \code{Permission denied} & 管理対象端末の規則と対象パス & システム領域へ直接書かず、作業ディレクトリとvenvを使う。 \\
+    TLSまたはプロキシのエラー & 組織のプロキシと証明書設定 & 表示全文を保存し、管理者が定めた設定を確認する。 \\
+    \code{traceroute}が\code{*}だけになる & ICMPなどの応答制限 & \code{curl}の到達性を別に確認し、経路不明と記録する。 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\source{\href{https://learn.microsoft.com/windows/wsl/install}{Microsoft: Install WSL}、\href{https://go.dev/doc/install}{Go installation documentation}、\href{https://docs.python.org/3/using/}{Python setup and usage}、\href{https://docs.python.org/3/library/venv.html}{Python venv documentation}、\href{https://bind9.readthedocs.io/en/latest/manpages.html\#dig-dns-lookup-utility}{BIND 9 dig manual}、\href{https://everything.curl.dev/}{everything curl}、\href{https://developer.chrome.com/docs/devtools/open}{Chrome DevTools}}

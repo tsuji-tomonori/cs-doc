@@ -34,8 +34,8 @@
 ## 用語候補（初出太字化対象）
 
 - 環境構築、Go、Python、pip、venv、dig、traceroute、curl、ブラウザ開発者ツール、PATH、バージョン確認、インストール
-- OS別手順、期待出力、エラー、トラブルシュート、WSL、macOS、Windows、Linux、サンプルコード、解答例、索引、参考文献
-- DOI、RFC、標準仕様、ライセンス、リンク切れ
+- OS別手順、期待出力、エラー、トラブルシュート、WSL、macOS、Windows、Linux、サンプルコード、解答例
+- DOI、RFC、標準仕様、ライセンス
 
 ## 図表・演習候補
 

@@ -19,8 +19,11 @@ pdf:
 
 verify: pdf
 	@python3 tools/check_catalog_coverage.py
+	@python3 tools/check_chapter_guides.py
 	@python3 tools/check_structure.py
+	@python3 tools/generate_section_evidence.py
 	@python3 tools/check_japanese_style.py
+	@python3 tools/check_beginner_comprehension.py
 	@python3 tools/check_layout_source.py
 	@if grep -En 'Overfull|Underfull|LaTeX (Font )?Warning|Package .* Warning|Undefined control sequence|Missing character' $(LOG); then exit 1; fi
 	@pages=$$(pdfinfo $(PUBLIC_PDF) | awk '/^Pages:/ {print $$2}'); test "$$pages" -ge 100

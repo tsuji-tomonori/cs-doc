@@ -16,6 +16,19 @@
 
 \chapterimage[文字列 → トークン → ベクトル → Attention → Transformer → 次トークンの確率 → 生成]{ch07-language-model.png}{データ表現、ニューラルネットワーク、Attention、生成、評価の概念図}{fig:ch07-language-model}
 
+\subsection*{この章の二つの読み方}
+
+内容を減らさず、初回通読で必要な経路と、数理を深く理解する経路を分けます。初回は下表の「最短経路」を読み、数式や古典的手法を確かめたいときに「深掘り経路」へ戻ってください。深掘り経路を飛ばしても、Transformerから文章生成までの因果は追えます。
+
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{25mm}YY@{}}
+  \toprule
+  読み方 & 対象 & 到達点 \\
+  \midrule
+  最短経路 & 7.1--7.7、7.17--7.18、7.22--7.36 & 学習と推論、損失、ニューラルネットワーク、Attention、Transformer、自己回帰生成、評価を一続きで説明します。 \\
+  深掘り経路 & 7.8--7.16、7.19--7.21 & 回帰、正則化、ベイズ、識別、パーセプトロン、XOR、勾配降下、誤差逆伝播、系列処理の背景を数式と歴史から補います。 \\
+  \bottomrule
+\end{tabularx}
+
 
 \section{関数・ベクトル・行列}
 \label{sec:06-machine-learning-01}
@@ -344,10 +357,13 @@
 \endgroup
 
 
-\section{未学習と過学習}
+\section{過少適合と過学習}
 \label{sec:06-machine-learning-10}
 
-曲線が単純すぎる、学習が足りないなどの理由で、訓練データにある関係さえ十分に捉えられない状態が\term{未学習}です。反対に、訓練データへよく合うものの、偶然の揺れまで拾い、未知の入力では誤りが増える状態が\term{過学習}です。流暢な応答を返すモデルでも、見たことのない条件で正しいとは限らない理由がここから始まります。
+曲線が単純すぎる、学習が足りないなどの理由で、訓練データにある関係さえ十分に捉えられない状態が\term{過少適合}です。
+英語のunderfittingに由来する\term{アンダーフィッティング}とも呼びます。
+反対に、訓練データへよく合うものの、偶然の揺れまで拾い、未知の入力では誤りが増える状態が\term{過学習}です。
+流暢な応答を返すモデルでも、見たことのない条件で正しいとは限らない理由がここから始まります。
 
 \begingroup
   \noindent
@@ -355,7 +371,7 @@
     \toprule
     状態 & 訓練データ & 未知データ & 主な兆候\\
     \midrule
-    未学習 & 誤差が大きい & 誤差が大きい & 表現力不足、学習不足、特徴不足\\
+    過少適合 & 誤差が大きい & 誤差が大きい & 表現力不足、学習不足、特徴不足\\
     適切 & 誤差が小さい & 誤差も小さい & 安定した検証性能\\
     過学習 & 誤差が非常に小さい & 誤差が大きい & ノイズや偶然の特徴へ適合\\
     \bottomrule
@@ -743,7 +759,7 @@
 \medskip
 \begingroup
 \paragraph{可変長}
-        文や時系列の長さは一定ではありません。複数の例を同じ形へ並べて一度に計算することを\term{バッチ化}といいます。短い列の後ろへ意味のない値を足して長さをそろえる処理が\term{パディング}です。その位置を計算対象から外す\term{マスク}と組み合わせます。
+        文や時系列の長さは一定ではありません。複数の例を同じ形へ並べて一度に計算することを\term{バッチ化}といいます。短い列の後ろへ意味のない値を足して長さをそろえる処理が\term{系列パディング}です。その位置を計算対象から外す\term{マスク}と組み合わせます。第3章のメモリ・パディングとは別の概念です。
 
 \par
 \endgroup
@@ -966,7 +982,11 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 \section{次トークン予測}
 \label{sec:06-machine-learning-28}
 
-\term{言語モデル}は、これまでのトークン列が与えられたとき、次に各トークンが続く確率を計算するモデルです。完成した答えを一度に取り出すのではありません。学習時には、実際に続いたトークンの確率が高くなるようパラメータを更新します。この\term{次トークン予測}を大量の文へ繰り返します。
+\term{言語モデル}は、言語の並びに確率を与えたり、言語に関する予測を行ったりするモデルの総称です。
+本章で扱う\term{自己回帰言語モデル}は、これまでのトークン列が与えられたとき、次に各トークンが続く確率を計算します。
+完成した答えを一度に取り出すのではありません。
+学習時には、実際に続いたトークンの確率が高くなるようパラメータを更新します。
+この\term{次トークン予測}を大量の文へ繰り返します。
 
 \begingroup
 \begingroup
@@ -1182,7 +1202,14 @@ import numpy as np
 def mse(y, pred):
     return np.mean((y - pred) ** 2)
 
-# train_x, train_y, test_x, test_y は事前に分割済み
+rng = np.random.default_rng(7)
+train_x = np.linspace(-1, 1, 12)
+train_y = np.sin(np.pi * train_x) + rng.normal(
+    0, 0.25, train_x.size
+)
+test_x = np.linspace(-0.95, 0.95, 80)
+test_y = np.sin(np.pi * test_x)
+
 for degree in [0, 1, 3, 9]:
     w = np.polynomial.polynomial.polyfit(
         train_x, train_y, degree
@@ -1193,8 +1220,9 @@ for degree in [0, 1, 3, 9]:
     test_pred = np.polynomial.polynomial.polyval(
         test_x, w
     )
-    print(degree, mse(train_y, train_pred),
-          mse(test_y, test_pred))
+    print(degree,
+          f"{mse(train_y, train_pred):.6f}",
+          f"{mse(test_y, test_pred):.6f}")
       \end{lstlisting}
 \par
 \endgroup
