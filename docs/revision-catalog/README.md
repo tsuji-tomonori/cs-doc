@@ -8,17 +8,17 @@
 
 | 章 | タイトル | Markdown | 節数 | 用語数 |
 | --- | --- | --- | --- | --- |
-| 00 | はじめに | 00_introduction.md | 5 | 29 |
+| 00 | はじめに | 00_introduction.md | 5 | 19 |
 | 01 | 第1章 信号から計算へ | 01_signal_to_computation.md | 20 | 67 |
 | 02 | 第2章 コードから命令へ | 02_code_to_instruction.md | 16 | 54 |
-| 03 | 第3章 プログラムが動く場所 | 03_runtime_place.md | 21 | 69 |
+| 03 | 第3章 プログラムが動く場所 | 03_runtime_place.md | 21 | 70 |
 | 04 | 第4章 変更を支える設計 | 04_design_for_change.md | 23 | 56 |
 | 05 | 第5章 インターネットという分散網 | 05_internet_distributed_network.md | 17 | 62 |
 | 06 | 第6章 要求が届くまで | 06_request_delivery.md | 16 | 59 |
-| 07 | 第7章 言葉が応答になるまで | 07_language_to_response.md | 36 | 80 |
-| 08 | 第8章 応答が画面になるまで | 08_response_to_screen.md | 11 | 53 |
+| 07 | 第7章 言葉が応答になるまで | 07_language_to_response.md | 36 | 83 |
+| 08 | 第8章 応答が画面になるまで | 08_response_to_screen.md | 11 | 55 |
 | 09 | 第9章 一つの応答をたどる | 09_trace_one_response.md | 21 | 49 |
-| A | 付録・参考文献・索引 | appendix_references_index.md | 4 | 29 |
+| A | 付録・参考文献・索引 | appendix_references_index.md | 38 | 26 |
 
 ## 編集方針
 

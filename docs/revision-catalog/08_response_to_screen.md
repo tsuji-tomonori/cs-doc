@@ -46,7 +46,7 @@
 - CSS、CSSOM、カスケード、セレクタ、スタイル計算、computed style、render tree、レイアウト、box model、viewport、reflow、paint
 - rasterize、compositing、layer、GPU、JavaScriptエンジン、V8、インタプリタ、JIT、ガベージコレクション、イベントループ、タスク、マイクロタスク
 - Promise、async/await、コールバック、非同期処理、fetch、DOM更新、再スタイル計算、再レイアウト、再描画、jank、FPS、First Contentful Paint
-- Largest Contentful Paint、DevTools、Network、Performance、Elements
+- Largest Contentful Paint、Interaction to Next Paint、INP、DevTools、Network、Performance、Elements
 
 ## 図表・演習候補
 

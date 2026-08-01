@@ -1,0 +1,20 @@
+\subsection*{章末の案内語}
+
+この表は、第8章で説明した語のうち、HTTP応答が画面へ変わり、操作後に更新されるまでの主経路に絞っています。
+
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{32mm}p{35mm}Y@{}}
+  \toprule
+  この章の語 & 最初に説明した節 & 一言で戻る \\
+  \midrule
+  \guideterm{ブラウザ} & 応答を受け取るブラウザ & Web資源を取得、解析、実行、表示するアプリです。 \\
+  \guideterm{HTML／DOM} & HTML解析とDOM & 文書の記述と、ブラウザが作るノード木です。 \\
+  \guideterm{CSSOM} & CSSOMとスタイル計算 & CSS規則を扱える木へしたものです。 \\
+  \guideterm{render tree} & CSSOMとスタイル計算 & 描画に必要な要素と計算済みスタイルをまとめます。 \\
+  \guideterm{レイアウト} & レイアウト & 要素の位置と寸法を計算します。 \\
+  \guideterm{paint／compositing} & 描画と合成 & 描画命令を作り、複数の描画層を画面へ重ねます。 \\
+  \guideterm{JavaScriptエンジン} & JavaScriptエンジン & DOMを操作するコードの解析と実行を担います。 \\
+  \guideterm{イベントループ} & イベントループと非同期処理 & 実行可能な仕事を選んで順に進めます。 \\
+  \guideterm{fetch} & fetchとDOM更新 & JavaScriptからネットワーク要求を始めます。 \\
+  \guideterm{LCP／INP} & 初回表示とその後の更新 & 最大表示候補の描画時刻と、操作応答の遅延を分けて測ります。 \\
+  \bottomrule
+\end{tabularx}

@@ -1,5 +1,4 @@
-\subsection*{第1章の索引用語}
-
+\newcommand{\ChapterOneSupplementalTerms}{%
 \begin{description}
   \item[\term{電気信号}] 電圧や電流の変化によって情報を運ぶ物理的な信号です。
   \item[\term{負数}] 0より小さい数です。
@@ -14,6 +13,27 @@
   \item[\term{データバス}] CPU、メモリ、周辺装置の間で値を運ぶ信号線群です。
   \item[\term{メインメモリ}] 実行中の命令とデータを置く主記憶です。
   \item[\term{ノイマン型}] 命令とデータを同じ記憶へ置く計算機構成です。
-  \item[\term{CPU}] Central Processing Unitの略で、命令を実行し機械を制御する処理装置です。
   \item[\term{命令レジスタ}] 現在デコードまたは実行する命令を保持するレジスタです。
-\end{description}
+\end{description}%
+}
+
+\subsection*{章末の案内語}
+
+この表は、第1章の本文で説明した語のうち、物理的な信号から命令実行までをたどり直すために必要な語だけを示します。
+
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{32mm}p{35mm}Y@{}}
+  \toprule
+  この章の語 & 最初に説明した節 & 一言で戻る \\
+  \midrule
+  \guideterm{論理値} & 電圧と論理値 & 電圧の範囲をLowとHighの二状態として読みます。 \\
+  \guideterm{ビット／バイト} & 2進数 & 0か1の一桁と、通常8桁をまとめた単位です。 \\
+  \guideterm{2の補数} & 負数と2の補数 & 固定幅の加算回路で負数を扱う表現です。 \\
+  \guideterm{Unicode／UTF-8} & ビット列の解釈 & 文字の番号と、その番号をバイト列へする方式です。 \\
+  \guideterm{論理ゲート} & 論理ゲート & 0と1の規則を回路として実現する部品です。 \\
+  \guideterm{加算器} & 加算器 & 和と桁上がりを論理ゲートで求めます。 \\
+  \guideterm{レジスタ} & クロックとレジスタ & CPUがすぐ使う値を更新の節目ごとに保持します。 \\
+  \guideterm{メモリ階層} & メモリ階層 & 容量と速さの異なる記憶をCPUに近い順に重ねます。 \\
+  \guideterm{キャッシュ} & メモリ階層 & 最近使った値や近い値を速い側へ一時保持します。 \\
+  \guideterm{CPU} & ノイマン型コンピュータ & メモリから命令を読み、回路の状態を更新します。 \\
+  \bottomrule
+\end{tabularx}

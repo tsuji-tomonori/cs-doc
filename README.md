@@ -10,7 +10,7 @@
 - [PDFを読む](https://tsuji-tomonori.github.io/cs-doc/information-engineering-basics.pdf)
 - [閲覧ページを開く](https://tsuji-tomonori.github.io/cs-doc/)
 
-PDFはA4縦で、序章、第1〜9章、付録、参考文献、索引を収録します。
+PDFはA4縦で、「はじめに」、第1〜9章、付録、参考文献、索引を収録します。
 `main`ブランチへのpush時に、GitHub ActionsがLuaLaTeXで再生成し、GitHub Pagesへ公開します。
 Pull Requestでは組版と品質検証だけを実行します。
 
@@ -59,7 +59,7 @@ make site
 - `build/information-engineering-basics.pdf`：配布用PDF
 - `site/information-engineering-basics.pdf`：GitHub Pages用PDF
 
-`make verify`は、組版警告、A4判定、ページ数、本文量、外部リンク、書体埋め込み、カタログの186節と607用語、文体規則を検査します。
+`make verify`は、組版警告、A4判定、ページ数、本文量、外部リンク、書体埋め込み、カタログの186節と600用語、文体規則を検査します。
 
 ## リポジトリ構成
 

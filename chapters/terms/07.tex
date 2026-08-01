@@ -1,5 +1,4 @@
-\subsection*{第7章の索引用語}
-
+\newcommand{\ChapterSevenSupplementalTerms}{%
 \begin{description}
   \item[\term{ラベル}] 教師あり学習で入力へ対応づける正解または目標値です。
   \item[\term{L1正則化}] パラメータの絶対値和を損失へ加える正則化です。
@@ -13,4 +12,26 @@
   \item[\term{文章生成}] 次トークンの選択を繰り返して系列を作る処理です。
   \item[\term{偏り}] データや評価条件の偏在によって結果が群や条件ごとに系統的に変わることです。
   \item[\term{汎化}] 学習時に見ていない入力へも有用な予測を返す性質です。
-\end{description}
+\end{description}%
+}
+
+\subsection*{章末の案内語}
+
+この表は、第7章で説明した語のうち、入力から自己回帰生成と評価までの最短経路に必要な語だけを示します。回帰、ベイズ、識別などの深掘り語は本文と補足用語集に残しています。
+
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{32mm}p{35mm}Y@{}}
+  \toprule
+  この章の語 & 最初に説明した節 & 一言で戻る \\
+  \midrule
+  \guideterm{機械学習} & 機械学習 & 例から関数のパラメータを調整します。 \\
+  \guideterm{学習／推論} & 学習と推論 & パラメータを更新する時間と、固定した値で答える時間です。 \\
+  \guideterm{損失関数} & 損失関数 & 予測と正解のずれを一つの数へ変えます。 \\
+  \guideterm{過少適合／過学習} & 過少適合と過学習 & 訓練例にも合わない状態と、未知例へ通用しない状態です。 \\
+  \guideterm{Attention} & Attention & 入力中の各位置を内容に応じた重みで参照します。 \\
+  \guideterm{Transformer} & Transformerの構成 & Attentionなどの変換を層として重ねます。 \\
+  \guideterm{トークン} & トークン化 & 文字列をモデルが扱う単位へ分けたものです。 \\
+  \guideterm{自己回帰言語モデル} & 次トークン予測 & それまでの列を条件に次の要素を一つずつ予測します。 \\
+  \guideterm{プロンプト／コンテキスト} & プロンプトとコンテキスト & 求める出力を伝える入力と、生成中に参照できる列全体です。 \\
+  \guideterm{評価} & 評価 & 決めた条件と指標で目的達成を確かめます。 \\
+  \bottomrule
+\end{tabularx}

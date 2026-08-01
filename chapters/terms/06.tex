@@ -1,0 +1,20 @@
+\subsection*{章末の案内語}
+
+この表は、第6章で説明した語のうち、端末内の届け分けから保護されたHTTP要求までをたどる語に絞っています。
+
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{32mm}p{35mm}Y@{}}
+  \toprule
+  この章の語 & 最初に説明した節 & 一言で戻る \\
+  \midrule
+  \guideterm{ポート番号} & ポート番号 & プロトコルごとの16ビット名前空間で通信端点を識別します。 \\
+  \guideterm{TCP} & TCP接続 & 順序のあるバイト列を接続状態とともに届けます。 \\
+  \guideterm{3ウェイハンドシェイク} & TCP接続 & SYN、SYN-ACK、ACKで接続を確立します。 \\
+  \guideterm{UDP} & UDP & 接続や再送を標準では持たないデータグラム配送です。 \\
+  \guideterm{QUIC} & QUIC & UDP上で暗号化、再送、多重化を提供します。 \\
+  \guideterm{HTTP} & HTTP & 要求と応答の意味を定めます。 \\
+  \guideterm{TLSハンドシェイク} & TLS & 暗号パラメータを交渉し、鍵を確立し、相手を認証します。 \\
+  \guideterm{証明書} & 証明書検証 & 公開鍵と主体名などを署名で結び付けます。 \\
+  \guideterm{URL} & URLから接続まで & 接続方式、ホスト、対象位置などを一つの文字列で示します。 \\
+  \guideterm{キャッシュ} & サーバーの手前 & 条件を満たす以前の応答を再利用します。 \\
+  \bottomrule
+\end{tabularx}
