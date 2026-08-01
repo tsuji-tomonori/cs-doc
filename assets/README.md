@@ -2,17 +2,17 @@
 
 ## `cover-progression.png`
 
-- 生成日：2026-07-15
+- 生成日：2026-07-28
 - 生成方法：Codex 組み込み `image_gen`（既定モード）
 - 用途：表紙の概念イラスト
-- 後処理：なし
+- 後処理：1904×826へ中央基準でトリミングし、PNGのメタデータを除去
 
 プロンプト：
 
 ```text
 Use case: scientific-educational
 Asset type: cover illustration for a Japanese computer-science training textbook
-Primary request: a simple visual progression from electronic switching to modern AI
+Primary request: a refined visual progression from electronic switching to modern AI: transistor and logic gate, CPU and memory, source structure and runtime, networked computers exchanging packets, then a compact neural network and browser response
 Scene/backdrop: perfectly plain off-white background, color #F7F6F1
 Subject: five clearly separated but connected stages, left to right: a transistor switch and logic gate; a CPU chip beside memory cells; source code becoming a small abstract syntax tree; two networked computers exchanging packets; a compact neural-network motif representing machine learning
 Style/medium: clean flat vector-like educational illustration, precise thin lines, restrained geometry
@@ -22,10 +22,13 @@ Constraints: no text, no letters, no numbers, no logos, no watermark; no gradien
 Avoid: dense infographic, photographic realism, colorful accents, purple, pink, orange, strong primary colors, decorative background
 ```
 
-## 2026年7月28日改訂の章扉画像
+## 2026年7月28日再生成の章扉画像
 
 次の画像は、Codex 組み込み `image_gen` の既定モードで生成しました。
-いずれも16:9、文字なし、人物なしの章扉用概念イラストです。
+いずれも16:9、画像内の生成文字なし、人物なしの章扉用概念イラストです。
+生成後に1200×675へ中央基準でトリミングし、PNGのメタデータを除去しました。
+日本語の説明は画像へ焼き込まず、`tex/macros.tex`によって図の一部として組版します。
+この方法により、生成文字の誤字を避け、検索可能な日本語としてPDFへ埋め込みます。
 本文中の厳密な回路、木構造、プロトコル順序は、画像生成の解釈に依存させずTeXまたは表で示します。
 
 | ファイル | 用途 |
@@ -33,7 +36,7 @@ Avoid: dense infographic, photographic realism, colorful accents, purple, pink, 
 | `ch00-overview.png` | 一要求を九つの場面で追う全体像 |
 | `ch01-signals.png` | 信号、論理回路、記憶、CPU |
 | `ch02-code.png` | ソースコードから命令への変換 |
-| `ch03-runtime.png` | OS、プロセス、仮想メモリ、データ構造 |
+| `ch03-runtime.png` | OS、プロセス、スレッド、仮想メモリ、ヒープ、GC |
 | `ch04-design.png` | モジュール、境界、テスト、変更 |
 | `ch05-internet.png` | 分散網、複数経路、名前解決 |
 | `ch06-delivery.png` | 接続、暗号化、HTTP、キャッシュ |
@@ -46,18 +49,19 @@ Avoid: dense infographic, photographic realism, colorful accents, purple, pink, 
 ```text
 Use case: scientific-educational
 Asset type: 16:9 chapter opener for a Japanese computer science textbook
-Primary request: [章ごとの概念を、左から右へつながる構成で表現]
+Primary request: [表の用途欄に示す章ごとの概念を、左から右へつながる構成で表現]
 Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
-Style/medium: clean editorial vector-style technology illustration, soft SaaS presentation aesthetic
+Style/medium: precise flat editorial vector-style educational illustration, thin geometric lines
 Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
-Constraints: no words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
+Constraints: no readable words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
 ```
 
-## 2026年7月28日改訂の本文挿絵
+## 2026年7月28日再生成の本文挿絵
 
 次の画像は、Codex組み込み`image_gen`の既定モードで生成しました。
 長い章の途中で概念を整理し、読者が文章から厳密な図へ進むための足場として使います。
 短い章とTikZ図が十分にある箇所には追加せず、視覚的な区切りが有効な5箇所に限定しました。
+章扉画像と同じく、日本語の説明はTeXで図中へ組版します。
 
 | ファイル | 挿入箇所 | 主なプロンプト |
 | --- | --- | --- |
@@ -77,3 +81,10 @@ Style/medium: clean editorial vector-style technology illustration, soft SaaS pr
 Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
 Constraints: no words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
 ```
+
+## 日本語説明の対応
+
+図中の日本語説明は、生成画像の見た目と本文の概念を対応付ける短い経路として記載します。
+章扉では、例えば「電気信号 → デジタル信号 → 論理回路 → 記憶 → 演算 → CPU」のように、章内で扱う順序を示します。
+本文挿絵では、「学習」と「推論」や、「メトリクス」「ログ」「トレース」の役割を対比します。
+OSI参照モデル、プロセスとスレッド、並行と並列、GCの到達可能性は、正確な対応関係が必要なためTikZで作成しました。

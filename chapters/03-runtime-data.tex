@@ -9,12 +9,14 @@
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item OS、プロセス、システムコール、仮想メモリの責務を区別できます。
+  \item OS、プロセス、スレッド、システムコール、仮想メモリの責務を区別できます。
+  \item マルチプロセスとマルチスレッド、並行と並列の違いを説明できます。
+  \item GCが回収するメモリと、明示的に閉じる必要がある資源を区別できます。
   \item 型、値、ポインタ、参照をメモリ上の配置へ結び付けられます。
   \item データ構造を時間計算量と空間計算量から選べます。
 \end{learninggoals}
 
-\chapterimage{ch03-runtime.png}{OSがプロセスとメモリを分離し、データ構造へ資源を割り当てる概念図}{fig:ch03-runtime}
+\chapterimage[プロセスとスレッド → OSの資源管理 → 仮想メモリ → ヒープとGC]{ch03-runtime.png}{OSがプロセスとメモリを分離し、データ構造へ資源を割り当てる概念図}{fig:ch03-runtime}
 
 
 \section{OSの役割}
@@ -64,29 +66,83 @@
 
 保存されている命令列はプログラムであり、まだ時間の中を進んでいません。OSが命令とデータをメモリへ配置し、実行位置や資源を管理し始めると、プログラムはプロセスになります。送信イベントを受け取るのはファイルではなく、この動いている存在です。
 
-\begingroup
-\begingroup
 \paragraph{プログラム}
-        \term{プログラム}は、命令や開始時に使うデータを含む、保存された処理の記述です。実行可能ファイルや、別の処理系に読ませる命令文であるスクリプトは、それだけではCPU時間を持ちません。
+\term{プログラム}は、命令や開始時に使うデータを含む、保存された処理の記述です。実行可能ファイルや、別の処理系に読ませる命令文であるスクリプトは、それだけではCPU時間を持ちません。
 
 \paragraph{プロセス}
-        \term{プロセス}は、実行中のプログラムに、メモリの見え方、CPUレジスタの現在値、開いているファイルなどを加えたものです。OSが「どこまで実行したか」を保存して再開できるよう、この一式を管理します。
+\term{プロセス}は、実行中のプログラムに、メモリの見え方、CPUレジスタの現在値、開いているファイルなどを加えたものです。OSが「どこまで実行したか」を保存して再開できるよう、この一式を管理します。
 
-\par
-\endgroup
-\medskip
-\begingroup
 \paragraph{スレッド}
-        プロセス内で命令を順に実行する一つの流れが\term{スレッド}です。一つのプロセスが複数のスレッドを持つと、同じメモリ上のデータを共有しながら複数の仕事を進められます。各スレッドは、自分が次に実行する位置を含むレジスタ状態と、関数呼び出しを置くスタックを持ちます。
+プロセス内で命令を順に実行する一つの流れが\term{スレッド}です。各スレッドは、次に実行する位置を含むレジスタ状態と、関数呼び出しを置くスタックを持ちます。同じプロセスのスレッドは、コード、ヒープ、開いているファイルなどを共有します。
 
-\paragraph{並行性の注意}
-        複数の仕事が、開始から終了までの時間を重ねて進む性質を\term{並行性}といいます。共有データへの読み書きが同じ時期に起き、順序によって結果が変わることが\term{競合}です。どの処理を先へ進めてよいかを決める\term{同期}によって、許される順序を定めます。
+\subsection{マルチプロセスとマルチスレッド}
 
-\par
-\endgroup
-  \takeaway{同じプログラムを2回起動すると、通常は別のプロセスと別の仮想アドレス空間が作られます。}
-\par
-\endgroup
+複数のプロセスを使って仕事を分ける構成が\term{マルチプロセス}です。各プロセスは原則として別の仮想アドレス空間を持つため、一方の不正なメモリアクセスが他方へ直接広がりにくくなります。データを渡すときは、パイプ、ソケット、共有メモリなどの\term{プロセス間通信}を使います。
+
+一つのプロセスに複数のスレッドを置く構成が\term{マルチスレッド}です。ヒープ上の値を共有しやすく、同じ大きなデータを複製せずに扱えます。一方で、一つの誤りがプロセス全体へ影響しやすく、共有データの更新順序を設計する必要があります。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
+    \node[font=\sffamily\bfseries,text=DeepNavy] (ptitle) {マルチプロセス};
+    \node[box,minimum width=34mm,minimum height=26mm,below left=4mm and 1mm of ptitle] (p1) {};
+    \node[box,minimum width=34mm,minimum height=26mm,below right=4mm and 1mm of ptitle] (p2) {};
+    \node at ([yshift=8mm]p1.center) {プロセスA};
+    \node at ([yshift=8mm]p2.center) {プロセスB};
+    \node[accentbox,minimum width=12mm] at ([yshift=-2mm]p1.center) {スレッド};
+    \node[accentbox,minimum width=12mm] at ([yshift=-2mm]p2.center) {スレッド};
+    \node[font=\tiny] at ([yshift=-9mm]p1.center) {独立したアドレス空間};
+    \node[font=\tiny] at ([yshift=-9mm]p2.center) {独立したアドレス空間};
+    \draw[{Latex[length=2mm]}-{Latex[length=2mm]},draw=MutedBlue,line width=0.5pt] (p1.east) -- node[above,font=\tiny]{プロセス間通信} (p2.west);
+
+    \node[font=\sffamily\bfseries,text=DeepNavy,right=18mm of ptitle] (ttitle) {マルチスレッド};
+    \node[box,minimum width=62mm,minimum height=32mm,below=4mm of ttitle] (proc) {};
+    \node at ([yshift=11mm]proc.center) {一つのプロセス};
+    \node[accentbox,minimum width=14mm] (t1) at ([xshift=-20mm,yshift=1mm]proc.center) {スレッド1};
+    \node[accentbox,minimum width=14mm] (t2) at ([yshift=1mm]proc.center) {スレッド2};
+    \node[accentbox,minimum width=14mm] (t3) at ([xshift=20mm,yshift=1mm]proc.center) {スレッド3};
+    \node[box,minimum width=53mm,minimum height=6mm] at ([yshift=-10mm]proc.center) {共有：コード・ヒープ・開いているファイル};
+  \end{tikzpicture}
+  \caption{マルチプロセスとマルチスレッドの共有範囲。実際の共有対象はOSと処理系の仕様に依存します。}
+  \label{fig:process-thread-sharing}
+\end{figure}
+
+\subsection{並行と並列}
+
+複数の仕事が、開始から終了までの時間を重ねて進む性質が\term{並行}です。一つのCPUコアでも、OSが実行する仕事を短い間隔で切り替えれば並行に進められます。ファイルの読み込みを待つ間に別の要求を処理する構成は、並行性を利用する例です。
+
+複数の仕事を、同じ時点に物理的に実行する性質が\term{並列}です。複数のCPUコアで画像の異なる領域を同時に計算する構成は、並列性を利用する例です。並行は仕事の進め方に関する性質であり、並列は同時実行の状態に関する性質です。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[x=7mm,y=5mm,every node/.append style={font=\scriptsize}]
+    \node[anchor=east] at (0,3) {並行};
+    \node[anchor=east] at (0,0) {並列};
+    \node[anchor=west,font=\tiny] at (0,4.2) {一つのCPUコア：時間を分けて切り替える};
+    \node[anchor=west,font=\tiny] at (0,1.2) {二つのCPUコア：同じ時間帯に実行する};
+    \foreach \x/\w/\c in {0/2/MutedBlue,2/2/PaleGray,4/2/MutedBlue,6/2/PaleGray} {
+      \fill[\c] (\x,2.2) rectangle ++(\w,0.7);
+    }
+    \node[white,font=\tiny] at (1,2.55) {仕事A};
+    \node[white,font=\tiny] at (3,2.55) {仕事B};
+    \node[white,font=\tiny] at (5,2.55) {仕事A};
+    \node[white,font=\tiny] at (7,2.55) {仕事B};
+    \fill[MutedBlue] (0,-0.1) rectangle (8,0.6);
+    \fill[PaleGray] (0,-1.0) rectangle (8,-0.3);
+    \node[white,font=\tiny] at (4,0.25) {コア1：仕事A};
+    \node[white,font=\tiny] at (4,-0.65) {コア2：仕事B};
+    \draw[-{Latex[length=2mm]},draw=DeepNavy] (0,-1.6) -- (8.5,-1.6) node[right]{時間};
+  \end{tikzpicture}
+  \caption{並行と並列の違い。並行な設計が、実行時には逐次または並列に動きます。}
+  \label{fig:concurrency-parallelism}
+\end{figure}
+
+\paragraph{競合と同期}
+共有データへの読み書きが同じ時期に起き、順序によって結果が変わる問題が\term{競合}です。複数の処理に許す順序を定めることが\term{同期}です。ロック、条件変数、メッセージ受け渡しなどを用いて、同時に変更してよい範囲を制限します。
+
+\source{\href{https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf}{OSTEP, “Concurrency: An Introduction”}、\href{https://pubs.opengroup.org/onlinepubs/9799919799/functions/V2_chap02.html}{POSIX.1-2024, General Information}}
+
+\takeaway{並行なプログラムが常に並列に動くとは限りません。実行時のコア数とスケジューリングによって、逐次実行と並列実行のどちらにもなります。}
 
 
 \section{システムコール}
@@ -224,13 +280,45 @@ OSとCPUは、各プロセスに自分専用の連続した空間があるよう
 \par
 \endgroup
 \medskip
-\begingroup
-\paragraph{GC}
-        \term{ガベージコレクション}は、どの変数からも到達できなくなった値など、今後使えない領域をランタイムが見つけて自動で再利用する仕組みです。Garbage Collectionを略して\term{GC}と呼びます。プログラマがメモリを一個ずつ解放する負担を減らしますが、ファイルや通信接続まで特定の時刻に閉じる保証ではありません。
+\subsection{ガベージコレクション}
 
-\par
-\endgroup
-  \vspace{4mm}
+\term{ガベージコレクション}は、プログラムが今後使えないヒープ領域を自動で見つけ、再利用できる状態へ戻す仕組みです。Garbage Collectionを略して\term{GC}と呼びます。GCは一般にOSそのものの機能ではなく、言語処理系のランタイムがOSの仮想メモリとアロケータの上で行う管理です。
+
+\paragraph{到達可能性}
+実行中の関数が持つ変数やグローバル変数など、確実に使われている参照の出発点が\term{ルート}です。ルートから参照を順にたどって見つかる値を\term{到達可能}といいます。ルートから到達できない値は、プログラムから再び使えないため、追跡型GCの回収候補になります。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[node distance=9mm and 13mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (root) {ルート\\実行中の変数};
+    \node[box,right=of root] (a) {値A};
+    \node[box,right=of a] (b) {値B};
+    \node[box,below=of a] (c) {値C};
+    \node[box,draw=PaleGray,dashed,below=of b] (d) {値D};
+    \draw[flow] (root) -- (a);
+    \draw[flow] (a) -- (b);
+    \draw[flow] (a) -- (c);
+    \node[align=center,text=MutedBlue,font=\tiny,above=2mm of b] {到達可能\\保持する};
+    \node[align=center,text=PaleGray,font=\tiny,right=2mm of d] {到達不能\\回収候補};
+  \end{tikzpicture}
+  \caption{追跡型GCにおける到達可能性。値Dはルートからたどれないため回収候補です。}
+  \label{fig:gc-reachability}
+\end{figure}
+
+\paragraph{代表的な方式}
+追跡型GCは、到達可能な値を印付けし、印のない領域を回収します。マークスイープは、生きている値への印付けと未使用領域の回収を分ける方式です。コピーGCは、生きている値を別の領域へ移して空きをまとめます。世代別GCは、寿命の短い値が多いという経験則を利用し、作られて間もない領域を重点的に調べます。
+
+参照カウントは、値を指す参照の数を記録し、数が0になった時点で回収します。回収時期を予測しやすい一方、値同士が輪になって参照する循環を、それだけでは回収できません。言語処理系は、用途に応じて複数の方式や改善を組み合わせます。
+
+\paragraph{停止時間と処理量}
+GCがアプリの実行を一時停止する時間が\term{停止時間}です。GCがアプリと同時期に処理を進める方式でも、すべての停止が必ずなくなるわけではありません。短い停止時間、GCに使うCPU時間、ヒープ使用量の間にはトレードオフがあります。
+
+\paragraph{GCが閉じない資源}
+GCが扱う主な対象はメモリです。ファイル、ソケット、データベース接続、ロックは、不要になった瞬間にGCが閉じるとは限りません。利用終了時に明示的に閉じる仕組みや、言語が提供する構文を使います。
+
+\source{\href{https://gchandbook.org/}{Jones, Hosking, Moss, \textit{The Garbage Collection Handbook}, 2nd ed.}、\href{https://go.dev/doc/gc-guide}{A Guide to the Go Garbage Collector}}
+
+\vspace{4mm}
 \paragraph{Goでの境界}
     Goはポインタを持ちますが、ポインタへ数を足して別の位置を直接作る通常のポインタ演算は認めません。関数を終えても参照され得る値を調べる処理を\term{エスケープ解析}といい、値をスタックかヒープのどちらへ置くかは、この解析などを用いる処理系の判断です。
 
@@ -609,7 +697,7 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 比較のため、各要素が次の要素への参照を持ち、鎖のようにつながる\term{連結リスト}も表へ加えます。途中の要素が分かっていれば参照をつなぎ替えて挿入できますが、$i$番目へ行くには先頭から参照をたどります。
 
 図\ref{fig:ch03-data-structures}は、同じデータでも置き方によって得意な操作が変わることを示します。
-\sectionimage{ch03-data-structures.png}{連続した領域、参照の鎖、キーによる格納を用途に応じて選ぶイメージ}{fig:ch03-data-structures}
+\sectionimage[配列：添字で参照 ／ 連結リスト：参照をたどる ／ マップ：キーから探す]{ch03-data-structures.png}{連続した領域、参照の鎖、キーによる格納を用途に応じて選ぶイメージ}{fig:ch03-data-structures}
 
 \begingroup
   \noindent
@@ -723,7 +811,7 @@ func BenchmarkMapLookup(b *testing.B) {
 \section{一要求からシステムへ}
 \label{sec:03-runtime-data-20}
 
-保存されていたプログラムは、OSから隔離されたアドレス空間とCPU時間を受け取り、動くプロセスになりました。入力文と注文データは型のある値としてメモリへ置かれ、配列、スライス、マップが処理に合う形で関係を持たせます。ポインタと参照は共有を可能にし、計算量は入力が増えた先の振る舞いを予測させます。
+保存されていたプログラムは、OSから隔離されたアドレス空間とCPU時間を受け取り、動くプロセスになりました。プロセスとスレッドは、分離と共有の範囲を変えながら複数の仕事を進めます。入力文と注文データは型のある値としてメモリへ置かれ、不要になったヒープ領域は処理系のGCが回収します。配列、スライス、マップは処理に合う形で値の関係を持たせます。
 
 一件の要求がどこで動くかは見えました。しかし実際のAIアプリには、多数の機能と変更が積み重なります。次章では実行中の値から一歩引き、注文の事実、通信の形式、モデルの呼び出しをどう分ければ、システム全体を育て続けられるかを見ます。
 
@@ -738,8 +826,11 @@ func BenchmarkMapLookup(b *testing.B) {
 \begingroup
   \begin{enumerate}
     \item プログラム、プロセス、スレッドの違いを説明してください。
+    \item マルチプロセスとマルチスレッドを、分離と共有の範囲から比較してください。
+    \item 並行と並列の違いを、一つのCPUコアでの実行を含めて説明してください。
     \item 仮想アドレスがプロセス分離に役立つ理由を説明してください。
     \item スタックとヒープを、値の寿命と管理方法から比較してください。
+    \item GCが回収するものと、明示的に閉じる必要がある資源を区別してください。
     \item Goの引数が値渡しでも、スライスの要素更新が共有されるのはなぜですか。
     \item 動的配列の末尾追加における「償却$O(1)$」は何を意味しますか。
     \item ハッシュマップの平均$O(1)$には、どのような仮定が必要ですか。
