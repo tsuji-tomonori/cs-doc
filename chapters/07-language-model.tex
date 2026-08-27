@@ -14,7 +14,7 @@
   \item 生成品質を、漏洩、偏り、分布変化、ハルシネーションから評価できます。
 \end{learninggoals}
 
-\chapterimage[文字列 → トークン → ベクトル → Attention → Transformer → 次トークンの確率 → 生成]{ch07-language-model.png}{データ表現、ニューラルネットワーク、Attention、生成、評価の概念図}{fig:ch07-language-model}
+\chapterimage{ch07-language-model.png}{データ表現、ニューラルネットワーク、Attention、生成、評価の概念図}{fig:ch07-language-model}
 
 \subsection*{この章の二つの読み方}
 
@@ -194,7 +194,7 @@
 モデルが作られる時間と、利用者の質問へ答える時間は分けて考えます。多くの例からパラメータを更新する処理が\term{学習}です。学習後の固定したパラメータへ新しい入力を通して出力を得る処理が\term{推論}です。物語の現在地は推論ですが、その振る舞いの理由は学習にあります。
 
 図\ref{fig:ch07-training-inference}は、多くの例を反復してモデルを調整する学習と、調整後のモデルを一度使う推論を対比します。
-\sectionimage[学習：多くの例と誤差からパラメータを更新 ／ 推論：固定したパラメータで出力を計算]{ch07-training-inference.png}{多くの例で内部を調整する学習と、新しい入力から出力を得る推論の対比}{fig:ch07-training-inference}
+\sectionimage{ch07-training-inference.png}{多くの例で内部を調整する学習と、新しい入力から出力を得る推論の対比}{fig:ch07-training-inference}
 
 \begingroup
 \begingroup
@@ -1055,7 +1055,7 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 コンテキストを受けたモデルは、語彙中の各候補へ、確率へ変換する前の点数を出します。この点数を\term{ロジット}といい、softmaxで確率分布へ変えます。そこから一つを選び、列へ足して再び計算します。「明日」「の」「午後」と一歩ずつ進み、停止条件へ達したとき、利用者へ返す一文が完成します。
 
 図\ref{fig:ch07-attention-generation}は、文脈中の位置を異なる強さで参照し、新しい要素を列へ加えて次の計算へ戻す流れを示します。
-\sectionimage[Attention：文脈を重み付きで参照 → 確率分布から次トークンを選ぶ → 列へ追加して反復]{ch07-attention-generation.png}{文脈内の関係を選択的に参照し、次の要素を加えながら生成を反復するイメージ}{fig:ch07-attention-generation}
+\sectionimage{ch07-attention-generation.png}{文脈内の関係を選択的に参照し、次の要素を加えながら生成を反復するイメージ}{fig:ch07-attention-generation}
 
 \begingroup
   \centering
