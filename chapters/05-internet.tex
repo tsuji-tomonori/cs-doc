@@ -96,13 +96,14 @@ IPv4では途中の分割があり得ますが、IPv6では送信元側のサイ
     \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (trans) at (66,24) {トランスポート層\quad{\tiny TCP・UDP}};
     \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (internet) at (66,16) {インターネット層\quad{\tiny IP}};
     \node[accentbox,minimum width=54mm,minimum height=15mm,anchor=south west] (link) at (66,0) {リンク層\\{\tiny Ethernet・無線LANなど}};
-    \draw[softflow] (54,51.5) -- (app.west);
-    \draw[softflow] (54,43.5) -- (app.west);
-    \draw[softflow] (54,35.5) -- (app.west);
-    \draw[softflow] (54,27.5) -- (trans.west);
-    \draw[softflow] (54,19.5) -- (internet.west);
-    \draw[softflow] (54,11.5) -- (link.west);
-    \draw[softflow] (54,3.5) -- (link.west);
+    % 各層の高さを保ったまま対応先へ結び、線の収束と重なりを避けます。
+    \draw[softflow] (54,51.5) -- (66,51.5);
+    \draw[softflow] (54,43.5) -- (66,43.5);
+    \draw[softflow] (54,35.5) -- (66,35.5);
+    \draw[softflow] (54,27.5) -- (66,27.5);
+    \draw[softflow] (54,19.5) -- (66,19.5);
+    \draw[softflow] (54,11.5) -- (66,11.5);
+    \draw[softflow] (54,3.5) -- (66,3.5);
   \end{tikzpicture}
   \caption{OSI参照モデルの7層とTCP/IPモデルの概念的な対応。対応は説明用であり、厳密な一対一ではありません。}
   \label{fig:osi-tcpip-models}
