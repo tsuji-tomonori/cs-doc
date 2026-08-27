@@ -868,7 +868,9 @@
     \node[accentbox,right=of x,yshift=-12mm] (v) {$V=XW_V$};
     \node[box,right=17mm of k] (attn) {Attention};
     \draw[flow] (x)--(q); \draw[flow] (x)--(k); \draw[flow] (x)--(v);
-    \draw[flow] (q)--(attn); \draw[flow] (k)--(attn); \draw[flow] (v)--(attn);
+    \draw[flow] (q.east)--([yshift=3.2mm]attn.west);
+    \draw[flow] (k.east)--(attn.west);
+    \draw[flow] (v.east)--([yshift=-3.2mm]attn.west);
   \end{tikzpicture}
   \vspace{4mm}
 \begingroup

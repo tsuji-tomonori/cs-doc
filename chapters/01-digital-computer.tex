@@ -678,8 +678,8 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
         \node[box,below=of r1] (r2) {R2};
         \node[accentbox,right=14mm of $(r1)!0.5!(r2)$] (alu) {ALU\\加算};
         \node[box,right=of alu] (r3) {R3};
-        \draw[flow] (r1.east) -- (alu.west);
-        \draw[flow] (r2.east) -- (alu.west);
+        \draw[flow] (r1.east) -- ([yshift=2.5mm]alu.west);
+        \draw[flow] (r2.east) -- ([yshift=-2.5mm]alu.west);
         \draw[flow] (alu) -- (r3);
         \node[box,above=of alu] (ctrl) {制御装置};
         \draw[softflow] (ctrl) -- node[right,font=\scriptsize] {演算選択} (alu);

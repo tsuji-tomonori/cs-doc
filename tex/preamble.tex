@@ -38,6 +38,7 @@
 
 % 図
 \usepackage{graphicx}
+\usepackage{etoolbox}
 \usepackage{float}
 \usepackage{placeins}
 \usepackage{tikz}
@@ -166,7 +167,9 @@
 \tikzset{
   box/.style={draw=RuleGray,fill=CardWhite,rounded corners=1mm,minimum height=8mm,inner sep=2mm,align=center,text=DeepNavy},
   accentbox/.style={box,draw=MutedBlue,fill=PaleBlue},
-  flow/.style={-{Latex[length=2mm]},draw=MutedBlue,line width=0.5pt},
-  softflow/.style={-{Latex[length=2mm]},draw=PaleGray,line width=0.5pt},
+  flow/.style={-{Latex[length=2mm]},draw=MutedBlue,line width=0.65pt,line cap=round,shorten <=1pt,shorten >=1pt},
+  softflow/.style={-{Latex[length=2mm]},draw=PaleGray,line width=0.65pt,line cap=round,shorten <=1pt,shorten >=1pt},
+  flowlabel/.style={fill=CardWhite,fill opacity=0.96,text opacity=1,inner xsep=1mm,inner ysep=0.4mm,font=\sffamily\scriptsize,text=DeepNavy},
+  diagramlabel/.style={draw=RuleGray,fill=CardWhite,fill opacity=0.96,text opacity=1,rounded corners=1mm,inner xsep=1.5mm,inner ysep=1.2mm,align=center,font=\sffamily\bfseries\scriptsize,text=DeepNavy},
   node/.style={circle,draw=MutedBlue,fill=CardWhite,minimum size=6mm,inner sep=0pt}
 }

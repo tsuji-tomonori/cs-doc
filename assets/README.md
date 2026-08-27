@@ -88,3 +88,33 @@ Constraints: no words, letters, numbers, logos, people, photorealism, gradients,
 章扉では、例えば「電気信号 → デジタル信号 → 論理回路 → 記憶 → 演算 → CPU」のように、章内で扱う順序を示します。
 本文挿絵では、「学習」と「推論」や、「メトリクス」「ログ」「トレース」の役割を対比します。
 OSI参照モデル、プロセスとスレッド、並行と並列、GCの到達可能性は、正確な対応関係が必要なためTikZで作成しました。
+
+
+## 2026年8月27日 図中ラベルと主要図版の再設計
+
+図の下に置いていた補記は、`tex/macros.tex` の `\BookAnnotatedImage` で画像内へ重ねる方式へ変更しました。
+画像生成へ日本語を直接描かせず、image-gen 2.0 は図形、矢印、ラベル用余白の作成に使い、日本語はTeXで検索可能な文字として組版します。
+この分担により、生成文字の誤字を避けながら、説明と対象の距離を短くします。
+
+次の3点は、情報量と線の密度を下げ、図中ラベル用カードを持つ構成へimage-gen 2.0で再生成しました。
+
+| ファイル | 再設計の要点 |
+| --- | --- |
+| `ch04-design.png` | 責務分離、境界、変更局所化、検証を四つのパネルへ分離 |
+| `ch07-attention-generation.png` | Attention、確率比較、追加と反復を三段階へ整理 |
+| `ch09-evidence-correlation.png` | メトリクス、ログ、トレースを同じ時間窓へ整列し、異常境界へ集約 |
+
+共通の生成方針は次のとおりです。
+
+```text
+Use case: scientific-educational
+Asset type: 16:9 educational infographic for a Japanese computer science textbook
+Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
+Style/medium: precise flat editorial vector-style educational infographic
+Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
+Composition/framing: a small number of clearly separated panels; reserve pale empty cards inside the figure for Japanese labels added later
+Constraints: no readable words, letters, numbers, logos, people, gradients, decorative patterns, watermark; no crossing connectors; print-sharp
+```
+
+TikZ図は画像へ置き換えず、厳密な対応関係を保ったまま配線を修正しました。
+ALUとAttentionの複数入力は異なる接続点へ分け、OSIとTCP/IPの対応線は各層の高さを保って接続します。
