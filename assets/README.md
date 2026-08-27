@@ -1,120 +1,59 @@
 # 生成画像の記録
 
-## `cover-progression.png`
+## 共通方針
 
-- 生成日：2026-07-28
-- 生成方法：Codex 組み込み `image_gen`（既定モード）
-- 用途：表紙の概念イラスト
-- 後処理：1904×826へ中央基準でトリミングし、PNGのメタデータを除去
+章扉と本文挿絵は、2026年8月27日に Codex 組み込みの image-gen 2.0 で再制作しました。
+参考にしたのは `tsuji-tomonori/rag-guide` の読み物向けスライドです。
 
-プロンプト：
+- 16:9（1672×941 px）
+- オフホワイト `#F7F6F1`、ディープネイビー `#2B3A4A`、くすんだ青 `#5E7E96`
+- 「章ラベル → 要点を言い切るタイトル → 3〜5個の意味ブロック → 結論」の順に読む構成
+- 工程名、比較軸、関係ラベルを対象と同じカードまたはレーンの中へ配置
+- 画像下の説明帯、空のラベル欄、交差する配線、装飾だけの要素を使用しない
+- A4本文へ縮小しても読める文字サイズと線幅を確保
+- 生成原版から64色へ最適化し、文字と線の見た目を保ったままPDF容量を抑制
 
-```text
-Use case: scientific-educational
-Asset type: cover illustration for a Japanese computer-science training textbook
-Primary request: a refined visual progression from electronic switching to modern AI: transistor and logic gate, CPU and memory, source structure and runtime, networked computers exchanging packets, then a compact neural network and browser response
-Scene/backdrop: perfectly plain off-white background, color #F7F6F1
-Subject: five clearly separated but connected stages, left to right: a transistor switch and logic gate; a CPU chip beside memory cells; source code becoming a small abstract syntax tree; two networked computers exchanging packets; a compact neural-network motif representing machine learning
-Style/medium: clean flat vector-like educational illustration, precise thin lines, restrained geometry
-Composition/framing: wide horizontal composition, centered vertically, generous outer margins, each stage similar visual weight, one thin continuous connector showing progression
-Color palette: deep navy #2B3A4A, muted blue #5E7E96, pale gray #9AA4AD, very light blue-gray accents only
-Constraints: no text, no letters, no numbers, no logos, no watermark; no gradients; no shadows; no glow; no 3D; no decorative dots, bubbles, waves, patterns, border ornaments, or background motifs; scientifically recognizable simplified objects; high visual clarity at small print size
-Avoid: dense infographic, photographic realism, colorful accents, purple, pink, orange, strong primary colors, decorative background
-```
+本文の `\chapterimage` と `\sectionimage` は完成したスライド画像をそのまま配置します。
+旧方式のように TeX で画像下端へ注釈を重ねません。キャプションは図の参照と本文からの導線に限ります。
 
-## 2026年7月28日再生成の章扉画像
+## 図版一覧
 
-次の画像は、Codex 組み込み `image_gen` の既定モードで生成しました。
-いずれも16:9、画像内の生成文字なし、人物なしの章扉用概念イラストです。
-生成後に1200×675へ中央基準でトリミングし、PNGのメタデータを除去しました。
-日本語の説明は画像へ焼き込まず、`tex/macros.tex`によって図の一部として組版します。
-この方法により、生成文字の誤字を避け、検索可能な日本語としてPDFへ埋め込みます。
-本文中の厳密な回路、木構造、プロトコル順序は、画像生成の解釈に依存させずTeXまたは表で示します。
-
-| ファイル | 用途 |
+| ファイル | 図中の要点タイトル |
 | --- | --- |
-| `ch00-overview.png` | 一要求を九つの場面で追う全体像 |
-| `ch01-signals.png` | 信号、論理回路、記憶、CPU |
-| `ch02-code.png` | ソースコードから命令への変換 |
-| `ch03-runtime.png` | OS、プロセス、スレッド、仮想メモリ、ヒープ、GC |
-| `ch04-design.png` | モジュール、境界、テスト、変更 |
-| `ch05-internet.png` | 分散網、複数経路、名前解決 |
-| `ch06-delivery.png` | 接続、暗号化、HTTP、キャッシュ |
-| `ch07-language-model.png` | 学習、Attention、生成、評価 |
-| `ch08-browser.png` | DOM、CSSOM、レイアウト、描画 |
-| `ch09-observability.png` | 観測点、仮説、切り分け |
+| `ch00-overview.png` | 一つの要求を追うと、情報工学の全体がつながる |
+| `ch01-signals.png` | 電気の連続変化を二値へ区切ると、論理と計算が作れる |
+| `ch02-code.png` | ソースコードは段階的な変換を経て、CPUが実行できる命令になる |
+| `ch03-runtime.png` | OSは実行単位とメモリを分離し、資源を安全に共有する |
+| `ch03-data-structures.png` | データ構造は、速くしたい操作から選ぶ |
+| `ch04-design.png` | 境界を明確にすると、変更を小さく閉じ込められる |
+| `ch04-change-safety.png` | 変更は小さく作り、複数の検査を通して安全に反映する |
+| `ch05-internet.png` | 異なる管理主体の網をつなぎ、複数経路で到達可能にする |
+| `ch06-delivery.png` | Web配信は、接続・保護・転送・処理を層として重ねる |
+| `ch07-language-model.png` | 言語モデルは、文字列を確率へ変換し、次のトークンを選ぶ |
+| `ch07-training-inference.png` | 学習はパラメータを変え、推論は固定したパラメータを使う |
+| `ch07-attention-generation.png` | 生成は、文脈を参照して次の一語を選ぶ反復で進む |
+| `ch08-browser.png` | 文書とスタイルを配置・描画し、画面を組み立てる |
+| `ch09-observability.png` | 境界ごとに観測すると、障害箇所を段階的に絞り込める |
+| `ch09-evidence-correlation.png` | 時刻をそろえると、三つの証拠が同じ障害を指す |
 
-共通プロンプトは次の形式です。
-
-```text
-Use case: scientific-educational
-Asset type: 16:9 chapter opener for a Japanese computer science textbook
-Primary request: [表の用途欄に示す章ごとの概念を、左から右へつながる構成で表現]
-Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
-Style/medium: precise flat editorial vector-style educational illustration, thin geometric lines
-Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
-Constraints: no readable words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
-```
-
-## 2026年7月28日再生成の本文挿絵
-
-次の画像は、Codex組み込み`image_gen`の既定モードで生成しました。
-長い章の途中で概念を整理し、読者が文章から厳密な図へ進むための足場として使います。
-短い章とTikZ図が十分にある箇所には追加せず、視覚的な区切りが有効な5箇所に限定しました。
-章扉画像と同じく、日本語の説明はTeXで図中へ組版します。
-
-| ファイル | 挿入箇所 | 主なプロンプト |
-| --- | --- | --- |
-| `ch03-data-structures.png` | 第3章「データ構造の選択」 | 同じデータを連続領域、参照の鎖、キーによる格納へ分け、操作の違いを示す |
-| `ch04-change-safety.png` | 第4章「テスト」 | 変更を一つのモジュールへ局所化し、複数の検査を通して全体へ戻す |
-| `ch07-training-inference.png` | 第7章「学習と推論」 | 多くの例で内部を調整する学習と、固定したモデルを一度使う推論を対比する |
-| `ch07-attention-generation.png` | 第7章「文章生成」 | 文脈内を異なる強さで参照し、新しい要素を列へ加えて生成を反復する |
-| `ch09-evidence-correlation.png` | 第9章「観測と仮説」 | ログ、トレース、メトリクスを同じ時点へそろえ、異常境界を絞り込む |
-
-共通指定は次のとおりです。
+## 生成プロンプトの骨格
 
 ```text
 Use case: scientific-educational
-Asset type: 16:9 mid-chapter editorial illustration for a Japanese computer science textbook
-Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
-Style/medium: clean editorial vector-style technology illustration, soft SaaS presentation aesthetic
-Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
-Constraints: no words, letters, numbers, logos, people, photorealism, gradients, decorative patterns, watermark; print-sharp
+Asset type: finished Japanese textbook infographic slide, 16:9 landscape
+Layout: safe outer margins; small section label; takeaway title; short accent rule;
+        3–5 clearly separated semantic cards or lanes; integrated takeaway callout
+Palette: #F7F6F1, #2B3A4A, #5E7E96, pale blue-gray, #9AA4AD
+Typography: readable Noto Sans JP-like sans serif with consistent hierarchy
+Constraints: exact specified Japanese text; labels inside their semantic blocks;
+             no detached legend, no bottom annotation strip, no crossing connectors;
+             no gradients, shadows, 3D, decorative bubbles, logo, or watermark
 ```
 
-## 日本語説明の対応
+工程図・比較図・二層構造・証拠の集約図は同じテンプレートへ押し込まず、内容に合うレイアウトを個別指定しました。
+生成後は各画像を原寸とPDFへの縮小表示で目視し、文字欠落、誤字、線の衝突、ラベルと対象の分離がないことを確認します。
 
-図中の日本語説明は、生成画像の見た目と本文の概念を対応付ける短い経路として記載します。
-章扉では、例えば「電気信号 → デジタル信号 → 論理回路 → 記憶 → 演算 → CPU」のように、章内で扱う順序を示します。
-本文挿絵では、「学習」と「推論」や、「メトリクス」「ログ」「トレース」の役割を対比します。
-OSI参照モデル、プロセスとスレッド、並行と並列、GCの到達可能性は、正確な対応関係が必要なためTikZで作成しました。
+## 表紙画像
 
-
-## 2026年8月27日 図中ラベルと主要図版の再設計
-
-図の下に置いていた補記は、`tex/macros.tex` の `\BookAnnotatedImage` で画像内へ重ねる方式へ変更しました。
-画像生成へ日本語を直接描かせず、image-gen 2.0 は図形、矢印、ラベル用余白の作成に使い、日本語はTeXで検索可能な文字として組版します。
-この分担により、生成文字の誤字を避けながら、説明と対象の距離を短くします。
-
-次の3点は、情報量と線の密度を下げ、図中ラベル用カードを持つ構成へimage-gen 2.0で再生成しました。
-
-| ファイル | 再設計の要点 |
-| --- | --- |
-| `ch04-design.png` | 責務分離、境界、変更局所化、検証を四つのパネルへ分離 |
-| `ch07-attention-generation.png` | Attention、確率比較、追加と反復を三段階へ整理 |
-| `ch09-evidence-correlation.png` | メトリクス、ログ、トレースを同じ時間窓へ整列し、異常境界へ集約 |
-
-共通の生成方針は次のとおりです。
-
-```text
-Use case: scientific-educational
-Asset type: 16:9 educational infographic for a Japanese computer science textbook
-Scene/backdrop: flat off-white #F6F3F6 with generous whitespace
-Style/medium: precise flat editorial vector-style educational infographic
-Color palette: #E8CDDD #71618E #5C4D7A #493D5E #2C2437
-Composition/framing: a small number of clearly separated panels; reserve pale empty cards inside the figure for Japanese labels added later
-Constraints: no readable words, letters, numbers, logos, people, gradients, decorative patterns, watermark; no crossing connectors; print-sharp
-```
-
-TikZ図は画像へ置き換えず、厳密な対応関係を保ったまま配線を修正しました。
-ALUとAttentionの複数入力は異なる接続点へ分け、OSIとTCP/IPの対応線は各層の高さを保って接続します。
+`cover-progression.png` は2026年7月28日に生成した表紙用概念イラストです。
+トランジスタ、CPU、ソース構造、ネットワーク、言語モデルへの進行を、文字なしの横長線画で表しています。

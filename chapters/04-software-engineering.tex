@@ -14,7 +14,7 @@
   \item テスト、レビュー、リファクタリングを品質維持へ結び付けられます。
 \end{learninggoals}
 
-\chapterimage[責務を分ける → 境界を定める → 変更を局所化する → テストで確かめる]{ch04-design.png}{境界を保ったモジュールが変更とテストを受け渡す概念図}{fig:ch04-design}
+\chapterimage{ch04-design.png}{境界を保ったモジュールが変更とテストを受け渡す概念図}{fig:ch04-design}
 
 
 \section{ソフトウェア危機}
@@ -595,7 +595,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 境界を設計しただけでは、その約束が守られる保証はありません。プログラムへ入力を与え、実際の結果と期待する結果を比べることを\term{テスト}といいます。注文番号が存在しない場合、配送サービスが遅い場合、モデルが失敗した場合を、部品単独と接続後の両方で確かめます。テストは実装の検査であると同時に、境界の具体例です。
 
 図\ref{fig:ch04-change-safety}は、変更を一つの境界へ閉じ込め、検査を通して全体へ戻す考え方を示します。
-\sectionimage[局所的な変更 → 単体テスト → 結合テスト → 境界の検査 → 安全な反映]{ch04-change-safety.png}{局所化した変更を複数の検査で確かめ、システム全体へ戻すイメージ}{fig:ch04-change-safety}
+\sectionimage{ch04-change-safety.png}{局所化した変更を複数の検査で確かめ、システム全体へ戻すイメージ}{fig:ch04-change-safety}
 
 \begingroup
 \begingroup

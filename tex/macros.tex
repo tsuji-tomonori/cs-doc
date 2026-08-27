@@ -11,69 +11,31 @@
 \newcommand{\guideterm}[1]{\textbf{#1}}
 \newcommand{\code}[1]{\texttt{#1}}
 
-% 生成画像へ正確な日本語ラベルを図中組版します。
-% image-genは構造と余白を作り、文字はTeXで重ねることで誤字と低解像度化を防ぎます。
-\newcommand{\BookAnnotatedImage}[3]{%
-  \begin{tikzpicture}
-    \node[inner sep=0pt,outer sep=0pt] (BookImage) {%
-      \includegraphics[width=#1]{assets/#2}%
-    };
-    \if\relax\detokenize{#3}\relax\else
-      \begin{scope}[
-        shift={(BookImage.south west)},
-        x={($(BookImage.south east)-(BookImage.south west)$)},
-        y={($(BookImage.north west)-(BookImage.south west)$)}
-      ]
-        \ifstrequal{#2}{ch04-design.png}{%
-          \node[diagramlabel,text width=.18\linewidth] at (.125,.125) {責務を分ける};
-          \node[diagramlabel,text width=.18\linewidth] at (.375,.125) {境界を定める};
-          \node[diagramlabel,text width=.18\linewidth] at (.625,.125) {変更を局所化};
-          \node[diagramlabel,text width=.18\linewidth] at (.875,.125) {テストで検証};
-        }{\ifstrequal{#2}{ch07-attention-generation.png}{%
-          \node[diagramlabel,text width=.24\linewidth] at (.17,.15) {文脈を重み付きで参照};
-          \node[diagramlabel,text width=.24\linewidth] at (.50,.15) {次トークンの確率を比較};
-          \node[diagramlabel,text width=.24\linewidth] at (.83,.15) {選択して列へ追加};
-        }{\ifstrequal{#2}{ch09-evidence-correlation.png}{%
-          \node[diagramlabel,text width=.12\linewidth] at (.115,.76) {メトリクス\\傾向};
-          \node[diagramlabel,text width=.12\linewidth] at (.115,.49) {ログ\\個別事象};
-          \node[diagramlabel,text width=.12\linewidth] at (.115,.22) {トレース\\要求の経路};
-          \node[diagramlabel,text width=.36\linewidth] at (.50,.075) {同じ時刻へそろえ、異常境界を絞る};
-          \node[diagramlabel,font=\sffamily\bfseries\tiny,text width=.07\linewidth] at (.885,.78) {入口};
-          \node[diagramlabel,font=\sffamily\bfseries\tiny,text width=.07\linewidth] at (.885,.62) {処理};
-          \node[diagramlabel,font=\sffamily\bfseries\tiny,text width=.07\linewidth] at (.885,.44) {異常境界};
-          \node[diagramlabel,font=\sffamily\bfseries\tiny,text width=.07\linewidth] at (.82,.27) {依存先A};
-          \node[diagramlabel,font=\sffamily\bfseries\tiny,text width=.07\linewidth] at (.95,.27) {依存先B};
-        }{%
-          \node[diagramlabel,anchor=south,text width=.82\linewidth] at (.50,.025) {#3};
-        }}}%
-      \end{scope}
-    \fi
-  \end{tikzpicture}%
-}
-
-\newcommand{\chapterimage}[4][]{%
+% 生成画像は、要点タイトル・図中ラベル・結論までを一枚のスライドとして完結させます。
+% TeX側で説明帯を追加せず、画像の構造と文字の対応をそのまま保ちます。
+\newcommand{\chapterimage}[3]{%
   \begin{figure}[htbp]
     \centering
-    \IfFileExists{assets/#2}{%
-      \BookAnnotatedImage{0.96\linewidth}{#2}{#1}%
+    \IfFileExists{assets/#1}{%
+      \includegraphics[width=0.96\linewidth]{assets/#1}%
     }{%
-      \PackageError{cs-doc}{Required image `assets/#2' is missing}{Add the generated chapter image.}%
+      \PackageError{cs-doc}{Required image `assets/#1' is missing}{Add the generated chapter image.}%
     }
-    \caption{#3}
-    \label{#4}
+    \caption{#2}
+    \label{#3}
   \end{figure}
 }
 
-\newcommand{\sectionimage}[4][]{%
+\newcommand{\sectionimage}[3]{%
   \begin{figure}[htbp]
     \centering
-    \IfFileExists{assets/#2}{%
-      \BookAnnotatedImage{0.90\linewidth}{#2}{#1}%
+    \IfFileExists{assets/#1}{%
+      \includegraphics[width=0.90\linewidth]{assets/#1}%
     }{%
-      \PackageError{cs-doc}{Required image `assets/#2' is missing}{Add the generated section image.}%
+      \PackageError{cs-doc}{Required image `assets/#1' is missing}{Add the generated section image.}%
     }
-    \caption{#3}
-    \label{#4}
+    \caption{#2}
+    \label{#3}
   \end{figure}
 }
 

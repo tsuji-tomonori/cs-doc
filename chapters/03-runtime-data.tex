@@ -16,7 +16,7 @@
   \item データ構造を時間計算量と空間計算量から選べます。
 \end{learninggoals}
 
-\chapterimage[プロセスとスレッド → OSの資源管理 → 仮想メモリ → ヒープとGC]{ch03-runtime.png}{OSがプロセスとメモリを分離し、データ構造へ資源を割り当てる概念図}{fig:ch03-runtime}
+\chapterimage{ch03-runtime.png}{OSがプロセスとメモリを分離し、データ構造へ資源を割り当てる概念図}{fig:ch03-runtime}
 
 
 \section{OSの役割}
@@ -697,7 +697,7 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 比較のため、各要素が次の要素への参照を持ち、鎖のようにつながる\term{連結リスト}も表へ加えます。途中の要素が分かっていれば参照をつなぎ替えて挿入できますが、$i$番目へ行くには先頭から参照をたどります。
 
 図\ref{fig:ch03-data-structures}は、同じデータでも置き方によって得意な操作が変わることを示します。
-\sectionimage[配列：添字で参照 ／ 連結リスト：参照をたどる ／ マップ：キーから探す]{ch03-data-structures.png}{連続した領域、参照の鎖、キーによる格納を用途に応じて選ぶイメージ}{fig:ch03-data-structures}
+\sectionimage{ch03-data-structures.png}{連続した領域、参照の鎖、キーによる格納を用途に応じて選ぶイメージ}{fig:ch03-data-structures}
 
 \begingroup
   \noindent
