@@ -1,0 +1,618 @@
+[
+  {
+    "image": "ch02-code.png",
+    "prompt": "image-prompts/ch02-code.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "92c3cd02b7cfab6a596aa74e6bd79cbb8089907f564190be4f9e7b2717deb121",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch03-data-structures.png",
+    "prompt": "image-prompts/ch03-data-structures.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "d886b15c07b04dbeacb088b29de445a6b6a433c9d827d34a21e5c05c1b0f35b7",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch03-runtime.png",
+    "prompt": "image-prompts/ch03-runtime.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "df60ca2674ac4d52b11edaf21ca25b1497ea259bd5d9ef44706878f8192da37b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch04-change-safety.png",
+    "prompt": "image-prompts/ch04-change-safety.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "b5ad1e582bb359c722522bd3f89e6772c5506c4b8814b260654dfe764297b369",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch05-internet.png",
+    "prompt": "image-prompts/ch05-internet.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "a4341bdb6e192f78468447707816218c22c2b2ace6155e1516a87d28a9fef870",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch07-attention-generation.png",
+    "prompt": "image-prompts/ch07-attention-generation.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "435fabb53245020e97408649554716bc7125c2f0b7b96fd0f5ac9f5ee674438b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch08-browser.png",
+    "prompt": "image-prompts/ch08-browser.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "7f351754152ebf9fecb537243430ad8882a6901cfb60049d0212ca13f80f5b2e",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "ch09-evidence-correlation.png",
+    "prompt": "image-prompts/ch09-evidence-correlation.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "db979d3d16d169473fde8cf5bc075dc2915fdb31adbf77aa3502905e442e0496",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-binary-conversion.png",
+    "prompt": "image-prompts/01-binary-conversion.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "f6f2907d2ca17352d0dfa156c6592759c56da7ac4dbf9b0c0d88eaff24d84f29",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-01.png",
+    "prompt": "image-prompts/01-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "3c9d4f654dafc202b1c6856040801d67f005e4b24324eff67b2e0649216ce32a",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-02.png",
+    "prompt": "image-prompts/01-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "205d84843aed7ca9fd8a0d3c9dc2a03c4776c47185ae1b638eafed83e3026ba2",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-03.png",
+    "prompt": "image-prompts/01-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "cd2fc2adb0903c8adb366abf48dc99a77d5bcca2221136970dbf66b4c854af57",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-04.png",
+    "prompt": "image-prompts/01-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "193a96496eb2589d7dd47be1381cbb1e05c179dfcb6508f378a3c2ed3f504593",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-05.png",
+    "prompt": "image-prompts/01-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "5741f3f29f6658487b6b1201a4e498b2d4fcbac7bf23ff4019d414cd00777099",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-06.png",
+    "prompt": "image-prompts/01-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "40292e9b9d179d153c07021c72e55fe3eca347e90038ef80063dd3cf688f6117",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-07.png",
+    "prompt": "image-prompts/01-diagram-07.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "b68a2c47539d350a5d6b211615de3f26b3ebba8bb124a1c2c3f795bb8f5c468c",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-08.png",
+    "prompt": "image-prompts/01-diagram-08.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "1ca1851d01023681eede60384624fbb01ae062e910927f0450ee21e864a6afa3",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-09.png",
+    "prompt": "image-prompts/01-diagram-09.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "279df66bdba54aead1bc97e9e6fabe367871ebf98655782646e3a9917424a11b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-10.png",
+    "prompt": "image-prompts/01-diagram-10.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "300c99290cd32b533361177c006793b6ee898b8fd3cdccfe5ea7bb2182b12aa9",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-diagram-11.png",
+    "prompt": "image-prompts/01-diagram-11.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "6b3a1afa6b77cc5fdde91dc32d5156bfff7952f9adcb5ed1a8f594806d206649",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/01-twos-complement.png",
+    "prompt": "image-prompts/01-twos-complement.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "fc8c7a5532b2be2c39f8ee6f750412b76d8114e7a48ea4d42ef6d267f5c6d9e2",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-dfs-bfs.png",
+    "prompt": "image-prompts/02-dfs-bfs.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "dee44cff5bacbee14375a8923a25e47a495e5c2a18c4ec833d985b44b6dfe7c0",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-01.png",
+    "prompt": "image-prompts/02-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "caa4dfaeeb16f6225ff47be2590df74bbe0915b736e7d35c5dab30d10c9faff6",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-02.png",
+    "prompt": "image-prompts/02-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "cd75a0f573ede28349adcf1aa7ea23b1a0f74f7e3a503ef4f90b87e6c781b972",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-03.png",
+    "prompt": "image-prompts/02-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "f08809c1086d8ec4bb8501fdf006dab106dbf928a2e5a72a556751cb992c0e3a",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-04.png",
+    "prompt": "image-prompts/02-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "07ebe2e77c3ba15160d80d4b00a34a28c59132d74394db733fc99ed08d612a39",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-05.png",
+    "prompt": "image-prompts/02-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "f8e9c20b125e2334bcade9e084195d51507ee69318718f6856a3f9cf05633f5d",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-06.png",
+    "prompt": "image-prompts/02-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "6e52188e89797ace308e171eebe6d0eabb7b8ab746529bffd80d0d70213fccd9",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/02-diagram-07.png",
+    "prompt": "image-prompts/02-diagram-07.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "96ec94f7b24706fa469155003bacc1f82a415a4e08a4d898debde81d15130a5b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-append.png",
+    "prompt": "image-prompts/03-append.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "bb421caa848f425c56dd04129e01ce19be534ba7cf5e74847a525e6e87c86196",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-01.png",
+    "prompt": "image-prompts/03-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "7a2559803570a715c2d648497c3e90685e2762a99e15dcdd7a1e40fd06284cf2",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-02.png",
+    "prompt": "image-prompts/03-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "e431c191f9ba8b30e7d32bd0c48eb1dff924b654f600ae4c3354bd258d7eff37",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-03.png",
+    "prompt": "image-prompts/03-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "57501a2a2ea87a96036f8feccdc8ad3aa0c47c529d712349ea6c191aa2e88364",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-04.png",
+    "prompt": "image-prompts/03-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "38fa841c532a9b9118a0e43a8a3e2781a84e0a9754aa645dae5854edd9ef488f",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-05.png",
+    "prompt": "image-prompts/03-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "e9fd9cb0ac38af3afddee57f5e02611eb42e0404f4acc941def6573e2214496d",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-06.png",
+    "prompt": "image-prompts/03-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "2b53a22127a87b472d8db3eac8417f45cfae2e24bd54752de39af852707e7665",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-07.png",
+    "prompt": "image-prompts/03-diagram-07.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "e4a2546015ac676374f07acd7fa7b3dd0112569cfc0b100d454f94c5c24bb425",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-08.png",
+    "prompt": "image-prompts/03-diagram-08.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "bade623e2245d1949b39cf1e8d48283fe5ba0a2b9c36a7176bf5ff2fdb2f9b38",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-09.png",
+    "prompt": "image-prompts/03-diagram-09.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "46976e89d50ef3cde29cd0efae7979ecdb508d9d3a0cf93cc11183915bb158a8",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-10.png",
+    "prompt": "image-prompts/03-diagram-10.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "82bdde9ab67f36c44a98a22803cc9ab1ac3b027ddc139dcf3db48d2a497e3fa3",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-11.png",
+    "prompt": "image-prompts/03-diagram-11.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "f041fafd1e5c5cb98a0b42f859f487d6d34c16b43d6aece6a352fac9c35cc884",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-12.png",
+    "prompt": "image-prompts/03-diagram-12.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "e2b36f93dc1cf276215db5da77e446c59317e199dbd280d8fc74ac6a3bd4cbdb",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-13.png",
+    "prompt": "image-prompts/03-diagram-13.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "cc08d2fcc5f82e9c5c9b824d4f1dd2cb7b19a7a6c34fd32eaab45f1b185c1f72",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-diagram-14.png",
+    "prompt": "image-prompts/03-diagram-14.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "87c2a74f2e1f891dcdad08c3d0754d6fd1f84ef08e66fb76940433d15cbdda12",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/03-linear-search.png",
+    "prompt": "image-prompts/03-linear-search.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "1ec7caa9255a463e1064fa1e18a2c15c378dc1732d752470a298b235ed9a4f6d",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-01.png",
+    "prompt": "image-prompts/04-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "a162a54351c99caf3df6e6a2bc8d4df485a3a490ad60096963fb60ec15354aeb",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-02.png",
+    "prompt": "image-prompts/04-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "4d1a59ea84ac20956e44c82f049ba062fb383cbf9fec92171301c35e87b0b2b4",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-03.png",
+    "prompt": "image-prompts/04-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "d1c103e1e854ef8f12ecd67c0877e15d3839f6164beb2045c4c1940720573923",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-04.png",
+    "prompt": "image-prompts/04-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "62c99cfe8840a3f1f32504006fe88a307c990b7daa0cae67ebc5b6acc7e7cfcf",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-05.png",
+    "prompt": "image-prompts/04-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "37112eef7735e2375adf30ae7f2592dc578bb1df7475a2331d20462f71f24c38",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/04-diagram-06.png",
+    "prompt": "image-prompts/04-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "d798a4a9bed542e1ee44a9185f3ee3a7e9a1a51cc7c1a9dc410c32e5cde3783f",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/05-diagram-01.png",
+    "prompt": "image-prompts/05-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "b63ec8ebe9e38815dffae1d4f1e01a08f371461e54a5f25b4d9c1224a9fa6b09",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/05-dns-steps.png",
+    "prompt": "image-prompts/05-dns-steps.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "0aeb8d89cc2b3bcc6e01869f67f5a808f063f4b17df281cf1d540948d45fa4c1",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/05-prefix-route.png",
+    "prompt": "image-prompts/05-prefix-route.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "99e6871f99cab5e8ecab866d40b52dff8d6661e26103189dc0bad24e2d0eae44",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/06-tcp-exchange.png",
+    "prompt": "image-prompts/06-tcp-exchange.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "cc593587f28e11503b27a9700d91d380fd596e123c227ac61a70c621a077d91a",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-bpe.png",
+    "prompt": "image-prompts/07-bpe.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "4018af1b97dcdf57737851561b3023a2e251297ad7f83f1aaa8d1a4b9852bca1",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-01.png",
+    "prompt": "image-prompts/07-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "8258816d7d17fad12db228df25802256a395746dca465d438e4d178a96db8504",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-02.png",
+    "prompt": "image-prompts/07-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "f088871acea4add811e1b6fed0b626e10568959efae965c59a1cfcef88dc86de",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-03.png",
+    "prompt": "image-prompts/07-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "6046e4aa03dc110e8a523ea352b776e80e09c4652230a8b84a3539b3bce86b3b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-04.png",
+    "prompt": "image-prompts/07-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "9b17f4f89c550105c34b62f597f7eea5609d6318f3ba8a2926278a36e732d16f",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-05.png",
+    "prompt": "image-prompts/07-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "71c70304574c025293068b2c321cc8c98e94517fc3a08a822048d24d4bba9644",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-06.png",
+    "prompt": "image-prompts/07-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "2de78442df39013692ff686f92a2af74af08f8b91918276bec3ef4ee277bd289",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-07.png",
+    "prompt": "image-prompts/07-diagram-07.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "eb3d4956287bea8b58927208ccdbb2f84267f1d42bccd2b956bc87c5deb95c63",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-08.png",
+    "prompt": "image-prompts/07-diagram-08.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "a0c809b6e779f41b0e7039c0d201037484b3948db3fe3cafdf5b164802f4e95b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-09.png",
+    "prompt": "image-prompts/07-diagram-09.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "32677ac690d49016acf9642ac3a3f9588bc1021155e85afe9699e4a01b05c83e",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-10.png",
+    "prompt": "image-prompts/07-diagram-10.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "b8f0b6b3b4dd167ba36e40ceae6548ad1fd49254fdd194f5312cb40eb5c5b8b8",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-diagram-11.png",
+    "prompt": "image-prompts/07-diagram-11.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "4697d975eaee1459e8ace9b4dd6eee59d931a4fce6317ef28bc628c941fa5d1e",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-gradient-backprop.png",
+    "prompt": "image-prompts/07-gradient-backprop.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "b035c468d3ae131af7307ce4bc97a142c854e5dbea247bdb9af1112767a6e77f",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-perceptron.png",
+    "prompt": "image-prompts/07-perceptron.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "1ba52b55bdc4a6b555b4f8b712171f68f698cded5e79114b32b537ffb5febba0",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/07-sampling.png",
+    "prompt": "image-prompts/07-sampling.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "a109f308ec391c055bf62871da8d068210b7ed2ca945ac3a43561232fa427682",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-01.png",
+    "prompt": "image-prompts/09-diagram-01.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "edbb1376c90ebb4c2c73ac25257b764683334673e6f8edadf4a3e78faec51625",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-02.png",
+    "prompt": "image-prompts/09-diagram-02.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "6770b350e8845ad57691228375908e0d11398f647402a26255fa6f285fe1a91e",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-03.png",
+    "prompt": "image-prompts/09-diagram-03.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "74adfb1270f67d365a867d5bab74bfa090505d5284bb1748ac82dceae9a29f17",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-04.png",
+    "prompt": "image-prompts/09-diagram-04.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "181bb0ac4cacc6c6565e88369f471867324cb71626e5f9b7726ebde823d0899b",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-05.png",
+    "prompt": "image-prompts/09-diagram-05.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "4ae1ce31c55d9f84d985dafeaafc9cd5db5936e58d5c485085df4f1330372f2e",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-06.png",
+    "prompt": "image-prompts/09-diagram-06.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "2d9059b271bad187a824fb0a76c59bb4255333af04a31081ac611d363b3c5628",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  },
+  {
+    "image": "generated/09-diagram-07.png",
+    "prompt": "image-prompts/09-diagram-07.txt",
+    "generator": "Codex built-in imagegen",
+    "date": "2026-09-05",
+    "sha256": "41d8804f3fd912998d5830ff2dcbf8520c4f2fe99c425916fb3c2bd9a7543f53",
+    "visual_review": "文字・矢印・数値例・本文との対応を確認"
+  }
+]

@@ -3,18 +3,18 @@
 \label{chap:internet}
 
 \begin{chapterabstract}
-端末で組み立てた要求は、単一組織が管理する一本の通信路を進むわけではありません。
+端末で組み立てた要求は、複数の組織が管理する通信路を通ります。
 インターネットは、異なる管理主体のネットワークを相互接続した「網の網」です。
 この章では、パケットの配送、組織間の経路交換、名前解決を分けて扱います。
 \end{chapterabstract}
 
 \begin{learninggoals}
   \item 通信性能を、帯域幅、遅延、往復時間、揺らぎ、損失に分けて説明できます。
-  \item IP、ルーティング、AS、IX、BGPの役割を、同じものとして混同せず説明できます。
+  \item IP、ルーティング、AS、IX、BGPの役割を区別して説明できます。
   \item DNSの委任とキャッシュを、\code{dig +trace}の結果へ対応づけられます。
 \end{learninggoals}
 
-\chapterimage{ch05-internet.png}{異なる管理主体の網が複数の経路で相互接続する概念図。右側の木は階層的な名前解決を表します。}{fig:ch05-internet}
+\chapterimage{ch05-internet.png}{ネットワーク間の転送と、DNSの名前の階層}{fig:ch05-internet}
 
 \section{通信の要素}
 
@@ -28,12 +28,12 @@
 
 \term{遅延}は、送信を始めてから相手側で処理できるまでに要する時間です。
 \term{帯域幅}は、通信路が単位時間に運べるデータ量の上限です。
-\term{スループット}は、測定区間で実際に運べたデータ量です。
+\term{スループット}は、単位時間あたりに実際に運べたデータ量です。
 帯域幅が大きくても、待ち時間や損失があればスループットは下がります。
 
 \term{RTT}はRound-Trip Timeの略で、送信元から宛先へ到達して返事が戻るまでの往復時間です。
 \term{ジッター}は、複数回測った遅延の揺らぎです。
-アプリケーションの体感は、帯域幅だけでは判断できません。
+アプリケーションの応答性は、遅延や損失も含めて評価します。
 
 \section{回線交換とパケット交換}
 
@@ -49,18 +49,20 @@
 
 \term{ヘッダー}は、宛先や制御情報を置く先頭部分です。
 \term{ペイロード}は、上位層から受け取った運搬対象です。
-一つのリンクで運べる最大サイズを\term{MTU}と呼びます。
+一つのリンクで分割せずに運べるIPパケットの最大サイズを\term{MTU}と呼びます。
+Maximum Transmission Unitの略です。
 MTUに収まるよう分割された断片が\term{フラグメント}です。
 IPv4では途中の分割があり得ますが、IPv6では送信元側のサイズ調整が前提です。
 
 中継装置がすぐ送れないパケットを置く列が\term{待ち行列}です。
 待ち行列で生じる時間が\term{キューイング遅延}です。
-待ち行列が保持限界を超えたときにパケットが破棄される現象を\term{パケット損失}と呼びます。
+送ったパケットが宛先へ届かず失われることを\term{パケット損失}と呼びます。
+待ち行列の容量超過、通信中の誤り、機器の故障などで起きます。
 
 \section{プロトコル}
 
 \term{プロトコル}は、通信する主体が共有する形式、意味、進行手順の約束です。
-形式だけ一致しても、応答する時点や失敗時の処理が違えば相互運用できません。
+機器同士が通信するには、形式に加えて応答の時点や失敗時の処理もそろえます。
 仕様を読むときは、メッセージの形、各フィールドの意味、状態遷移を分けて確認します。
 
 \section{階層化とカプセル化}
@@ -73,39 +75,13 @@ IPv4では途中の分割があり得ますが、IPv6では送信元側のサイ
 
 \term{OSI参照モデル}は、通信機能を7層で整理する参照用のモデルです。
 \term{TCP/IPモデル}は、インターネットで使われるプロトコル群を中心に層を整理します。
-両者は厳密な一対一対応ではありません。
-本書では、役割を説明する地図として使い、実装をモデルへ無理に当てはめません。
+両者は機能の分け方が異なります。
+役割を比較するときは、複数の層をまとめて対応づける場合があります。
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
-    \node[font=\sffamily\bfseries,text=DeepNavy] at (29,57) {OSI参照モデル};
-    \node[font=\sffamily\bfseries,text=DeepNavy] at (93,57) {TCP/IPモデル};
-    \foreach \y/\n/\labeltext/\example in {
-      48/7/アプリケーション層/HTTP・DNS,
-      40/6/プレゼンテーション層/表現変換,
-      32/5/セッション層/対話管理,
-      24/4/トランスポート層/TCP・UDP,
-      16/3/ネットワーク層/IP,
-      8/2/データリンク層/Ethernet,
-      0/1/物理層/電気・光・無線
-    } {
-      \node[box,minimum width=54mm,minimum height=7mm,anchor=south west] at (0,\y) {\n：\labeltext\quad{\tiny \example}};
-    }
-    \node[accentbox,minimum width=54mm,minimum height=23mm,anchor=south west] (app) at (66,32) {アプリケーション層\\{\tiny HTTP・DNSなど}};
-    \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (trans) at (66,24) {トランスポート層\quad{\tiny TCP・UDP}};
-    \node[accentbox,minimum width=54mm,minimum height=7mm,anchor=south west] (internet) at (66,16) {インターネット層\quad{\tiny IP}};
-    \node[accentbox,minimum width=54mm,minimum height=15mm,anchor=south west] (link) at (66,0) {リンク層\\{\tiny Ethernet・無線LANなど}};
-    % 各層の高さを保ったまま対応先へ結び、線の収束と重なりを避けます。
-    \draw[softflow] (54,51.5) -- (66,51.5);
-    \draw[softflow] (54,43.5) -- (66,43.5);
-    \draw[softflow] (54,35.5) -- (66,35.5);
-    \draw[softflow] (54,27.5) -- (66,27.5);
-    \draw[softflow] (54,19.5) -- (66,19.5);
-    \draw[softflow] (54,11.5) -- (66,11.5);
-    \draw[softflow] (54,3.5) -- (66,3.5);
-  \end{tikzpicture}
-  \caption{OSI参照モデルの7層とTCP/IPモデルの概念的な対応。対応は説明用であり、厳密な一対一ではありません。}
+  \inlineimage{generated/05-diagram-01.png}
+  \caption{OSIの7層とTCP/IPの4層を、役割ごとに対応づけた概念図}
   \label{fig:osi-tcpip-models}
 \end{figure}
 
@@ -134,6 +110,13 @@ OSIの第7層から第5層は、アプリケーション間の機能、データ
 \term{NAT}はNetwork Address Translationの略で、アドレスやポートを変換する仕組みです。
 NATはアドレス不足への対処や境界設計に使われますが、IPの暗号化や相手の認証を保証しません。
 
+転送表で複数の宛先範囲が一致するときは、接頭辞が最も長い経路を選びます。
+この規則を最長接頭辞一致と呼びます。
+図\ref{fig:05-prefix-route}の宛先は三つの範囲すべてに含まれます。
+最も細かい範囲を示す/25に従い、Cへ転送します。
+\sectionimage{generated/05-prefix-route.png}{転送表から次の転送先を選ぶ例}{fig:05-prefix-route}
+\source{\href{https://www.rfc-editor.org/rfc/rfc1812.html}{RFC 1812, section 5.2.4.3}}
+
 \section{網の網}
 
 \term{ISP}はInternet Service Providerの略で、インターネット接続を提供する事業者です。
@@ -152,7 +135,7 @@ NATはアドレス不足への対処や境界設計に使われますが、IPの
 \term{到達性}は、ある宛先へパケットを届けられる性質です。
 
 \term{経路制御}は、到達性だけでなく、契約や運用方針を踏まえて経路を選ぶ処理です。
-したがって、AS\_PATHが最短の経路を必ず採用するわけではありません。
+AS\_PATHの長さより、運用方針を優先して選ぶ場合があります。
 \source{\href{https://datatracker.ietf.org/doc/html/rfc4271}{RFC 4271: Border Gateway Protocol 4}}
 
 \section{中央のない網の耐障害性}
@@ -163,15 +146,15 @@ NATはアドレス不足への対処や境界設計に使われますが、IPの
 \term{迂回}は、利用できない区間を避けて別の経路を選ぶことです。
 
 IPは到着、順序、所要時間を保証しない\term{ベストエフォート}の配送です。
-別経路があることは自動的な復旧を保証しません。
-経路情報の伝播時間や誤った広告によって、一時的に到達できない場合があります。
+別経路を使うには、経路情報の更新と伝播が必要です。
+更新中や誤った広告の影響で、一時的な通信断が起きる場合があります。
 
 \section{エンドツーエンド原則}
 
 \term{エンドツーエンド原則}は、通信の正しさを最終的に判断できる端点へ機能を置く設計上の考え方です。
 途中の網は汎用的なパケット配送へ集中します。
 到着確認やアプリケーション固有の整合性は、必要に応じて端点側で実現します。
-すべての機能を端点だけへ置くという絶対規則ではありません。
+途中の機器にも補助機能を置き、端点で最終的に確認する設計が成り立ちます。
 
 \section{DNS}
 
@@ -184,8 +167,16 @@ IPは到着、順序、所要時間を保証しない\term{ベストエフォー
 \term{リゾルバ}は、利用者側に代わって名前解決を進めます。
 \term{委任}は、下位の名前空間を別の権威DNSへ任せる仕組みです。
 \term{キャッシュ}は、得た応答を再利用する保存です。
-\term{TTL}はTime to Liveの略で、DNS応答をキャッシュして再利用できる上限時間を秒数で示します。キャッシュ側はTTLが満了する前でも応答を破棄できますが、満了後の値をそのまま正しいものとして再利用してはいけません。
-\source{\href{https://datatracker.ietf.org/doc/html/rfc1034}{RFC 1034}、\href{https://datatracker.ietf.org/doc/html/rfc1035}{RFC 1035}}
+\term{TTL}はTime to Liveの略で、DNSレコードを更新確認するまでの時間を秒数で示します。
+通常は期限内のキャッシュを再利用します。
+権威DNSへ再問い合わせできない場合には、RFC 8767の条件で期限切れの値を一時的に返す方式もあります。
+\source{\href{https://datatracker.ietf.org/doc/html/rfc1034}{RFC 1034}、\href{https://datatracker.ietf.org/doc/html/rfc1035}{RFC 1035}、\href{https://www.rfc-editor.org/rfc/rfc8767.html}{RFC 8767, sections 4--5}}
+
+キャッシュが空なら、リゾルバはルートから順に案内を受けます。
+問い合わせる相手が変わるたびに、リゾルバ自身が次の問い合わせを送ります。
+名前解決後のHTTP通信は、得た宛先へ送ります。
+\sectionimage{generated/05-dns-steps.png}{example.comを解決するための問い合わせと応答}{fig:05-dns-steps}
+
 
 \section{手を動かす：経路を観測する}
 

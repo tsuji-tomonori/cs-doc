@@ -24,16 +24,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\tiny,minimum width=17mm,inner sep=1mm}]
-    \node[accentbox] (user) {利用者の操作\\URL・API};
-    \node[box,right=of user] (net) {通信\\DNS・HTTP};
-    \node[box,right=of net] (app) {アプリ\\解析・業務処理};
-    \node[box,right=of app] (runtime) {実行環境\\プロセス・OS};
-    \node[box,right=of runtime] (machine) {機械\\CPU・メモリ};
-    \node[accentbox,right=of machine] (signal) {物理的実体\\電圧・ビット};
-    \draw[flow] (user)--(net); \draw[flow] (net)--(app); \draw[flow] (app)--(runtime);
-    \draw[flow] (runtime)--(machine); \draw[flow] (machine)--(signal);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-01.png}
   \vspace{3mm}
 \begingroup
 \paragraph{上位層の役割}
@@ -59,19 +50,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (src) {ソースコード};
-    \node[box,right=of src] (front) {字句・構文解析\\AST};
-    \node[box,right=of front] (code) {コード生成\\機械語};
-    \node[box,right=of code] (exe) {実行可能形式};
-    \draw[flow] (src)--(front); \draw[flow] (front)--(code); \draw[flow] (code)--(exe);
-    \node[box,below=8mm of src] (loader) {OSのローダー};
-    \node[box,right=of loader] (proc) {プロセス\\仮想アドレス空間};
-    \node[box,right=of proc] (cpu) {CPUが命令を\\フェッチ・実行};
-    \node[accentbox,right=of cpu] (sys) {システムコール\\入出力};
-    \draw[flow] (exe.south) to[bend right=18] (loader.north);
-    \draw[flow] (loader)--(proc); \draw[flow] (proc)--(cpu); \draw[flow] (cpu)--(sys);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-02.png}
   \vspace{5mm}
 \begingroup
 \paragraph{ビルド時}
@@ -104,18 +83,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox,minimum width=23mm] (browser) {クライアント};
-    \node[box,minimum width=23mm,right=of browser] (dns) {DNS};
-    \node[box,minimum width=23mm,right=of dns] (transport) {TCP／QUIC};
-    \node[box,minimum width=23mm,right=of transport] (tls) {TLS};
-    \node[accentbox,minimum width=23mm,right=of tls] (server) {サーバー};
-    \draw[flow] (browser)--node[above]{名前}(dns);
-    \draw[flow] (dns)--node[above]{IP}(transport);
-    \draw[flow] (transport)--node[above]{接続}(tls);
-    \draw[flow] (tls)--node[above]{HTTP}(server);
-    \draw[softflow] (server.south) to[bend left=18] node[below]{応答は逆向きに戻る} (browser.south);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-03.png}
 \begingroup
 \paragraph{サーバーへ届くまで}
         DNSで宛先を求め、トランスポート接続を作り、TLSで相手を認証して暗号化・完全性保護された通信路を確立してからHTTP要求を送ります。TLSは物理経路やルーティング経路そのものを検証しません。再利用やキャッシュで一部を省く場合があります。
@@ -141,15 +109,7 @@ HTTPの本文が届くと、ただのバイト列は文字列、入力型、注�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=2.4mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (bytes) {HTTPのバイト列};
-    \node[box,right=of bytes] (parse) {解析\\構造化};
-    \node[box,right=of parse] (validate) {検証\\境界で拒否};
-    \node[box,right=of validate] (usecase) {ユースケース\\業務規則};
-    \node[box,right=of usecase] (output) {応答へ変換};
-    \draw[flow] (bytes)--(parse); \draw[flow] (parse)--(validate);
-    \draw[flow] (validate)--(usecase); \draw[flow] (usecase)--(output);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-04.png}
   \vspace{5mm}
 \begingroup
 \paragraph{表現}
@@ -220,15 +180,7 @@ HTTPの本文が届くと、ただのバイト列は文字列、入力型、注�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (case) {業務処理};
-    \node[box,right=of case] (input) {入力整形\\機密情報を制御};
-    \node[box,right=of input] (model) {モデル推論\\確率的な出力};
-    \node[box,right=of model] (check) {形式・根拠・\\禁止事項を検査};
-    \node[accentbox,right=of check] (decision) {採用／再試行／\\人へ引き継ぐ};
-    \draw[flow] (case)--(input); \draw[flow] (input)--(model);
-    \draw[flow] (model)--(check); \draw[flow] (check)--(decision);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-05.png}
   \vspace{6mm}
 \begingroup
 \paragraph{通常の関数と異なる点}
@@ -248,7 +200,7 @@ HTTPの本文が届くと、ただのバイト列は文字列、入力型、注�
 
 \section{描画までの経路}
 
-HTTP応答が成功しても、画面が更新されるとは限りません。
+HTTP応答の受信後に、画面を更新する処理が続きます。
 ブラウザはfetchの完了、JavaScriptの継続処理、DOM更新、スタイル計算、レイアウト、描画を順に進めます。
 正常系では、Networkに成功応答が残り、Elementsに期待したDOMが現れ、Performanceに短い描画処理が記録されます。
 異常系では、通信成功後の例外、更新対象の誤り、長いタスク、過剰な再レイアウトなどを分けて調べます。
@@ -287,7 +239,7 @@ HTTP応答が成功しても、画面が更新されるとは限りません。
 \section{遅延の調査}
 \label{sec:07-practice-08}
 
-五秒待ったという体験は、五秒かかる一つの処理があったことを意味しません。CPU計算、メモリ確保、キュー、DNS、接続、注文照会、モデル推論の時間を端から端までの流れに置き、どこで時間を失ったかを絞ります。
+5秒の待ち時間には、複数の処理と通信の時間が含まれます。CPU計算、メモリ確保、キュー、DNS、接続、注文照会、モデル推論の時間を端から端までの流れに置き、どこで時間を失ったかを絞ります。
 
 \begingroup
 \begingroup
@@ -349,7 +301,7 @@ HTTP応答が成功しても、画面が更新されるとは限りません。
 \paragraph{切り分けの順序}
     ある時点のヒープ上の値と参照を記録した\term{ヒープスナップショット}を、通常時と高負荷時で比較し、増えた型と確保元を特定します。その後、どの部品が値を管理するか、生存期間、上限、解放条件をコード上で確認します。
 
-  \takeaway{GCがあることは、不要になった時点で自動的に解放されることを意味しません。到達可能な参照が残れば回収されません。}
+  \takeaway{追跡型GCは、到達可能な参照が残る値を保持します。意図した利用が終わったら、参照の残り方も確認します。}
 \par
 \endgroup
 
@@ -363,23 +315,7 @@ HTTP応答が成功しても、画面が更新されるとは限りません。
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=2.6mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (dns) {名前をIPへ解決できたか};
-    \node[box,right=of dns] (connect) {ポートへ接続できたか};
-    \node[box,right=of connect] (tls) {TLS検証が通ったか};
-    \node[box,right=of tls] (http) {HTTP応答を得たか};
-    \draw[flow] (dns)--node[above]{はい}(connect);
-    \draw[flow] (connect)--node[above]{はい}(tls);
-    \draw[flow] (tls)--node[above]{はい}(http);
-    \node[below=5mm of dns,align=center] (df) {NXDOMAIN、タイムアウト、\\古いキャッシュ};
-    \node[below=5mm of connect,align=center] (cf) {拒否、経路なし、\\再送、ポート違い};
-    \node[below=5mm of tls,align=center] (tf) {期限、名前、信頼、\\版、時計};
-    \node[below=5mm of http,align=center] (hf) {4xx／5xx、形式、\\リダイレクト、容量};
-    \draw[softflow] (dns)--node[left]{いいえ}(df);
-    \draw[softflow] (connect)--node[left]{いいえ}(cf);
-    \draw[softflow] (tls)--node[left]{いいえ}(tf);
-    \draw[softflow] (http)--node[left]{いいえ}(hf);
-  \end{tikzpicture}
+  \inlineimage{generated/09-diagram-06.png}
   \vspace{5mm}
 \paragraph{確認条件}
     発生時刻、接続元、対象名、IP、ポート、プロトコル版、証明書、HTTP要求を記録します。別の端末で成功しても、DNSキャッシュや経路が同じとは限りません。
@@ -455,7 +391,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 
 \par
 \endgroup
-  \takeaway{一つの成功例や失敗例ではなく、版管理した入力集合に対する分布として品質を比較します。}
+  \takeaway{版管理した入力集合を使い、結果の分布として品質を比較します。}
 \par
 \endgroup
 
@@ -467,18 +403,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 
 \begingroup
   \centering
-  \resizebox{\textwidth}{!}{%
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (fact) {1. 現象を事実で記述};
-    \node[box,right=of fact] (scope) {2. 範囲と時刻を限定};
-    \node[box,right=of scope] (hypo) {3. 階層別に仮説化};
-    \node[box,right=of hypo] (test) {4. 一変数ずつ検証};
-    \node[accentbox,right=of test] (record) {5. 結果と次手を記録};
-    \draw[flow] (fact)--(scope); \draw[flow] (scope)--(hypo);
-    \draw[flow] (hypo)--(test); \draw[flow] (test)--(record);
-    \draw[softflow] (record.south) to[bend left=18] node[below]{未解決なら更新} (hypo.south);
-  \end{tikzpicture}%
-  }
+  \inlineimage{generated/09-diagram-07.png}
   \vspace{6mm}
 \begingroup
 \paragraph{事実}
@@ -507,9 +432,9 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 \section{次の学習}
 \label{sec:07-practice-14}
 
-一つのリクエストを最後までたどると、自分が説明できない境界も見えてきます。その境界は欠点ではなく、次に深く学ぶ場所です。担当システムで実際に観測できる問いへ変え、必要な分野へ進みます。
+一つのリクエストを最後までたどると、自分が説明できない境界も見えてきます。その境界が、次に深く学ぶ場所です。担当システムで実際に観測できる問いへ変え、必要な分野へ進みます。
 
-ここでは新しい用語を一度に定義せず、次に答えたい問いだけを選びます。各分野の正式な用語と短い定義は、付録の補足用語集へ移し、必要になった時点で参照できるようにします。
+次に学ぶ分野は、いま答えたい問いから選びましょう。関連する用語は、付録の補足用語集で確認できます。
 
 \begingroup
   \noindent
@@ -526,7 +451,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
     \bottomrule
   \end{tabularx}
   \vspace{1mm}
-  \takeaway{用語の暗記ではなく、自分の担当システムで再現できる小さな観測・実装・説明を学習単位にします。}
+  \takeaway{自分の担当システムで再現できる、小さな観測・実装・説明を学習単位にします。}
 \par
 \endgroup
 
@@ -542,7 +467,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
         利用者がブラウザへ「注文番号1234はいつ届きますか」と入力します。Web APIは注文を検索し、配送サービスから到着予定を取得します。その事実を文脈へ含めて生成AIを呼び出し、利用者向けの応答を返します。
 
 \paragraph{発生している現象}
-        通常は800ミリ秒ですが、遅い側の1\%、すなわち99パーセンタイルが5秒を超えます。ミリ秒は千分の一秒です。多数の要求を送り、想定する利用量で性能と安定性を確かめる\term{負荷試験}では、メモリが増え続けます。まれにTLSエラーも発生し、応答には配送サービスが返していない日時が混じることがあります。
+        以下は調査練習用の架空の測定例です。通常は800ミリ秒ですが、遅い側の1\%、すなわち99パーセンタイルが5秒を超えます。ミリ秒は千分の一秒です。多数の要求を送り、想定する利用量で性能と安定性を確かめる\term{負荷試験}では、メモリが増え続けます。まれにTLSエラーも発生し、応答には配送サービスが返していない日時が混じることがあります。
 
 \par
 \endgroup
@@ -552,7 +477,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
         入力はHTTPSのJSONです。アプリはコンパイル済みプロセスとして動作し、会話履歴をスライス、注文索引をマップで保持します。
 
 \paragraph{演習の目的}
-        すぐに原因を断定するのではなく、各階層の処理、失敗点、必要な観測、検証順序を説明します。
+        各階層の処理、失敗点、必要な観測、検証順序を説明します。
 
 \par
 \endgroup
@@ -585,7 +510,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 \section{途切れた旅}
 \label{sec:07-practice-17}
 
-次に、同じ経路のどこかが遅れ、あふれ、届かず、誤る場合を扱います。現象ごとに旅全体を作り直すのではなく、正常系との差が最初に現れる境界を探します。
+次に、同じ経路のどこかが遅れ、あふれ、届かず、誤る場合を扱います。正常時との差が最初に現れる境界を探します。
 
 \begingroup
   \noindent
@@ -610,7 +535,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 \section{評価方法}
 \label{sec:07-practice-18}
 
-説明の良さは、用語の数ではなく、第三者が同じ経路をたどれるかで評価します。層を網羅し、矢印の因果を示し、事実と仮定を分け、調査で反証できることを基準にします。
+説明の良さは、第三者が同じ経路をたどれるかで評価します。層を網羅し、矢印の因果を示し、事実と仮定を分け、調査で反証できることを基準にします。
 
 \begingroup
   \noindent
@@ -620,7 +545,7 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
     \midrule
     階層の網羅 & 20 & 言語、OS、メモリ、CPU、通信、アプリ、AIの役割を区別しています。 \\
     因果関係 & 25 & データと制御の流れを矢印で示し、前段の出力が次段でどう使われるか説明しています。 \\
-    技術的正確さ & 20 & 各層が保証することと保証しないこと、平均と最悪、学習と推論を混同していません。 \\
+    技術的正確さ & 20 & 各層の保証範囲、平均と最悪、学習と推論を区別して説明しています。 \\
     調査計画 & 25 & 仮説を観測で支持・反証でき、条件、比較対象、安全な検証順序が明確です。 \\
     伝達品質 & 10 & 用語を定義し、事実・仮定・推測を分け、第三者が同じ調査を再現できます。 \\
     \bottomrule
@@ -638,10 +563,10 @@ DOMが正しければ、Performance panelで長いタスク、再レイアウト
 
 もう一度、利用者の画面を見ます。「注文番号1234はいつ届きますか」という一文は、入力装置の電気信号から始まりました。CPUが命令を実行し、OS上のプロセスが文字列を値として保持し、設計された境界に沿って注文と配送の事実を集めました。HTTP要求はTLSで守られてネットワークを渡り、モデルは渡された事実を含む文脈から応答を生成しました。その文は同じ層を戻り、ブラウザが画面へ描きました。
 
-どの層も、一つ前の層の仕事をなかったことにはしていません。上位は下位の細部を隠しながら、その計算、記憶、配送を使っています。だから問題が起きたときは、抽象化を捨ててすべてを調べるのではなく、最後に成功した境界まで戻り、そこから一段ずつ降ります。
+上位の層は、下位の計算、記憶、配送を使っています。細部は境界の内側へ隠れています。問題が起きたときは、最後に成功した境界まで戻ります。そこから一段ずつ下位の動作を調べます。
 
 この物語に終点はありますが、システムには次の要求が届きます。新しい機能も障害も、同じようにデータの姿、受け渡す相手、境界の保証をたどれば、どこから理解を始めるべきかが見えます。
 
-\takeaway{物理からアプリまでをつなぐ鍵は、全詳細を同時に覚えることではありません。各層でデータがどんな姿を取り、何を保証されて次へ渡るかを、途切れない因果として説明することです。}
+\takeaway{物理からアプリまでを、データの受け渡しでつなぎます。各層でデータがどんな姿を取り、何を保証されて次へ渡るかを、途切れない因果として説明することです。}
 
 \input{chapters/terms/09}

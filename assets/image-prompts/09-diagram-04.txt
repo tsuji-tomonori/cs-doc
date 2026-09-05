@@ -1,0 +1,14 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: アプリケーション処理
+Original diagram's semantic specification:
+\begin{tikzpicture}[node distance=2.4mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (bytes) {HTTPのバイト列};
+    \node[box,right=of bytes] (parse) {解析\\構造化};
+    \node[box,right=of parse] (validate) {検証\\境界で拒否};
+    \node[box,right=of validate] (usecase) {ユースケース\\業務規則};
+    \node[box,right=of usecase] (output) {応答へ変換};
+    \draw[flow] (bytes)--(parse); \draw[flow] (parse)--(validate);
+    \draw[flow] (validate)--(usecase); \draw[flow] (usecase)--(output);
+  \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Preserve the original conceptual relationships; explain each process step in plain Japanese with short labels.

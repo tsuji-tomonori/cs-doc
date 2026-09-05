@@ -1,0 +1,12 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: ノイマン型コンピュータ
+Original diagram's semantic specification:
+\begin{tikzpicture}[node distance=5mm,every node/.append style={font=\small}]
+        \node[accentbox,minimum width=48mm,minimum height=20mm] (cpu) {CPU\\制御装置・レジスタ・ALU};
+        \node[box,right=of cpu,minimum height=20mm] (mem) {メモリ\\命令・データ};
+        \node[box,below=of cpu] (io) {入出力装置};
+        \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- node[above,font=\scriptsize] {アドレス・データ・制御} (mem);
+        \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- (io);
+      \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Preserve the original conceptual relationships; explain each process step in plain Japanese with short labels.

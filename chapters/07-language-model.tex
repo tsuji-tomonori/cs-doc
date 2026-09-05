@@ -5,11 +5,11 @@
 \begin{chapterabstract}
 要求はサーバーへ届き、アプリは注文データから「明日の午後」という事実を得ました。残る仕事は、その事実と利用者の質問を受け取り、自然な応答へ変えることです。ここで物語の中にあった大きな箱、言語モデルの内側へ入ります。
 
-文字列はそのままではモデルへ渡せません。文を小さな単位へ分け、その単位を数へ置き換え、さらに複数の数をひとまとまりにします。モデルは、その数のまとまりを何段階も変換します。なぜ変換の規則をデータから決められるのかを理解するため、入力と出力の対応、変化の測り方、不確実さの表し方から順に始めます。専門用語は数式より先に日常語で意味を置き、最後に一単位ずつ応答が生まれるところまでつなぎます。
+モデルへ渡す前に、文字列を数値へ変えます。文を小さな単位へ分け、その単位を数へ置き換え、さらに複数の数をひとまとまりにします。モデルは、その数のまとまりを何段階も変換します。なぜ変換の規則をデータから決められるのかを理解するため、入力と出力の対応、変化の測り方、不確実さの表し方から順に始めます。最後に、一単位ずつ応答が生まれる計算へつなぎます。
 \end{chapterabstract}
 
 \begin{learninggoals}
-  \item 学習、検証、テスト、推論を同じ処理として混同せず説明できます。
+  \item 学習、検証、テスト、推論の役割を分けて説明できます。
   \item Attention、Query、Key、Value、Transformerの関係を説明できます。
   \item 生成品質を、漏洩、偏り、分布変化、ハルシネーションから評価できます。
 \end{learninggoals}
@@ -18,22 +18,24 @@
 
 \subsection*{この章の二つの読み方}
 
-内容を減らさず、初回通読で必要な経路と、数理を深く理解する経路を分けます。初回は下表の「最短経路」を読み、数式や古典的手法を確かめたいときに「深掘り経路」へ戻ってください。深掘り経路を飛ばしても、Transformerから文章生成までの因果は追えます。
+初回は「最短経路」で学習から文章生成までの流れをつかみます。計算の背景を確かめたいときは「深掘り経路」へ進んでください。
 
-\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{25mm}YY@{}}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{30mm}Y@{}}
   \toprule
-  読み方 & 対象 & 到達点 \\
+  読み方 & 読む範囲 \\
   \midrule
-  最短経路 & 7.1--7.7、7.17--7.18、7.22--7.36 & 学習と推論、損失、ニューラルネットワーク、Attention、Transformer、自己回帰生成、評価を一続きで説明します。 \\
-  深掘り経路 & 7.8--7.16、7.19--7.21 & 回帰、正則化、ベイズ、識別、パーセプトロン、XOR、勾配降下、誤差逆伝播、系列処理の背景を数式と歴史から補います。 \\
+  最短経路 & 7.1--7.7、7.17--7.18、7.22--7.36 \\
+  深掘り経路 & 7.8--7.16、7.19--7.21 \\
   \bottomrule
 \end{tabularx}
+
+最短経路では、学習と推論からAttention、文章生成、評価へ進みます。深掘り経路では、回帰、分類、勾配計算、系列処理の背景を数式で確かめます。
 
 
 \section{関数・ベクトル・行列}
 \label{sec:06-machine-learning-01}
 
-サーバーへ届いた質問をモデルへ渡すには、言葉を計算できる形へ変えなければなりません。モデルの内側では、入力と出力の対応を表す関数、複数の数を順序付きで並べるベクトル、多数のベクトルをまとめて変換する行列が共通の言葉になります。
+サーバーへ届いた質問を、モデルが計算できる数値へ変えます。モデルの内側では、入力と出力の対応を表す関数、複数の数を順序付きで並べるベクトル、多数のベクトルをまとめて変換する行列が共通の言葉になります。
 
 \begingroup
 \begingroup
@@ -43,12 +45,7 @@
 
       \par\smallskip
       \begin{center}
-      \begin{tikzpicture}[x=7mm,y=5mm,every node/.append style={font=\scriptsize}]
-        \draw[->,draw=PaleGray] (-2.3,0)--(2.5,0) node[right] {$x$};
-        \draw[->,draw=PaleGray] (0,-.5)--(0,4.8) node[above] {$f(x)$};
-        \draw[draw=MutedBlue,line width=.8pt] plot[smooth] coordinates {(-2,4)(-1.5,2.25)(-1,1)(-.5,.25)(0,0)(.5,.25)(1,1)(1.5,2.25)(2,4)};
-        \node[right] at (1.5,3.5) {$x^2$};
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-01.png}
       \end{center}
 \end{samepage}
 \par
@@ -75,7 +72,7 @@
 \section{微分と勾配}
 \label{sec:06-machine-learning-02}
 
-行列の値を決めれば関数は動きますが、良い応答を生む値を人が一つずつ設定することはできません。出力の誤りが、どの値をどちらへ動かすと減るかを知るため、関数の変化を微分と勾配で読みます。
+モデルのパラメータは、訓練データを使って少しずつ調整します。出力の誤りが、どの値をどちらへ動かすと減るかを知るため、関数の変化を微分と勾配で読みます。
 
 \begingroup
 \begingroup
@@ -105,7 +102,7 @@
         勾配の各成分は、対応するパラメータを少し増やしたとき$L$がどれほど変わるかを示します。
 
 \paragraph{最小化}
-        勾配は現在地点の近くで$L$が最も増える向きを示します。その反対の$-\nabla L$側へ小さく動かすと、現在地点の近くでは$L$を下げられます。遠くまで同じ形とは限らないため、これは局所的、すなわち近い範囲での根拠です。
+        微分可能な関数では、0以外の勾配は、その点で最も増える向きを示します。反対の$-\nabla L$側へ十分小さく動かすと、$L$は下がります。勾配が0の点では、周囲の形をさらに調べます。この説明が扱うのは、現在地点に近い範囲での変化です。
 
 \par
 \endgroup
@@ -116,7 +113,7 @@
 \section{確率と期待値}
 \label{sec:06-machine-learning-03}
 
-同じ入力に常に唯一の正解があるとは限らず、観測データにもばらつきがあります。ある出来事がどれほど起こりやすいかを0から1までの数で表したものが\term{確率}です。0は起こらない、1は必ず起こることを表します。何が起こるか確定していない状態を\term{不確実さ}と呼びます。
+同じ入力に常に唯一の正解があるとは限らず、観測データにもばらつきがあります。ある出来事がどれほど起こりやすいかを0から1までの数で表したものが\term{確率}です。有限個の候補を扱う例では、0は起こらない、1は必ず起こることを表します。連続量では、一つの値だけを取る確率が0になる場合もあります。何が起こるか確定していない状態を\term{不確実さ}と呼びます。
 
 \begingroup
 \begingroup
@@ -160,15 +157,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[box] (data) {訓練データ\\$(\mathbf{x},y)$};
-    \node[accentbox,right=of data] (learn) {学習アルゴリズム};
-    \node[box,right=of learn] (model) {モデル\\$f_{\boldsymbol{\theta}}$};
-    \node[accentbox,right=of model] (pred) {未知の入力へ予測};
-    \draw[flow] (data)--(learn);
-    \draw[flow] (learn)--(model);
-    \draw[flow] (model)--(pred);
-  \end{tikzpicture}
+  \inlineimage{generated/07-diagram-02.png}
   \vspace{5mm}
 \begingroup
 \paragraph{ルールを書く処理}
@@ -233,16 +222,16 @@
   \noindent
   \begin{tabularx}{\textwidth}{@{}lYY@{}}
     \toprule
-    分割 & 使い方 & 避けること\\
+    分割 & 使い方 & 守る条件\\
     \midrule
-    訓練データ & パラメータを最適化する & 評価対象へ同じ例を使う\\
-    検証データ & モデル、正則化、しきい値などを選ぶ & 選択を繰り返した後も未使用とみなす\\
-    テストデータ & 最終候補の汎化性能を一度評価する & 結果を見て設計を直し続ける\\
+    訓練データ & パラメータを最適化する & 評価用の例と分ける\\
+    検証データ & モデルやしきい値などを選ぶ & 設計への使用履歴を管理する\\
+    テストデータ & 最終候補の汎化性能を評価する & 設計の確定後に使う\\
     \bottomrule
   \end{tabularx}
   \vspace{4mm}
 \paragraph{分割単位}
-    同じ利用者の似た例、同じ文書の複製、時間的に未来の情報が分割をまたぐと、運用時には得られない手掛かりが学習側から評価側へ漏れます。この問題を\term{データ漏洩}といいます。同じ元から来た例をまとめ、運用時の時間順を反映して分けます。
+    評価用の例と同じ内容や、運用時には得られない未来の情報が学習に入ると、評価結果が実力より良く見える場合があります。この問題を\term{データ漏洩}といいます。同じ元から来た例をまとめ、運用時の時間順を反映して分けます。
 
 \par
 \endgroup
@@ -294,14 +283,7 @@
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=6.5mm,y=6.5mm,every node/.append style={font=\scriptsize}]
-        \draw[->,draw=PaleGray] (-.2,0)--(6.5,0) node[right] {$x$};
-        \draw[->,draw=PaleGray] (0,-.2)--(0,4.5) node[above] {$y$};
-        \foreach \x/\y in {.5/.7,1.2/1.4,2/1.8,2.8/2.3,3.6/2.5,4.4/3.1,5.2/3.6,5.8/3.7}{
-          \fill[DeepNavy] (\x,\y) circle (1.2pt);
-        }
-        \draw[draw=MutedBlue,line width=.8pt] plot[smooth] coordinates {(.3,.55)(1,1.15)(2,1.85)(3,2.25)(4,2.75)(5,3.35)(6,3.85)};
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-03.png}
 \par
 \endgroup
 \medskip
@@ -315,7 +297,7 @@
 
 \par
 \endgroup
-  \takeaway{表現力を増やすことと、未知データを正しく予測することは同じではありません。}
+  \takeaway{表現力を増やした効果は、未知のデータに対する予測で確かめます。}
 \par
 \endgroup
 
@@ -417,7 +399,7 @@
 \medskip
 \begingroup
 \paragraph{汎化性能}
-        訓練に使っていない、運用時と同じ条件から来る例へどれだけ良く予測できるかを\term{汎化性能}といいます。訓練損失の低さだけでは測れません。
+        訓練に使っていない、運用時と同じ条件から来る例へどれだけ良く予測できるかを\term{汎化性能}といいます。学習から分けておいたデータで測ります。
 
 \paragraph{正則化の限界}
         データ漏洩、分布差、誤ったラベル、評価指標の不一致があれば、正則化しても妥当な評価にはなりません。
@@ -466,7 +448,7 @@
 \section{確率的意思決定}
 \label{sec:06-machine-learning-13}
 
-確率を出しただけでは、アプリが何をすべきかは決まりません。起こり得る各結果の確率と、その結果が生む損失を組み合わせて行動を選ぶことが\term{確率的意思決定}です。誤って答える損失、回答を控える損失、人へ確認を求める損失を比べます。
+アプリの行動は、確率と誤った判断の損失を合わせて選びます。起こり得る各結果の確率と、その結果が生む損失を組み合わせて行動を選ぶことが\term{確率的意思決定}です。誤って答える損失、回答を控える損失、人へ確認を求める損失を比べます。
 
 \begingroup
 \begingroup
@@ -498,19 +480,12 @@
 \section{線形識別}
 \label{sec:06-machine-learning-14}
 
-連続値の予測から、入力を複数の側へ分ける問題へ進みます。特徴量の重み付き和を計算し、直線や平面のどちら側にあるかで分類する方法を\term{線形識別}といいます。単純な形だからこそ、何を表せて何を表せないかが見えます。
+連続値の予測から、入力を複数の側へ分ける問題へ進みます。特徴量の重み付き和を計算し、直線や平面のどちら側にあるかで分類する方法を\term{線形識別}といいます。境界が単純なので、表現できる範囲を確かめやすい方法です。
 
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=10mm,y=9mm,every node/.append style={font=\scriptsize}]
-        \draw[->,draw=PaleGray] (0,0)--(5.5,0) node[right] {$x_1$};
-        \draw[->,draw=PaleGray] (0,0)--(0,4.8) node[above] {$x_2$};
-        \foreach \x/\y in {.7/3.4,1.2/2.8,1.7/3.7,2.1/2.5}{\fill[MutedBlue] (\x,\y) circle (1.5pt);}
-        \foreach \x/\y in {3.1/1.3,3.7/2,4.3/1.1,4.7/2.3}{\draw[DeepNavy,fill=CardWhite] (\x,\y) circle (1.7pt);}
-        \draw[draw=DeepNavy,line width=.8pt] (.8,.5)--(4.4,4.3);
-        \node[rotate=46] at (3.6,4.15) {$\mathbf{w}^\top\mathbf{x}+b=0$};
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-04.png}
 \par
 \endgroup
 \medskip
@@ -566,26 +541,21 @@
 \endgroup
 
 
+図\ref{fig:07-perceptron}は、一つの誤分類を使った更新例です。
+学習率を1とし、重みへ正解ラベルと入力の積を加えます。
+切片にも正解ラベルを加えると、この入力の得点は−1から1へ変わります。
+\sectionimage{generated/07-perceptron.png}{パーセプトロンの一回の更新}{fig:07-perceptron}
+
+
 \section{XOR}
 \label{sec:06-machine-learning-16}
 
-一枚の直線では、どんな規則でも分けられるわけではありません。XORは小さな例でその限界を示します。入力を一度別の表現へ写してから境界を引く必要があり、多層化へ進む理由が生まれます。
+一本の直線で分けられる規則には限りがあります。XORは小さな例でその限界を示します。入力を一度別の表現へ写してから境界を引く必要があり、多層化へ進む理由が生まれます。
 
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=24mm,y=20mm,every node/.append style={font=\scriptsize}]
-        \draw[->,draw=PaleGray] (-.1,0)--(1.4,0) node[right] {$x_1$};
-        \draw[->,draw=PaleGray] (0,-.1)--(0,1.35) node[above] {$x_2$};
-        \fill[MutedBlue] (0,1) circle (2.3pt);
-        \fill[MutedBlue] (1,0) circle (2.3pt);
-        \draw[DeepNavy,fill=CardWhite,line width=.8pt] (0,0) circle (2.5pt);
-        \draw[DeepNavy,fill=CardWhite,line width=.8pt] (1,1) circle (2.5pt);
-        \node[left] at (0,1) {1};
-        \node[below] at (1,0) {1};
-        \node[below left] at (0,0) {0};
-        \node[above right] at (1,1) {0};
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-05.png}
 \par
 \endgroup
 \medskip
@@ -597,7 +567,7 @@
         入力を定数倍と足し算だけでは表せない形へ変える\term{非線形な変換}、複数の線形境界、変換する層を重ねたネットワークなどで、中間表現を作る必要があります。
 
 \paragraph{教訓}
-        学習則を長く回すだけでは、モデルが表現できない境界を学べません。
+        学習する境界に合わせて、モデルの表現力を選びます。
 
 \par
 \endgroup
@@ -613,13 +583,7 @@
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=7mm,every node/.append style={font=\scriptsize}]
-        \node[box] (x) {$\mathbf{x}$};
-        \node[accentbox,right=of x] (z) {$z=\mathbf{w}^\top\mathbf{x}+b$};
-        \node[box,right=of z] (a) {$a=\phi(z)$};
-        \draw[flow] (x)--(z);
-        \draw[flow] (z)--(a);
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-06.png}
       \vspace{5mm}
 \paragraph{活性化関数}
         重み付き和$z$へ適用する非線形関数$\phi$を\term{活性化関数}といいます。\term{ReLU}はRectified Linear Unitの略で、$z$が負なら0、正ならそのまま返す関数です。\term{シグモイド}は、出力を0から1の間へ滑らかに収める関数です。\term{tanh}はhyperbolic tangent、すなわち双曲線正接という関数で、出力を$-1$から1の間へ滑らかに収めます。ここでは、入力をどの範囲の出力へ変えるかに注目すれば十分です。用途と層の役割に応じて選びます。
@@ -647,15 +611,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[box] (x) {入力$\mathbf{x}$};
-    \node[accentbox,right=of x] (h1) {隠れ層1};
-    \node[accentbox,right=of h1] (h2) {隠れ層2};
-    \node[box,right=of h2] (out) {予測$\hat{\mathbf{y}}$};
-    \node[box,right=of out] (loss) {損失$\ell(\hat{\mathbf{y}},\mathbf{y})$};
-    \draw[flow] (x)--(h1); \draw[flow] (h1)--(h2);
-    \draw[flow] (h2)--(out); \draw[flow] (out)--(loss);
-  \end{tikzpicture}
+  \inlineimage{generated/07-diagram-07.png}
   \vspace{5mm}
 \begingroup
 \paragraph{順伝播}
@@ -682,7 +638,7 @@
 \begingroup
 \begingroup
 \paragraph{基本更新}
-        勾配降下法は、現在のパラメータから勾配と反対方向へ学習率だけ進めます。
+        勾配降下法では、勾配へ学習率を掛けた量を現在のパラメータから引きます。
         \[
           \boldsymbol{\theta}_{t+1}
           =\boldsymbol{\theta}_{t}
@@ -699,7 +655,7 @@
 \medskip
 \begingroup
 \paragraph{実用的な最適化}
-        \term{Momentum}は英語で勢いを意味し、過去の勾配の移動平均を使って、同じ方向へ進む動きを残す方法です。\term{Adam}はAdaptive Moment Estimationに由来する名前で、勾配の平均と、勾配を二乗した値の平均を推定し、パラメータごとの更新幅を調整します。直近の値ほど強く反映する平均が\term{移動平均}です。二乗値の平均がここでいう\term{二次モーメント}です。どちらも、基本の勾配へ過去の情報を加えて更新を安定させる方法です。
+        \term{Momentum}は英語で勢いを意味し、過去の勾配の移動平均を使って、同じ方向へ進む動きを残す方法です。\term{Adam}はAdaptive Moment Estimationに由来する名前で、勾配の平均と、勾配を二乗した値の平均を推定し、パラメータごとの更新幅を調整します。時点が進むにつれて取り込む値を更新する平均が\term{移動平均}です。ここでは、直近の値を強く反映する指数移動平均を使います。二乗値の平均がここでいう\term{二次モーメント}です。過去の勾配を使って更新方向や幅を調整します。効果は目的関数や学習率などの条件によって変わります。
 
 \paragraph{監視する量}
         訓練・検証損失、勾配の大きさ、学習率、計算時間を追い、発散、停滞、過学習を切り分けます。
@@ -713,7 +669,7 @@
 \section{誤差逆伝播}
 \label{sec:06-machine-learning-20}
 
-深いモデルには膨大な重みがあり、それぞれを別々に少し変えて試すのは非効率です。出力側で測った損失から、関数のつながりに沿って後ろから前へ計算し、各重みの勾配を求める方法が\term{誤差逆伝播}です。backpropagationを縮めて逆伝播とも呼びます。順伝播の計算経路を、学習時だけ逆向きにたどります。
+深いモデルの勾配は、共通する途中計算を再利用して効率よく求めます。損失から計算経路を逆向きにたどり、各重みの勾配を求める方法が\term{誤差逆伝播}です。英語ではbackpropagationと呼びます。本章では、学習に使う勾配をこの方法で求めます。
 
 \begingroup
 \begingroup
@@ -743,6 +699,14 @@
 \par
 \endgroup
 
+
+図\ref{fig:07-gradient-backprop}では、予測を$wx$、損失を$(wx-y)^2/2$とします。
+$x=2$、$y=6$、$w=1$なら、予測は2、損失は8です。
+予測に関する損失の微分は$2-6=-4$です。
+これへ$x=2$を掛けると、重みの勾配$-8$を得ます。
+学習率0.1で更新すると$w=1.8$となり、損失は2.88へ下がります。
+\sectionimage{generated/07-gradient-backprop.png}{順伝播、逆伝播、パラメータ更新の数値例}{fig:07-gradient-backprop}
+\source{\href{https://doi.org/10.1038/323533a0}{Rumelhart, Hinton and Williams (1986), Learning representations by back-propagating errors}}
 
 \section{系列データ}
 \label{sec:06-machine-learning-21}
@@ -786,15 +750,7 @@
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
-        \node[accentbox] (q) {現在位置};
-        \node[box,right=of q,yshift=13mm] (v1) {位置1\\重み .1};
-        \node[box,right=of q] (v2) {位置2\\重み .7};
-        \node[box,right=of q,yshift=-13mm] (v3) {位置3\\重み .2};
-        \draw[softflow] (q)--(v1);
-        \draw[flow,line width=1.1pt] (q)--(v2);
-        \draw[softflow] (q)--(v3);
-      \end{tikzpicture}
+      \inlineimage{generated/07-diagram-08.png}
 \par
 \endgroup
 \medskip
@@ -861,17 +817,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[box] (x) {入力$X$};
-    \node[accentbox,right=of x,yshift=12mm] (q) {$Q=XW_Q$};
-    \node[accentbox,right=of x] (k) {$K=XW_K$};
-    \node[accentbox,right=of x,yshift=-12mm] (v) {$V=XW_V$};
-    \node[box,right=17mm of k] (attn) {Attention};
-    \draw[flow] (x)--(q); \draw[flow] (x)--(k); \draw[flow] (x)--(v);
-    \draw[flow] (q.east)--([yshift=3.2mm]attn.west);
-    \draw[flow] (k.east)--(attn.west);
-    \draw[flow] (v.east)--([yshift=-3.2mm]attn.west);
-  \end{tikzpicture}
+  \inlineimage{generated/07-diagram-09.png}
   \vspace{4mm}
 \begingroup
 \paragraph{Multi-Head Attention}
@@ -955,13 +901,7 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (text) {「情報工学を学ぶ」};
-    \node[box,right=of text] (pieces) {情報｜工学｜を｜学ぶ};
-    \node[box,right=of pieces] (ids) {318, 9042, 17, 771};
-    \draw[flow] (text)--(pieces);
-    \draw[flow] (pieces)--(ids);
-  \end{tikzpicture}
+  \inlineimage{generated/07-diagram-10.png}
   \vspace{5mm}
 \begingroup
 \paragraph{トークンの単位}
@@ -976,10 +916,20 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 
 \par
 \endgroup
-  {\scriptsize 図の分割とIDは説明用です。実際の語彙と分割はモデルごとに異なります。}
+  図の分割とIDは説明用です。実際の語彙と分割はモデルごとに異なります。
 \par
 \endgroup
 
+
+\paragraph{BPEで単位を作る}
+頻出する隣接ペアを繰り返しまとめる方式を\term{BPE}と呼びます。
+Byte Pair Encodingの略です。
+図\ref{fig:07-bpe}では、二つの文字列を一回ずつ数えます。
+最も多いaとbの組をabへ結合し、ペアの出現回数を数え直します。
+これを繰り返して結合規則を学びます。
+実際の文章を分割するときは、学習済みの結合規則を使います。
+\sectionimage{generated/07-bpe.png}{BPEの結合規則を学ぶ例}{fig:07-bpe}
+\source{\href{https://aclanthology.org/P16-1162/}{Sennrich, Haddow and Birch (2016), section 3}}
 
 \section{次トークン予測}
 \label{sec:06-machine-learning-28}
@@ -1059,16 +1009,7 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (ctx) {文脈};
-    \node[box,right=of ctx] (logits) {logits};
-    \node[box,right=of logits] (prob) {softmax\\確率};
-    \node[box,right=of prob] (select) {選択};
-    \node[accentbox,right=of select] (next) {次トークン};
-    \draw[flow] (ctx)--(logits); \draw[flow] (logits)--(prob);
-    \draw[flow] (prob)--(select); \draw[flow] (select)--(next);
-    \draw[softflow] (next.south) to[bend left=25] node[below]{文脈へ追加して反復} (ctx.south);
-  \end{tikzpicture}
+  \inlineimage{generated/07-diagram-11.png}
   \vspace{5mm}
 \begingroup
 \paragraph{貪欲選択}
@@ -1093,6 +1034,14 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
 \par
 \endgroup
 
+
+候補を絞った後は、その中の確率の合計が1になるように調整します。
+図\ref{fig:07-sampling}では、AとBを残すと合計は0.8です。
+それぞれ0.8で割り、Aを0.625、Bを0.375の確率で選びます。
+この例ではTop-$k$とTop-$p$の候補が一致します。
+候補の分布や設定値が変わると、残る候補も変わります。
+\sectionimage{generated/07-sampling.png}{貪欲法と、候補を絞るサンプリングの比較}{fig:07-sampling}
+\source{\href{https://arxiv.org/abs/1904.09751}{Holtzman et al. (2020), The Curious Case of Neural Text Degeneration}}
 
 \section{評価}
 \label{sec:06-machine-learning-31}
@@ -1185,7 +1134,7 @@ Attentionと位置情報を一つのまとまりにします。各位置で同�
   \vspace{5mm}
 \paragraph{運用上の制御}
     出典の照合、入力・出力検査、権限分離、操作前確認、誰がいつ何をしたかを後から追える\term{監査ログ}、停止手段、モデルを使えないときの代替手順を組み合わせます。
-    モデルの確信表現だけを検証の代わりにしません。
+    モデルの応答は、出典や実際のデータと照らして確かめます。
 
 \par
 \endgroup
@@ -1251,7 +1200,7 @@ for degree in [0, 1, 3, 9]:
 
 ただし、流暢さは事実性の保証ではありません。評価集合、出典との照合、入力と出力の検査、失敗時の代替がアプリ側に必要です。完成した文はHTTP応答へ入り、ネットワークを戻ろうとしています。最終章では、その帰り道を含めて全層を一度につなぎ、問題が起きたときの戻り方を考えます。
 
-\takeaway{モデルの応答は、言葉を直接理解する魔法ではなく、数値表現を層ごとに変換し、文脈に続くトークンを確率的に選ぶ計算の結果です。}
+\takeaway{モデルの応答は、数値表現を層ごとに変換し、文脈に続くトークンを選ぶ計算の結果です。}
 
 
 \section{旅をたどり直す}

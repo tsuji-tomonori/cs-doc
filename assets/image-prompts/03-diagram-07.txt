@@ -1,0 +1,17 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: ポインタと参照
+Original diagram's semantic specification:
+\begin{tikzpicture}[node distance=9mm and 13mm,every node/.append style={font=\scriptsize}]
+    \node[accentbox] (root) {ルート\\実行中の変数};
+    \node[box,right=of root] (a) {値A};
+    \node[box,right=of a] (b) {値B};
+    \node[box,below=of a] (c) {値C};
+    \node[box,draw=PaleGray,dashed,below=of b] (d) {値D};
+    \draw[flow] (root) -- (a);
+    \draw[flow] (a) -- (b);
+    \draw[flow] (a) -- (c);
+    \node[align=center,text=MutedBlue,font=\tiny,above=2mm of b] {到達可能\\保持する};
+    \node[align=center,text=PaleGray,font=\tiny,right=2mm of d] {到達不能\\回収候補};
+  \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Show tracing GC in 3 steps with same graph root->A, A->B, A->C, isolated D. 1 ルートからたどる; 2 A・B・Cに印を付ける; 3 Dを回収候補にする. D has no inbound edges. Hypothetical simple tracing collector not Go-specific timing.

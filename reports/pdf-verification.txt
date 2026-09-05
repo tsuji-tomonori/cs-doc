@@ -1,0 +1,38 @@
+2026-09-05
+Command: make verify
+Exit status: 0
+
+catalog coverage passed: 600 term rows
+chapter guide check passed: 9 tables, 87 previously defined core terms
+structure coverage passed: 186 sections
+section evidence passed: 186 sections, 53 sources
+Japanese style passed: 0 long sentences recorded for review
+beginner comprehension passed: 600 term rows, 18 key checks
+layout source check passed: centered blocks start in fresh paragraphs and prose-centered blocks stay on one page
+figure slide check passed: 84 infographic slides have readable 16:9 resolution
+読み物版検証完了: 199ページ、本文154787文字、外部リンク84件
+
+Title:           情報工学入門
+Subject:         一つのAIアプリ要求を追い、物理からアプリまでをつなぐ技術書
+Keywords:        情報工学, 物理, コンピュータ, プログラミング, ネットワーク, 機械学習
+Author:          社内研修教材
+Creator:         LaTeX with hyperref
+Producer:        LuaTeX-1.14.0
+CreationDate:    Sat Sep  5 14:13:46 2026 JST
+ModDate:         Sat Sep  5 14:13:46 2026 JST
+Custom Metadata: yes
+Metadata Stream: no
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            none
+JavaScript:      no
+Pages:           199
+Encrypted:       no
+Page size:       595.276 x 841.89 pts (A4)
+Page rot:        0
+File size:       93192233 bytes
+Optimized:       no
+PDF version:     1.5
+
+SHA-256: 49b544e7716ba1b4de00e64a7c33efc09999b34050889aa914c8b22c5a6bbd66

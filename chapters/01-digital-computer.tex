@@ -3,9 +3,9 @@
 \label{chap:digital-computer}
 
 \begin{chapterabstract}
-送信ボタンは押されましたが、要求はまだ端末を出ていません。指やキーボードの操作を受けた回路では、電気を動かそうとする差である電圧が変化します。その変化が、キーボードやタッチ画面など情報を機械へ入れる入力装置からCPUへ伝わろうとしています。ここで視点を最も小さな世界まで近づけます。
+送信ボタンを押した直後の、端末の内部から始めます。指やキーボードの操作を受けた回路では、電気を動かそうとする差である電圧が変化します。その変化が、キーボードやタッチ画面など情報を機械へ入れる入力装置からCPUへ伝わろうとしています。ここで視点を最も小さな世界まで近づけます。
 
-連続的な電圧から安定した0と1を取り出し、電圧で電流を制御するトランジスタを、0と1の規則を実現する論理ゲートへ組み上げます。さらに、論理ゲートから足し算をする加算器と値を保つ記憶回路を作ります。限られた速い記憶と大きな遅い記憶をつなぎ、CPUが一つの命令を実行するところまで進みます。各用語は、必要になる順に改めて説明します。章の終わりには、画面上の操作も無数の状態変化として動いていることが見えるはずです。
+連続的な電圧から安定した0と1を取り出し、電圧で電流を制御するトランジスタを、0と1の規則を実現する論理ゲートへ組み上げます。さらに、論理ゲートから足し算をする加算器と値を保つ記憶回路を作ります。限られた速い記憶と大きな遅い記憶をつなぎ、CPUが一つの命令を実行するところまで進みます。章の終わりには、画面上の操作も無数の状態変化として動いていることが見えるはずです。
 \end{chapterabstract}
 
 \begin{learninggoals}
@@ -22,15 +22,15 @@
 
 送信の瞬間へカメラを寄せると、最初に見えるのは文字でも命令でもなく、導線に現れる電気の変化です。物質を細かく分けていったときの基本的な粒を\term{原子}といいます。原子の中には、負の電気的性質を持つ\term{電子}があります。この「正または負の電気的性質」を\term{電荷}と呼びます。金属では一部の電子が移動でき、その移動が電気の働きを運びます。
 
-電気が通りやすい金属で作った道が\term{導線}です。導線や部品をつないで、電気が動ける道を作ったものを\term{回路}といいます。回路へ外から与える電気的な値を\term{入力}と呼びます。回路が処理した結果として外へ示す値を\term{出力}と呼びます。回路上の二点を比べたとき、電荷を動かそうとする差が\term{電圧}です。電圧の単位は\term{ボルト}で、記号Vを使います。水そのものではなく水を流そうとする高低差に近い、と考えると最初の足場になります。
+電気が通りやすい金属で作った道が\term{導線}です。導線や部品をつないで、電気が動ける道を作ったものを\term{回路}といいます。回路へ外から与える電気的な値を\term{入力}と呼びます。回路が処理した結果として外へ示す値を\term{出力}と呼びます。回路上の二点を比べたとき、電荷を動かそうとする差が\term{電圧}です。電圧の単位は\term{ボルト}で、記号Vを使います。水路の高低差が水を動かすように、電圧の差が電荷を動かすと考えるとイメージできます。
 
-実際に単位時間あたりどれだけの電荷が移動するかを\term{電流}といいます。電流の単位を\term{アンペア}といい、記号Aで表します。電圧は「動かそうとする差」、電流は「実際に動く量」なので、同じものではありません。本章では主に電圧を見ます。電圧は途中の値をすべて取り得る連続的な量なので、そのままでは安定した計算の記号にできません。そこで、低い電圧の範囲を\term{Low}と呼びます。高い電圧の範囲を\term{High}と呼びます。LowとHighは、二つの\term{論理値}として読みます。
+実際に単位時間あたりどれだけの電荷が移動するかを\term{電流}といいます。電流の単位を\term{アンペア}といい、記号Aで表します。電圧は「電荷を動かそうとする差」、電流は「単位時間に動く電荷の量」です。本章では主に電圧を見ます。安定した記号として使うため、電圧を範囲で区切ります。低い電圧の範囲を\term{Low}と呼びます。高い電圧の範囲を\term{High}と呼びます。LowとHighは、二つの\term{論理値}として読みます。
 
 \begingroup
 \begingroup
 \paragraph{デジタル抽象化}
         \term{連続量}は、二つの値の間にもさらに値がある量です。たとえば0 Vと1 Vの間には0.5 Vや0.51 Vがあります。これに対して、区別できる値を飛び飛びに扱うことを\term{デジタル}といいます。回路は連続量である電圧を、LowとHighの二つの状態として解釈します。このように細かな違いをいったん隠して必要な区別だけを残すのが、はじめに説明した抽象化です。
-        「Lowは必ず0 V、Highは必ず5 V」という固定値ではありません。
+        LowとHighの電圧範囲は、回路の仕様によって決まります。
 
 \paragraph{しきい値}
         判定の境目となる値を\term{しきい値}といいます。入力電圧が $V_{IL}$ 以下ならLow、$V_{IH}$ 以上ならHighと判定します。$V_{IL}$はLowと保証できる入力電圧の上限、$V_{IH}$はHighと保証できる入力電圧の下限を表す記号です。
@@ -41,17 +41,7 @@
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[x=0.75mm,y=0.75mm]
-        \draw[->,draw=DeepNavy] (0,0) -- (65,0) node[right] {電圧};
-        \fill[PaleBlue] (0,5) rectangle (20,20);
-        \fill[RuleGray] (20,5) rectangle (43,20);
-        \fill[PaleBlue] (43,5) rectangle (65,20);
-        \node at (10,12.5) {Low};
-        \node[font=\scriptsize] at (31.5,12.5) {保証外};
-        \node at (54,12.5) {High};
-        \draw[draw=MutedBlue] (20,3) -- (20,22) node[above] {$V_{IL}$};
-        \draw[draw=MutedBlue] (43,3) -- (43,22) node[above] {$V_{IH}$};
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-01.png}
       \vspace{4mm}
 \paragraph{ノイズ耐性}
         周囲の機器や配線などの影響で意図せず混ざる電気的な揺れを\term{ノイズ}といいます。出力がしきい値から十分離れるように設計すると、小さな電圧変動がLowとHighの反転につながりにくくなります。この余裕が、ノイズに耐えられる幅です。
@@ -111,6 +101,11 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \par
 \endgroup
 
+13を2で割り続けると、余りは1、0、1、1の順に出ます。
+最初の余りが最下位の桁なので、逆順に読むと2進数の1101になります。
+\sectionimage{generated/01-binary-conversion.png}{2で割る操作と、余りを読む向き}{fig:01-binary-conversion}
+
+
 \section{負数と2の補数}
 \label{sec:01-digital-computer-03}
 
@@ -149,6 +144,9 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \endgroup
 
 
+\sectionimage{generated/01-twos-complement.png}{8ビットで5から−5を作る手順}{fig:01-twos-complement}
+
+
 \section{ビット列の解釈}
 \label{sec:01-digital-computer-04}
 
@@ -162,7 +160,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 
 \paragraph{区別する三つの値}
         人が読む文字「A」、その文字に割り当てた番号であるコードポイント \code{U+0041}、メモリや通信路に置くUTF-8のバイト \code{0x41} は、この例では対応します。先頭の\code{0x}は、後ろを16進数として読む印です。
-        ただし、すべての文字が1バイトになるわけではありません。
+        UTF-8では、コードポイントに応じて1〜4バイトを使います。
 
 \par
 \endgroup
@@ -173,12 +171,12 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
         限られたビット数で非常に大きい値や小さい値を表せる一方、表現できる値は飛び飛びです。
 
 \paragraph{丸め誤差}
-        10進小数の0.1は、2進数では有限桁に収まりません。
+        10進小数の0.1は、2進数では無限に続く小数です。
         保存できる近い値へ置き換えることを\term{丸め}といいます。そのとき生じる差を\term{丸め誤差}といいます。そのため、\code{0.1 + 0.2} を厳密な10進数の0.3として比較すると一致しない処理系があります。
 
 \par
 \endgroup
-  \takeaway{ビット列だけでは意味が決まりません。型と符号化方式が解釈を決めます。}
+  \takeaway{ビット列の意味は、型と符号化方式に従って読み取ります。}
 \par
 \endgroup
 
@@ -211,25 +209,17 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
-        \node[box,minimum width=22mm,minimum height=15mm] (sw) {チャネル\\オン／オフ};
-        \node[box,left=of sw] (in) {ソース};
-        \node[box,right=of sw] (out) {ドレイン};
-        \node[accentbox,above=of sw] (gate) {ゲート電圧};
-        \draw[flow] (in) -- (sw);
-        \draw[flow] (sw) -- (out);
-        \draw[flow] (gate) -- (sw);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-02.png}
       \vspace{1mm}
 \paragraph{CMOS回路}
         \term{CMOS}はComplementary MOS、すなわち「相補的なMOS」を表します。\term{相補的}とは、片方の不得意をもう片方が補う関係です。pMOSをHigh側の電源へ、nMOSをLow側の基準へつなぎます。入力がLowのときはpMOSが出力をHighへ引き上げます。入力がHighのときはnMOSが出力をLowへ引き下げます。この最小のCMOS回路が、入力を反対へ変えるNOT回路です。
 
-        回路を動かすために供給する電圧を\term{電源電圧}といいます。Low側の基準点を\term{グラウンド}といいます。グラウンドは必ずしも地面そのものではなく、回路内で0 Vとして比べる基準です。
+        回路を動かすために供給する電圧を\term{電源電圧}といいます。Low側の基準点を\term{グラウンド}といいます。グラウンドは、回路内で0 Vとして比べる基準点です。
 
 \paragraph{回路設計で残る現実}
         入力が変わってから出力が安定するまでの時間を\term{遅延}といいます。回路が単位時間あたりに使う電気エネルギーを\term{消費電力}といい、その一部は熱になります。また、配線や端子には電荷を一時的に蓄える性質があります。この性質の大きさが\term{静電容量}で、容量が大きいほど電圧の切り替えに時間とエネルギーが要ります。
 
-        したがって、トランジスタをオン／オフと呼んでも、遅延、消費電力、発熱、しきい値、配線の静電容量は消えません。次に扱う論理回路は、これらの物理的な値が設計で許した範囲に収まることを前提にします。
+        トランジスタの動作には、遅延、消費電力、発熱、しきい値、配線の静電容量が関わります。次に扱う論理回路は、これらの物理的な値が設計で許した範囲に収まることを前提にします。
 
 \par
 \endgroup
@@ -241,7 +231,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 \section{論理ゲート}
 \label{sec:01-digital-computer-06}
 
-一個のトランジスタは単純なスイッチとして振る舞います。複数を組み合わせると、「両方がHighならHigh」「どちらかがHighならHigh」という判断を回路自身に行わせられます。0と1を受け取り、あらかじめ決めた規則で0か1を返す操作を\term{論理演算}といいます。その一つを実現する小さな回路のまとまりが\term{論理ゲート}です。ここからは、トランジスタ一個ずつではなく、論理ゲートを計算の部品として扱います。
+一個のトランジスタは単純なスイッチとして振る舞います。複数を組み合わせると、「両方がHighならHigh」「どちらかがHighならHigh」という判断を回路自身に行わせられます。0と1を受け取り、あらかじめ決めた規則で0か1を返す操作を\term{論理演算}といいます。その一つを実現する小さな回路のまとまりが\term{論理ゲート}です。ここからは、論理ゲートを計算の部品として扱います。
 
 \begingroup
 \begingroup
@@ -360,13 +350,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 
       \par\smallskip
       \begin{center}
-      \begin{tikzpicture}[node distance=7mm]
-        \node[accentbox] (fa) {全加算器};
-        \node[box,left=of fa] (inputs) {$A,B,C_{in}$};
-        \node[box,right=of fa] (outputs) {$S,C_{out}$};
-        \draw[flow] (inputs) -- (fa);
-        \draw[flow] (fa) -- (outputs);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-03.png}
       \end{center}
 \end{samepage}
 \par
@@ -382,19 +366,7 @@ LowとHighを区別できても、一つの状態が表せるのは二通りだ�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=5mm]
-    \node[box] (f0) {全加算器0};
-    \node[box,right=of f0] (f1) {全加算器1};
-    \node[box,right=of f1] (f2) {全加算器2};
-    \node[box,right=of f2] (f3) {全加算器3};
-    \draw[flow] (f0) -- node[above,font=\scriptsize] {$C_1$} (f1);
-    \draw[flow] (f1) -- node[above,font=\scriptsize] {$C_2$} (f2);
-    \draw[flow] (f2) -- node[above,font=\scriptsize] {$C_3$} (f3);
-    \node[below=5mm of f0,font=\scriptsize] {$A_0,B_0\rightarrow S_0$};
-    \node[below=5mm of f1,font=\scriptsize] {$A_1,B_1\rightarrow S_1$};
-    \node[below=5mm of f2,font=\scriptsize] {$A_2,B_2\rightarrow S_2$};
-    \node[below=5mm of f3,font=\scriptsize] {$A_3,B_3\rightarrow S_3$};
-  \end{tikzpicture}
+  \inlineimage{generated/01-diagram-04.png}
   \vspace{4mm}
 \begingroup
 \paragraph{リップルキャリー加算器}
@@ -433,14 +405,7 @@ ALUは入力が来れば答えを出せますが、次の瞬間まで覚えて�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=9mm]
-        \node[accentbox] (state) {状態記憶};
-        \node[box,left=of state] (input) {入力};
-        \node[box,right=of state] (output) {出力};
-        \draw[flow] (input) -- (state);
-        \draw[flow] (state) -- (output);
-        \draw[softflow] (output.south) -- ++(0,-8mm) -| (state.south);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-05.png}
       \vspace{4mm}
 \paragraph{フリップフロップ}
         1ビットを保持する基本的な回路を\term{フリップフロップ}といいます。SRフリップフロップのSはset、Rはresetです。\term{セット}は状態を1にします。\term{リセット}は状態を0にします。
@@ -462,7 +427,7 @@ ALUは入力が来れば答えを出せますが、次の瞬間まで覚えて�
 \begingroup
 \paragraph{クロック同期}
         複数の回路が共通のクロックを節目として状態を更新する方式を\term{クロック同期}といいます。組み合わせ回路が次の値を計算し、フリップフロップがクロックエッジで一斉に取り込みます。
-        エッジから次のエッジまでの時間が一周期です。一秒間の周期数を\term{周波数}といい、単位はヘルツです。次のエッジまでに信号が安定しなければならないため、周波数は無制限には上げられません。
+        エッジから次のエッジまでの時間が一周期です。一秒間の周期数を\term{周波数}といい、単位はヘルツです。次のエッジまでに信号が安定する範囲で、周波数を決めます。
 
 \paragraph{レジスタ}
         複数のDフリップフロップを並べ、複数ビットを同時に保持する回路がレジスタです。CPUは計算中の値や次に読む命令の位置をレジスタへ置き、ALUから短い距離で読み書きします。
@@ -472,12 +437,7 @@ ALUは入力が来れば答えを出せますが、次の瞬間まで覚えて�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[x=7mm,y=7mm]
-        \draw[draw=DeepNavy] (0,0) -- (1,0) -- (1,1) -- (2,1) -- (2,0) -- (3,0) -- (3,1) -- (4,1) -- (4,0) -- (5,0);
-        \foreach \x in {1,3}{\draw[draw=MutedBlue,dashed] (\x,-0.5) -- (\x,1.5);}
-        \node[font=\scriptsize] at (2.5,-0.7) {クロック};
-        \node[box,minimum width=20mm] at (2.5,-2) {状態更新};
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-06.png}
       \vspace{3mm}
 \paragraph{状態機械}
         取り得る状態と、入力に応じて次のどの状態へ移るかを定めた仕組みを\term{状態機械}といいます。レジスタが現在状態を保持し、組み合わせ回路が入力と現在状態から次状態を計算します。
@@ -508,17 +468,7 @@ ALUは入力が来れば答えを出せますが、次の瞬間まで覚えて�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=1.5mm,every node/.append style={font=\small}]
-        \node[accentbox,minimum width=27mm,minimum height=18mm] (mem) {メモリセル配列};
-        \node[box,left=of mem] (dec) {行・列\\デコーダ};
-        \node[box,above=of dec] (addr) {アドレス};
-        \node[box,right=of mem] (data) {データ};
-        \node[box,below=of dec] (ctrl) {制御};
-        \draw[flow] (addr) -- (dec);
-        \draw[flow] (dec) -- (mem);
-        \draw[<->,draw=MutedBlue] (mem) -- (data);
-        \draw[flow] (ctrl) -- (dec);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-07.png}
 \par
 \endgroup
   \source{MIT 6.111, “Memory Devices: SRAM / DRAM”}
@@ -568,13 +518,7 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=1mm,scale=0.82,transform shape]
-    \node[accentbox,minimum width=35mm] (reg) {レジスタ：最小・最速};
-    \node[box,minimum width=58mm,below=of reg] (l1) {L1キャッシュ};
-    \node[box,minimum width=82mm,below=of l1] (l2) {L2／L3キャッシュ};
-    \node[box,minimum width=106mm,below=of l2] (ram) {主記憶（DRAM）};
-    \node[box,minimum width=130mm,below=of ram] (storage) {SSD／保存装置：大容量・高遅延};
-  \end{tikzpicture}
+  \inlineimage{generated/01-diagram-08.png}
   \vspace{1mm}
 \begingroup
 \paragraph{局所性}
@@ -602,13 +546,7 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\small}]
-        \node[accentbox,minimum width=48mm,minimum height=20mm] (cpu) {CPU\\制御装置・レジスタ・ALU};
-        \node[box,right=of cpu,minimum height=20mm] (mem) {メモリ\\命令・データ};
-        \node[box,below=of cpu] (io) {入出力装置};
-        \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- node[above,font=\scriptsize] {アドレス・データ・制御} (mem);
-        \draw[<->,draw=MutedBlue,line width=0.6pt] (cpu) -- (io);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-09.png}
 \par
 \endgroup
 \medskip
@@ -629,20 +567,11 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
 \section{CPUの命令実行}
 \label{sec:01-digital-computer-16}
 
-メモリに置かれた命令は、順番に読まれるだけでは仕事になりません。CPUは現在位置から命令を取り出し、そのビット列の意味を読み、必要な回路を選んで状態を更新します。この一連の流れを\term{命令実行サイクル}といいます。送信ボタンの処理も、この短い周期の繰り返しとして進みます。
+メモリに置かれた命令を読み、回路の動作へ結び付けます。CPUは現在位置から命令を取り出し、そのビット列の意味を読み、必要な回路を選んで状態を更新します。この一連の流れを\term{命令実行サイクル}といいます。送信ボタンの処理も、この短い周期の繰り返しとして進みます。
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=7mm]
-    \node[accentbox] (fetch) {1　フェッチ};
-    \node[box,right=of fetch] (decode) {2　デコード};
-    \node[box,right=of decode] (exec) {3　実行};
-    \node[box,right=of exec] (write) {4　書き戻し};
-    \draw[flow] (fetch) -- (decode);
-    \draw[flow] (decode) -- (exec);
-    \draw[flow] (exec) -- (write);
-    \draw[softflow] (write.south) -- ++(0,-8mm) -| node[below,pos=0.25,font=\scriptsize] {PCを更新} (fetch.south);
-  \end{tikzpicture}
+  \inlineimage{generated/01-diagram-10.png}
   \vspace{6mm}
 \begingroup
 \paragraph{フェッチとデコード}
@@ -673,17 +602,7 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
 \noindent{\sffamily\bfseries\color{MutedBlue}例：\code{ADD R3, R1, R2} はR1とR2を加え、R3へ保存します}\par\medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=5mm]
-        \node[box] (r1) {R1};
-        \node[box,below=of r1] (r2) {R2};
-        \node[accentbox,right=14mm of $(r1)!0.5!(r2)$] (alu) {ALU\\加算};
-        \node[box,right=of alu] (r3) {R3};
-        \draw[flow] (r1.east) -- ([yshift=2.5mm]alu.west);
-        \draw[flow] (r2.east) -- ([yshift=-2.5mm]alu.west);
-        \draw[flow] (alu) -- (r3);
-        \node[box,above=of alu] (ctrl) {制御装置};
-        \draw[softflow] (ctrl) -- node[right,font=\scriptsize] {演算選択} (alu);
-      \end{tikzpicture}
+      \inlineimage{generated/01-diagram-11.png}
 \par
 \endgroup
 \medskip
@@ -709,7 +628,7 @@ CPUと主記憶の間に置き、よく使うデータの複製を一時的に�
 
 連続的な電圧はしきい値によって0と1になり、ビット列は規則によって数や文字になりました。トランジスタから組み上げたゲートは計算と記憶を担い、CPUはメモリ中の命令を読みながら状態を更新します。送信という上位の出来事も、最下層ではこの物理的な変化の連続です。
 
-ただし、ここには一つ大きな空白があります。CPUが読んだのは機械向けの命令ですが、開発者が書いたのは関数や型を持つコードでした。次章では視点を少し上げ、人間の意図がどのように命令の列へ翻訳されたのかをたどります。
+次に、命令が作られる過程へ進みます。CPUが読んだのは機械向けの命令ですが、開発者が書いたのは関数や型を持つコードでした。次章では視点を少し上げ、人間の意図がどのように命令の列へ翻訳されたのかをたどります。
 
 \takeaway{物理から計算への流れは、電圧を論理値として読み、論理値を表現と回路へ組み、回路の状態変化を命令として制御する積み重ねです。}
 

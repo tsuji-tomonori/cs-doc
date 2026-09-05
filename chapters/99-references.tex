@@ -10,8 +10,7 @@
 \label{sec:99-references-evidence}
 
 第1〜9章と「はじめに」の各節を、公式仕様、標準、原著論文、大学公式教材へ一行ずつ対応づけた表を公開しています。
-本文を最初から読む負荷を増やさないため、根拠の追跡情報は\href{https://github.com/tsuji-tomonori/cs-doc/blob/main/docs/section-evidence.md}{節ごとの根拠対応表}へ集約しました。
-節を追加または改名したときは自動検査で空欄を検出します。
+関連資料は\href{https://github.com/tsuji-tomonori/cs-doc/blob/main/docs/section-evidence.md}{節ごとの根拠対応表}から探せます。
 
 
 \section{資料の選び方}
@@ -32,12 +31,12 @@
         概念が提案された背景と、原文での主張を確認します。本文より難しいため、読了後の発展資料として位置付けます。
 
 \paragraph{利用上の注意}
-        リンク先の利用条件は提供者ごとに異なります。本教材は外部PDFを同梱せず、要約、独自図解、参照リンクで構成します。
+        資料を再利用するときは、各提供者の利用条件を確認してください。
 
 \par
 \endgroup
   \vspace{4mm}
-  \takeaway{すべてのWeb資料の最終参照日は、2026年7月28日です。リンク切れ時は資料名と著者名で公式サイトを検索してください。}
+  \takeaway{資料は本文の主題に合う章や節から読んでください。リンク切れ時は資料名と著者名で公式サイトを検索できます。}
 \par
 \endgroup
 
@@ -181,6 +180,8 @@
 \begingroup
 \begingroup
 \paragraph{学習、回帰、分類}
+        \materialref{https://arxiv.org/abs/1412.6980}{Kingma and Ba: Adam (2015)}{勾配の一次・二次モーメントを用いる更新則。}
+        \materialref{https://doi.org/10.1038/323533a0}{Rumelhart, Hinton and Williams (1986)}{計算経路を逆向きにたどって勾配を求める誤差逆伝播。}
         \materialref{https://introml.mit.edu/notes/}{MIT 6.390: Introduction to Machine Learning}{予測と意思決定、損失、最適化、評価、ニューラルネットの講義ノート。}
         \materialref{https://cs229.stanford.edu/lectures-spring2022/main_notes.pdf}{Stanford CS229: Machine Learning Notes}{線形モデル、正則化、分類、ニューラルネット、逆伝播。}
         \materialref{https://www.microsoft.com/en-us/research/wp-content/uploads/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf}{Bishop: Pattern Recognition and Machine Learning}{曲線フィッティング、過学習、決定理論、線形分類の発展資料。}
@@ -190,6 +191,8 @@
 \medskip
 \begingroup
 \paragraph{AttentionとTransformer}
+        \materialref{https://aclanthology.org/P16-1162/}{Sennrich, Haddow and Birch (2016)}{頻出する隣接ペアをまとめるBPEの学習と、サブワードによる表現。}
+        \materialref{https://arxiv.org/abs/1904.09751}{Holtzman et al.: The Curious Case of Neural Text Degeneration (2020)}{Top-pによる候補集合の選択と、文章生成方式の比較。}
         \materialref{https://papers.neurips.cc/paper/7181-attention-is-all-you-need.pdf}{Vaswani et al.: Attention Is All You Need}{Transformer、Multi-Head Attention、位置エンコーディングの原論文。}
         \materialref{https://web.stanford.edu/class/archive/cs/cs224n/cs224n.1244/slides/cs224n-2024-lecture08-transformers.pdf}{Stanford CS224N: Transformers}{Self-Attention、Query・Key・Value、Encoder・Decoderの講義資料。}
 

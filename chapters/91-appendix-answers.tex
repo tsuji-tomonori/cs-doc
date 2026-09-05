@@ -37,11 +37,12 @@ False
   \end{tabularx}
 \end{table}
 
+\FloatBarrier
 \section{第2章：式を木にする}
 
 次は、本文のASTへ実行部分とエラー処理を加えた全体例です。
 
-\begin{lstlisting}[language=Go,basicstyle=\ttfamily\fontsize{7.0}{8.3}\selectfont]
+\begin{lstlisting}[language=Go]
 package main
 
 import (
@@ -73,7 +74,11 @@ func Eval(n *Node) (int, error) {
         return 0, fmt.Errorf("unknown operator %q", n.Op)
     }
 }
+\end{lstlisting}
 
+続けて、式を組み立てる補助関数と実行部分を同じファイルへ加えます。
+
+\begin{lstlisting}[language=Go]
 func number(v int) *Node { return &Node{Value: v} }
 
 func main() {
@@ -115,7 +120,7 @@ import "testing"
 go test -bench=. -benchmem -count=5
 \end{lstlisting}
 
-代表的な出力の形は次のとおりです。数値の完全一致は求めません。
+次は出力形式を示す架空の例です。時間は実行環境で変わります。
 
 \begin{lstlisting}[language=bash]
 BenchmarkSliceIndex-8  1000000000  0.8 ns/op  0 B/op  0 allocs/op

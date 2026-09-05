@@ -1,0 +1,14 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: 配列
+Original diagram's semantic specification:
+\begin{tikzpicture}[x=9mm,y=9mm,every node/.append style={font=\scriptsize}]
+        \foreach \x/\v in {0/18,1/7,2/31,3/4,4/12,5/9}{
+          \draw[draw=RuleGray,fill=CardWhite] (\x,0) rectangle ++(1,1);
+          \node at (\x+.5,.5) {\v};
+          \node[below,font=\tiny] at (\x+.5,0) {[\x]};
+        }
+        \draw[flow] (2.5,-1.4)--(2.5,-.1);
+        \node[below,font=\scriptsize] at (2.5,-1.5) {base $+ 2\times$要素幅};
+      \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Preserve the original conceptual relationships; explain each process step in plain Japanese with short labels.

@@ -56,15 +56,7 @@
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[every node/.append style={font=\scriptsize}]
-        \foreach \a in {90,162,234,306,378}{
-          \node[node] (n\a) at (\a:15mm) {};
-        }
-        \foreach \a/\b in {90/162,90/234,90/306,90/378,162/234,162/306,162/378,234/306,234/378,306/378}{
-          \draw[draw=RuleGray] (n\a)--(n\b);
-        }
-        \node[font=\small,align=center] at (0,-23mm) {5要素を全結合すると\\関係は10本};
-      \end{tikzpicture}
+      \inlineimage{generated/04-diagram-01.png}
 \par
 \endgroup
 \medskip
@@ -159,15 +151,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[box] (client1) {利用者A};
-    \node[box,below=of client1] (client2) {利用者B};
-    \node[accentbox,right=15mm of $(client1)!0.5!(client2)$] (api) {安定した\\インタフェース};
-    \node[box,right=12mm of api] (detail) {変更し得る詳細\\保存形式・アルゴリズム};
-    \draw[flow] (client1)--(api);
-    \draw[flow] (client2)--(api);
-    \draw[flow] (api)--(detail);
-  \end{tikzpicture}
+  \inlineimage{generated/04-diagram-02.png}
   \vspace{3mm}
 \begingroup
 \paragraph{隠す対象}
@@ -212,13 +196,7 @@
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-        \node[accentbox] (seq) {逐次\\Aの後にB};
-        \node[accentbox,right=of seq] (sel) {選択\\条件で分岐};
-        \node[accentbox,right=of sel] (loop) {反復\\条件まで繰返し};
-        \draw[flow] (seq)--(sel);
-        \draw[flow] (sel)--(loop);
-      \end{tikzpicture}
+      \inlineimage{generated/04-diagram-03.png}
       \vspace{5mm}
 \paragraph{基本となる制御構造}
         文を上から順に進める構造が\term{逐次}です。条件によって道を選ぶ構造が\term{選択}です。条件を満たす間または回数だけ繰り返す構造が\term{反復}です。三つを明示的に組み合わせます。各まとまりについて、始める前に必要な条件と、終わった後に保証する条件を考えます。
@@ -235,7 +213,7 @@
 
 構造を整えても、毎回すべての細部を読んでいては大きなシステムを扱えません。
 問いに必要な性質を表へ出し、今は不要な細部を境界の内側へ置く考え方が\term{抽象化}です。
-注文を「行の集合」ではなく業務上の注文として、モデル呼び出しを「HTTPの手順」ではなく応答生成として扱います。
+注文を業務上のまとまりとして扱います。モデル呼び出しには、応答を生成する役割を与えます。
 
 \begingroup
 \begingroup
@@ -322,7 +300,7 @@
 
 \par
 \endgroup
-  \takeaway{\term{UML}はUnified Modeling Language、すなわち「統一モデリング言語」の略で、クラス図やシーケンス図などを共通の記号で表すための規則です。本書では、UMLの全記法ではなく、物語に必要な図だけを使います。}
+  \takeaway{\term{UML}はUnified Modeling Language、すなわち「統一モデリング言語」の略で、クラス図やシーケンス図などを共通の記号で表すための規則です。注文の構造をクラス図で表し、要求のやり取りをシーケンス図で表します。}
   \source{Object Management Group, \textit{UML 2.5.1 Specification}}
 \par
 \endgroup
@@ -336,13 +314,7 @@
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[every node/.append style={font=\scriptsize},node distance=13mm]
-        \node[box,align=left] (order) {\textbf{Order}\\\rule{24mm}{.3pt}\\id: OrderID\\items: []Item\\\rule{24mm}{.3pt}\\Total(): Money};
-        \node[box,align=left,right=of order] (item) {\textbf{Item}\\\rule{23mm}{.3pt}\\qty: int\\price: Money\\\rule{23mm}{.3pt}\\Subtotal(): Money};
-        \node[box,align=left,below=10mm of order] (repo) {\textbf{\textless\textless interface\textgreater\textgreater}\\OrderRepository\\\rule{29mm}{.3pt}\\Save(Order): error};
-        \draw[draw=MutedBlue] (order)--node[above,font=\tiny]{1\quad contains\quad 1..*}(item);
-        \draw[flow] (order)--(repo);
-      \end{tikzpicture}
+      \inlineimage{generated/04-diagram-04.png}
 \par
 \endgroup
 \medskip
@@ -366,18 +338,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[x=0.9mm,y=0.52mm,every node/.append style={font=\scriptsize}]
-    \foreach \x/\name in {10/利用者,42/API,76/注文サービス,112/データ保存}{
-      \node[box,minimum width=22mm] (h\x) at (\x,0) {\name};
-      \draw[dashed,draw=PaleGray] (\x,-5)--(\x,-53);
-    }
-    \draw[flow] (10,-10)--node[above]{注文作成要求}(42,-10);
-    \draw[flow] (42,-20)--node[above]{注文データ}(76,-20);
-    \draw[flow] (76,-30)--node[above]{保存する注文}(112,-30);
-    \draw[softflow] (112,-39)--node[above]{注文ID}(76,-39);
-    \draw[softflow] (76,-47)--node[above]{結果}(42,-47);
-    \node[font=\tiny,align=left] at (112,-58) {上から下へ時間が進みます};
-  \end{tikzpicture}
+  \inlineimage{generated/04-diagram-05.png}
   \vspace{1mm}
 \begingroup
 \paragraph{見えるもの}
@@ -668,17 +629,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=2mm,every node/.append style={font=\scriptsize}]
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm] (adapter1) {入力アダプタ：HTTP API／チャット画面};
-    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of adapter1] (usecase) {ユースケース：質問受付・事実取得・応答生成};
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of usecase] (domain) {ドメイン：Order・DeliveryEstimate・業務規則};
-    \node[accentbox,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of domain] (ports) {ポート：OrderRepository・DeliveryService・ResponseGenerator};
-    \node[box,minimum width=92mm,minimum height=6mm,inner ysep=.5mm,below=of ports] (adapter2) {出力アダプタ：PostgreSQL／配送API／LLM API};
-    \draw[flow] (adapter1)--(usecase);
-    \draw[flow] (usecase)--(domain);
-    \draw[flow] (domain)--(ports);
-    \draw[flow] (adapter2)--(ports);
-  \end{tikzpicture}
+  \inlineimage{generated/04-diagram-06.png}
   \vspace{2mm}
 \begingroup
 \paragraph{内側の責務}
@@ -741,7 +692,7 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 設計図の中で、要求は入力アダプタからユースケースへ渡るところまで来ました。次に必要なのは、端末とサーバーの間を実際に越えることです。次章では箱と矢印で描いた「HTTP API」の内側へ入り、データが相手へ届くまでの物理的な旅を再開します。
 
-\takeaway{良い設計は複雑さを消すのではなく、変わる理由ごとに置き場所を与え、変更の波が越える境界を少なくします。}
+\takeaway{変わる理由ごとに処理を分けると、変更の影響が届く範囲を絞れます。}
 
 
 \section{旅をたどり直す}

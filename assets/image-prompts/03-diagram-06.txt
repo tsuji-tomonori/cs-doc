@@ -1,0 +1,17 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: アドレス空間
+Original diagram's semantic specification:
+\begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
+        \draw[draw=MutedBlue] (0,0) rectangle (35,52);
+        \fill[PaleBlue] (0,0) rectangle (35,10);
+        \fill[CardWhite] (0,10) rectangle (35,21);
+        \fill[PaleBlue] (0,21) rectangle (35,36);
+        \fill[CardWhite] (0,36) rectangle (35,52);
+        \draw[RuleGray] (0,10)--(35,10) (0,21)--(35,21) (0,36)--(35,36);
+        \node at (17.5,5) {コード／静的データ};
+        \node at (17.5,15.5) {ヒープ $\uparrow$};
+        \node[color=PaleGray] at (17.5,28.5) {未割り当て領域};
+        \node at (17.5,44) {$\downarrow$ スタック};
+      \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Conceptual virtual address-space example, not physical contiguous RAM. Label 仮想アドレス空間の一例 and four bands code/static data, heap, unmapped region, stack. Large caption 配置と拡張方向は処理系による; avoid exact numeric address claims.
