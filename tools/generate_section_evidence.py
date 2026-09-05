@@ -25,6 +25,21 @@ CHAPTERS = [
 ]
 
 SOURCES = {
+    "CMUHASH": ("CMU 15-122: Hash Tables, sections 5–6", "大学公式教材", "https://www.cs.cmu.edu/~15122/handouts/lectures/12-hashing.pdf"),
+    "HUGHES": ("Hughes: Why Functional Programming Matters", "原著論文", "https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf"),
+    "REST": ("Fielding: REST, chapter 5", "原著学位論文", "https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm"),
+    "ENDTOEND": ("Saltzer et al.: End-to-End Arguments in System Design", "原著論文", "https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf"),
+    "RFC1035": ("RFC 1035 — DNS resource record TTL", "インターネット標準", "https://www.rfc-editor.org/rfc/rfc1035.html#section-3.2.1"),
+    "RFC9001": ("RFC 9001 — Using TLS to Secure QUIC", "インターネット標準", "https://www.rfc-editor.org/rfc/rfc9001.html"),
+    "RFC9112": ("RFC 9112 — HTTP/1.1", "インターネット標準", "https://www.rfc-editor.org/rfc/rfc9112.html"),
+    "FLASH": ("Dao et al.: FlashAttention", "原著論文", "https://arxiv.org/abs/2205.14135"),
+    "ROPE": ("Su et al.: RoFormer", "原著論文", "https://arxiv.org/abs/2104.09864"),
+    "CS229NOTES": ("Stanford CS229: Supervised Learning", "大学公式教材", "https://cs229.stanford.edu/notes-spring2019/cs229-notes1.pdf"),
+    "CSSVALUES": ("CSS Cascading and Inheritance: Value Stages", "公式仕様", "https://www.w3.org/TR/css-cascade-5/#value-stages"),
+    "RENDER": ("Rendering performance", "ブラウザ公式文書", "https://web.dev/articles/rendering-performance"),
+    "CLS": ("Cumulative Layout Shift", "ブラウザ公式文書", "https://web.dev/articles/cls"),
+    "TROUBLESHOOT": ("Effective Troubleshooting", "公式実務書", "https://sre.google/sre-book/effective-troubleshooting/"),
+
     "RFC1812": ("RFC 1812 — IPv4 Router Requirements", "標準仕様", "https://www.rfc-editor.org/rfc/rfc1812.html"),
     "RFC4632": ("RFC 4632 — CIDR", "Best Current Practice", "https://www.rfc-editor.org/rfc/rfc4632.html"),
     "RFC8767": ("RFC 8767 — Serving Stale DNS Data", "標準仕様", "https://www.rfc-editor.org/rfc/rfc8767.html"),
@@ -95,6 +110,12 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["LLVM"]
         return ["MIT6006"]
     if chapter == "3":
+        if "マップ" in title:
+            return ["GOSPEC", "CMUHASH"]
+        if "append" in title or "置き方と速さ" in title:
+            return ["GOSPEC", "MIT6006"]
+        if "ポインタと参照" in title:
+            return ["GOSPEC", "GOGC"]
         if "Python" in title:
             return ["PYDATA"]
         if re.search(r"Go|型|サイズ|値渡し|スライス|append|マップ", title):
@@ -105,6 +126,12 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["GOGC"]
         return ["OSTEP"]
     if chapter == "4":
+        if re.search(r"関数型|高階関数", title):
+            return ["HUGHES", "GOSPEC"]
+        if title == "インタフェース":
+            return ["GOSPEC", "REST", "PARNAS"]
+        if re.search(r"オブジェクト指向|継承|ポリモーフィズム|パラダイム", title):
+            return ["SWEBOK", "GOSPEC"]
         if re.search(r"クラス図|シーケンス図|モデル", title):
             return ["UML"]
         if "品質" in title:
@@ -115,8 +142,10 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["DIJKSTRA"]
         return ["PARNAS"]
     if chapter == "5":
+        if "エンドツーエンド" in title:
+            return ["ENDTOEND"]
         if "DNS" in title:
-            return ["RFC1034", "RFC8767"]
+            return ["RFC1034", "RFC1035", "RFC8767"]
         if re.search(r"IPアドレス|CIDR", title):
             return ["RFC4632", "RFC8200"]
         if re.search(r"ルーティング|網の網|経路制御|耐障害", title):
@@ -125,7 +154,7 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["X200"]
         return ["RFC1122"]
     if chapter == "6":
-        if "curl" in title or "通信時間" in title:
+        if "curl" in title or "通信時間" in title or "通信の時間" in title:
             return ["CURL"]
         if "輻輳制御" in title:
             return ["RFC5681"]
@@ -136,15 +165,23 @@ def source_ids(chapter: str, title: str) -> list[str]:
         if "UDP" in title:
             return ["RFC768"]
         if "QUIC" in title:
-            return ["RFC9000"]
+            return ["RFC9000", "RFC9001"]
         if title == "TLS":
             return ["RFC8446"]
         if "証明書" in title:
             return ["RFC5280", "RFC8446"]
         if "サーバーの手前" in title:
             return ["RFC9111"]
-        return ["RFC9110"]
+        return ["RFC9110", "RFC9112", "RFC9001"]
     if chapter == "7":
+        if title == "Self-Attention":
+            return ["TRANSFORMER", "FLASH"]
+        if title == "位置情報":
+            return ["TRANSFORMER", "ROPE"]
+        if title == "評価":
+            return ["CS229", "NISTGENAI"]
+        if re.search(r"損失|最小二乗|勾配降下|正則化", title):
+            return ["CS229NOTES", "D2L"]
         if "トークン化" in title:
             return ["BPE", "CS224N"]
         if "文章生成" in title:
@@ -165,18 +202,22 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["D2L"]
         return ["CS229"]
     if chapter == "8":
+        if re.search(r"レイアウト|描画と合成|開発者ツール", title):
+            return ["RENDER", "CSSVALUES", "HTML"]
         if "初回表示" in title:
-            return ["LCP", "INP"]
+            return ["LCP", "INP", "CLS"]
         if "fetch" in title:
             return ["FETCH"]
         if re.search(r"JavaScript|イベントループ", title):
             return ["ECMA262", "HTML"]
         if "CSSOM" in title:
-            return ["CSSOM"]
+            return ["CSSOM", "CSSVALUES"]
         if re.search(r"HTML|DOM", title):
             return ["DOM", "HTML"]
         return ["HTML"]
     if chapter == "9":
+        if re.search(r"観測と仮説|障害調査の進め方", title):
+            return ["TROUBLESHOOT", "OTEL"]
         if re.search(r"通信経路|通信障害", title):
             return ["RFC8446", "RFC9293"]
         if "コードから実行" in title:
@@ -186,7 +227,7 @@ def source_ids(chapter: str, title: str) -> list[str]:
         if re.search(r"機械学習|AI品質", title):
             return ["NISTGENAI"]
         if "描画" in title:
-            return ["LCP", "INP"]
+            return ["LCP", "INP", "CLS"]
         if re.search(r"観測|遅延|障害調査|評価方法", title):
             return ["OTEL", "SRE"]
         if "変更容易性" in title:
@@ -234,7 +275,7 @@ def main() -> int:
     lines = [
         "# 節ごとの根拠対応表",
         "",
-        "第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。この一覧は参照先を探すための索引です。リンクの登録は、個々の主張の照合完了を意味しません。今回の照合内容は reports/pdf-review.md に記録しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。",
+        "第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。この一覧は参照先を探すための索引です。リンクの登録は、個々の主張の照合完了を意味しません。今回の照合内容は [ファクトチェック記録](../reports/fact-check.md) に記録しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。",
         "",
         "| 節 | 区分 | 節名 | 主要根拠 | 資料種別 | 照合観点 |",
         "| --- | --- | --- | --- | --- | --- |",

@@ -1,0 +1,3 @@
+Method: built-in image_gen; edit target: assets/generated/07-diagram-09.png
+Date: 2026-09-05
+Use case: text-localization. Edit the supplied self-attention educational infographic. Preserve its layout, existing equations Q=XW_Q, K=XW_K, V=XW_V, S=QK^T/sqrt(d_k), A=softmax(S), O=AV, arrows and labels. Replace the bottom-right explanatory text (currently starts 生成時は) with exact Japanese text: 「因果マスクは、自分と過去の位置への参照を許します。訓練時も使います。」 Keep line breaks readable, large text. To connect masking to the equations, change the weight equation from A=softmax(S) to 「A = softmax(S + M)」, and add directly below it a small but readable label 「M：マスク」. Preserve all other math and labels exactly. No overlaps. Sharp 16:9 PNG at 2560×1440 or higher.

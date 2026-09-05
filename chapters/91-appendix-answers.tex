@@ -106,7 +106,15 @@ operator: unknown operator "%"
 
 \section{第3章：置き方と速さ}
 
-本文の二つの関数を\code{lookup\_test.go}へ保存し、先頭へ次を加えます。
+付録Aの作業場所で、ベンチマーク専用のディレクトリとGoモジュールを作ります。Goモジュールは、パッケージと依存関係を管理する単位です。
+
+\begin{lstlisting}[language=bash]
+mkdir lookup-bench
+cd lookup-bench
+go mod init example.com/lookup-bench
+\end{lstlisting}
+
+本文の二つの関数と\code{var sink int}を\code{lookup\_test.go}へ保存し、先頭へ次を加えます。
 
 \begin{lstlisting}[language=Go]
 package lookup
@@ -114,7 +122,7 @@ package lookup
 import "testing"
 \end{lstlisting}
 
-同じ端末で次を5回実行します。
+同じ端末で次を一度実行します。\code{-count=5}で各ベンチマークを5回測定します。
 
 \begin{lstlisting}[language=bash]
 go test -bench=. -benchmem -count=5
@@ -129,10 +137,10 @@ BenchmarkMapLookup-8    100000000  12.4 ns/op  0 B/op  0 allocs/op
 
 判定では、CPU、Go版、要素数、キー分布、事前確保を同じにします。
 5回の中央値を比べ、配列の添字アクセスとハッシュ表の検索では定数係数が異なることを説明します。
-一方の測定だけから、すべての入力で必ず速いとは結論しません。
+結論には、測定した入力と実行環境の範囲を添えます。
 
 追加課題では、\code{make([]int, 0)}と\code{make([]int, 0, n)}を分けてベンチマークします。
-事前容量を与えた方で\code{allocs/op}と\code{B/op}が減ることを確かめれば達成です。
+初期容量を変えたときの\code{allocs/op}と\code{B/op}を比べます。初期確保を計測に含めるかをそろえ、差を元配列の再確保で説明できれば達成です。
 
 \section{第4章：変更要求を境界へ流す}
 
@@ -181,8 +189,8 @@ BenchmarkMapLookup-8    100000000  12.4 ns/op  0 B/op  0 allocs/op
 dns=0.012 connect=0.031 tls=0.084 ttfb=0.142 total=0.143
 \end{lstlisting}
 
-各値は開始時点からの累積時刻です。
-通常は\code{dns <= connect <= tls <= ttfb <= total}の順になります。
+この行は出力形式を示す架空の例です。各値は開始時点からの累積秒数です。
+新しいTCP接続で、リダイレクトとプロキシを使わないHTTPS通信では、\code{dns <= connect <= tls <= ttfb <= total}の順になります。
 段階の所要時間を求めるときは、隣り合う値の差を取ります。
 たとえば上の例では、接続後からTLS完了までがおよそ0.053秒です。
 
@@ -192,7 +200,7 @@ dns=0.012 connect=0.031 tls=0.084 ttfb=0.142 total=0.143
 
 \section{第7章：学習と汎化}
 
-本文のデータ生成と乱数シードを変えずに実行すると、次の値になります。
+各行は、次数、訓練MSE、元の関数に対するMSEの順です。本文のデータ生成と乱数シードを固定すると、次の値になります。
 
 \begin{lstlisting}[language=bash]
 0 0.559948 0.520170
@@ -202,10 +210,11 @@ dns=0.012 connect=0.031 tls=0.084 ttfb=0.142 total=0.143
 \end{lstlisting}
 
 次数0は訓練データにも十分合わず、過少適合の例です。
-次数3は訓練MSEとテストMSEがともに小さいため、この比較では最もよく汎化しています。
-次数9は訓練MSEがさらに下がる一方、テストMSEが増えるため、過学習の兆候があります。
+次数3は、用意した評価用の点で元の関数からのずれが最も小さい結果です。
+次数9は訓練MSEがさらに下がる一方、元の関数に対するMSEが増えます。この例では、訓練時のノイズへの適合が進んだと考えられます。
+この評価用の点を使って次数を選ぶ場合、それらはモデル選択用のデータになります。最終性能を測るテストデータは別に用意します。
 
-Ridge回帰では、次数と正則化係数を訓練データだけで決めません。
+Ridge回帰では、検証データを使って次数と正則化係数を決めます。
 訓練、検証、テストへ分け、検証MSEで係数を選んだ後にテストMSEを一度だけ確認できれば達成です。
 
 \section{第8章：画面更新}

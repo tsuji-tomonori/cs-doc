@@ -51,7 +51,7 @@
 \section{規模と相互作用}
 \label{sec:04-software-engineering-02}
 
-コード量が二倍になれば難しさも単純に二倍になるわけではありません。部分同士の関係が増え、ある変更が思いがけない場所へ伝わるからです。注文データ、配送規則、HTTP、LLMが互いを直接知るほど、送信処理の全体像はつかみにくくなります。
+コード量が増えると、部分同士の関係も増えます。ある変更が、つながった先へ伝わることもあります。注文データ、配送規則、HTTP、LLMが互いを直接知るほど、送信処理の全体像はつかみにくくなります。
 
 \begingroup
 \begingroup
@@ -59,6 +59,7 @@
       \inlineimage{generated/04-diagram-01.png}
 \par
 \endgroup
+図の関係数は、すべての部品の組が一つずつ結び付く場合です。実際の依存関係の数は、部品の分け方とつなぎ方によって変わります。
 \medskip
 \begingroup
 \paragraph{本質的な複雑さ}
@@ -78,7 +79,7 @@
 \section{分割統治}
 \label{sec:04-software-engineering-03}
 
-全体を一度に理解できないなら、責任を小さな部分へ分けます。大きな問題を小さな問題へ分け、各部分を解いてから全体へ組み戻す考え方が\term{分割統治}です。ただし、切り分ければ終わりではありません。各部分が解く問いを決め、必要な情報だけを境界越しに渡し、最後に一つの応答へ組み戻せる分け方が必要です。
+全体を理解しやすくするため、責任を小さな部分へ分けます。大きな問題を小さな問題へ分け、各部分を解いてから全体へ組み戻す考え方が\term{分割統治}です。各部分が解く問いを決めます。境界越しに渡す情報を必要なものへ絞ります。最後に、一つの応答へ組み戻せることを確かめます。
 
 \begingroup
 \begingroup
@@ -338,7 +339,7 @@
 
 \begingroup
   \centering
-  \inlineimage{generated/04-diagram-05.png}
+  \inlineimage{generated/04-diagram-05-reviewed.png}
   \vspace{1mm}
 \begingroup
 \paragraph{見えるもの}
@@ -423,7 +424,7 @@
 
 \begingroup
 \begingroup
-      \begin{lstlisting}[language=Go,basicstyle=\ttfamily\fontsize{7}{8.3}\selectfont]
+      \begin{lstlisting}[language=Go]
 type Notifier interface {
     Send(ctx context.Context, m Message) error
 }
@@ -465,7 +466,7 @@ func (c Checkout) Complete(ctx context.Context) error {
         同じ引数へ常に同じ結果を返し、関数の外から観測できる状態を変更しない関数が\term{純粋関数}です。結果を考えるとき入力と関数だけを見ればよく、局所的な推論とテストをしやすくします。
 
 \paragraph{副作用}
-        関数が結果を返す以外に外部から観測できる変化を\term{副作用}といいます。ファイルやネットワークの入出力、現在時刻の取得、呼ぶたび値が変わる乱数、共有状態の更新などです。アプリに必要な処理ですが、境界へ集めると純粋な計算部分を分離できます。
+        関数が結果を返す以外に外部から観測できる変化を\term{副作用}といいます。ファイルへの書き込み、ネットワーク送信、共有状態の更新などです。現在時刻や外部データの読み取りも、同じ引数から異なる結果が生じる要因になります。アプリに必要な処理ですが、境界へ集めると純粋な計算部分を分離できます。
 
 \par
 \endgroup
@@ -653,7 +654,8 @@ total := Reduce(taxed, 0, func(a, x int) int {
 
 境界の良し悪しは、図の整い方ではなく、現実の変更を流したときに分かります。データベース、配送会社、入力経路、モデル提供者を一つずつ変え、業務上の事実まで不必要に揺れないかを確かめます。
 
-通信方法、相手、相手上の対象を一つの文字列で示すものをURLと呼びます。表の\term{REST}は、URLで対象を示し、HTTPの共通操作を使って状態をやり取りするAPIの設計上の考え方です。ここでは「現在の文字入力とは別の入力経路」という変更例として使います。URLの構成は次章で詳しく説明します。
+通信方法、相手、相手上の対象を一つの文字列で示すものをURLと呼びます。表の\term{REST}はRepresentational State Transferの略で、分散システムの設計様式です。資源の表現と共通の操作を使い、一つの要求を解釈するための情報をその要求内に含める、といった制約を組み合わせます。HTTP APIではURLによる資源の識別などへ反映します。ここでは「現在の文字入力とは別の入力経路」という変更例として使います。URLの構成は第6章で詳しく説明します。
+\source{\href{https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm}{Fielding (2000), chapter 5, REST}}
 
 \begingroup
   \noindent

@@ -1,0 +1,2 @@
+# Keep the printed six-decimal regression output reproducible.
+numpy==2.5.2

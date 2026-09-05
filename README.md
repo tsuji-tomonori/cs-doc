@@ -12,7 +12,8 @@
 
 PDFはA4縦で、「はじめに」、第1〜9章、付録、参考文献、索引を収録します。
 `main`ブランチへのpush時に、GitHub ActionsがLuaLaTeXで再生成し、GitHub Pagesへ公開します。
-Pull Requestでは組版と品質検証だけを実行します。
+Pull Requestでは組版・品質検証とPython・Go演習の検証を実行します。
+Pagesへの公開は、両方の検証が成功した後に進みます。
 
 ## 物語としての構成
 
@@ -61,6 +62,24 @@ make site
 
 `make verify`は、組版警告、A4判定、ページ数、本文量、外部リンク、書体埋め込み、カタログの186節と600用語、文体規則を検査します。
 
+## 演習の検証
+
+CIではPython 3.12.9、Go 1.27.1を使います。ローカルでも同じ版を用意し、次のコマンドで検証できます。
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r tools/requirements-examples.txt
+make verify-examples PYTHON=.venv/bin/python
+```
+
+`make verify-examples`は原稿からコードと期待出力を読み取ります。第1・7章のPython演習と、第2章のGo演習・解答を実行し、付録Bの出力と照合します。第3章のGoベンチマークは各5回実行します。実行時間は環境によって変わるため、両ベンチマークが完走することを確認します。
+
+NumPyの版は`tools/requirements-examples.txt`で固定します。コードや期待出力の変更、コードブロックの欠落、実行エラーを検証ツールが検出できることもCIで確認します。
+
+```bash
+.venv/bin/python -m unittest discover -s tools -p 'test_check_examples.py' -v
+```
+
 ## リポジトリ構成
 
 - `main.tex`：書籍全体のエントリーポイント
@@ -83,7 +102,8 @@ make site
 表紙と各章の概念図は画像生成を用いて作成しました。
 生成条件とプロンプトは[画像記録](assets/README.md)に残しています。
 本文の構成図、回路図、グラフもimagegenで生成しています。
-改訂内容と確認結果は[PDF見直し記録](reports/pdf-review.md)に記録しています。
+改訂内容と確認結果は[ファクトチェック記録](reports/fact-check.md)に記録しています。
+執筆・レビュー時は[cs-textbook-reviewスキル](skills/cs-textbook-review/SKILL.md)を使います。
 
 ## 参考資料
 

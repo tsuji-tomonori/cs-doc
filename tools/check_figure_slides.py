@@ -104,7 +104,7 @@ def main() -> int:
 
     print(
         "figure slide check passed: "
-        f"{len(invocations)} infographic slides have readable 16:9 resolution"
+        f"{len(invocations)} infographic slides meet 16:9 dimensions and generation-record checks"
     )
     return 0
 
