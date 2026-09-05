@@ -9,7 +9,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CHAPTERS = sorted((ROOT / "chapters").glob("0[0-9]-*.tex"))
-EXPECTED_SIZE = (1672, 941)
 EXPECTED_SLIDES = {
     "ch00-overview.png",
     "ch01-signals.png",
@@ -57,17 +56,17 @@ def main() -> int:
         invocations.extend(pattern.findall(source))
 
     actual = {image for image, _, _ in invocations}
-    if len(invocations) != len(EXPECTED_SLIDES):
-        failures.append(
-            f"expected {len(EXPECTED_SLIDES)} slide figures, found {len(invocations)}"
-        )
-    if actual != EXPECTED_SLIDES:
+    if not EXPECTED_SLIDES.issubset(actual):
         missing = sorted(EXPECTED_SLIDES - actual)
-        extra = sorted(actual - EXPECTED_SLIDES)
         if missing:
             failures.append(f"missing slide references: {', '.join(missing)}")
-        if extra:
-            failures.append(f"unexpected slide references: {', '.join(extra)}")
+
+    for chapter in CHAPTERS:
+        source = chapter.read_text(encoding="utf-8")
+        if r"\begin{tikzpicture}" in source:
+            failures.append(f"{chapter.name}: a non-imagegen diagram remains")
+        for filename in re.findall(r"\\inlineimage\{([^}]+)\}", source):
+            invocations.append((filename, "本文内の図", "fig:inline"))
 
     for image, caption, label in invocations:
         path = ROOT / "assets" / image
@@ -79,9 +78,9 @@ def main() -> int:
         except ValueError as exc:
             failures.append(f"{image}: {exc}")
             continue
-        if size != EXPECTED_SIZE:
+        if min(size) < 900 or abs(size[0] / size[1] - 16 / 9) > 0.01:
             failures.append(
-                f"{image}: expected {EXPECTED_SIZE[0]}x{EXPECTED_SIZE[1]}, "
+                f"{image}: expected approximately 16:9 with at least 900px height, "
                 f"found {size[0]}x{size[1]}"
             )
         if path.stat().st_size < 150_000:
@@ -90,7 +89,11 @@ def main() -> int:
             failures.append(f"{image}: caption is empty")
         if not label.startswith("fig:"):
             failures.append(f"{image}: figure label must start with fig:")
-        if f"`{image}`" not in readme:
+        if image.startswith("generated/"):
+            prompt = ROOT / "assets/image-prompts" / (Path(image).stem + ".txt")
+            if not prompt.is_file():
+                failures.append(f"{image}: generation prompt is missing")
+        elif f"`{image}`" not in readme:
             failures.append(f"{image}: generation record is missing")
 
     if failures:
@@ -101,7 +104,7 @@ def main() -> int:
 
     print(
         "figure slide check passed: "
-        f"{len(invocations)} infographic slides are {EXPECTED_SIZE[0]}x{EXPECTED_SIZE[1]}"
+        f"{len(invocations)} infographic slides have readable 16:9 resolution"
     )
     return 0
 

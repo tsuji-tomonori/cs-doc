@@ -16,7 +16,7 @@
   \item データ構造を時間計算量と空間計算量から選べます。
 \end{learninggoals}
 
-\chapterimage{ch03-runtime.png}{OSがプロセスとメモリを分離し、データ構造へ資源を割り当てる概念図}{fig:ch03-runtime}
+\chapterimage{ch03-runtime.png}{OSと、GCを備える言語ランタイムの役割}{fig:ch03-runtime}
 
 
 \section{OSの役割}
@@ -26,15 +26,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\small}]
-    \node[box,minimum width=29mm] (app1) {アプリA};
-    \node[box,minimum width=29mm,right=of app1] (app2) {アプリB};
-    \node[accentbox,minimum width=68mm,below=of $(app1)!0.5!(app2)$] (os) {OS：抽象化・保護・資源管理};
-    \node[box,minimum width=68mm,below=of os] (hw) {CPU・メモリ・ストレージ・入出力装置};
-    \draw[flow] (app1) -- (os);
-    \draw[flow] (app2) -- (os);
-    \draw[flow] (os) -- (hw);
-  \end{tikzpicture}
+  \inlineimage{generated/03-diagram-01.png}
   \vspace{4mm}
 \begingroup
 \paragraph{抽象化}
@@ -83,26 +75,7 @@
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\scriptsize}]
-    \node[font=\sffamily\bfseries,text=DeepNavy] (ptitle) {マルチプロセス};
-    \node[box,minimum width=34mm,minimum height=26mm,below left=4mm and 1mm of ptitle] (p1) {};
-    \node[box,minimum width=34mm,minimum height=26mm,below right=4mm and 1mm of ptitle] (p2) {};
-    \node at ([yshift=8mm]p1.center) {プロセスA};
-    \node at ([yshift=8mm]p2.center) {プロセスB};
-    \node[accentbox,minimum width=12mm] at ([yshift=-2mm]p1.center) {スレッド};
-    \node[accentbox,minimum width=12mm] at ([yshift=-2mm]p2.center) {スレッド};
-    \node[font=\tiny] at ([yshift=-9mm]p1.center) {独立したアドレス空間};
-    \node[font=\tiny] at ([yshift=-9mm]p2.center) {独立したアドレス空間};
-    \draw[{Latex[length=2mm]}-{Latex[length=2mm]},draw=MutedBlue,line width=0.5pt] (p1.east) -- node[above,font=\tiny]{プロセス間通信} (p2.west);
-
-    \node[font=\sffamily\bfseries,text=DeepNavy,right=18mm of ptitle] (ttitle) {マルチスレッド};
-    \node[box,minimum width=62mm,minimum height=32mm,below=4mm of ttitle] (proc) {};
-    \node at ([yshift=11mm]proc.center) {一つのプロセス};
-    \node[accentbox,minimum width=14mm] (t1) at ([xshift=-20mm,yshift=1mm]proc.center) {スレッド1};
-    \node[accentbox,minimum width=14mm] (t2) at ([yshift=1mm]proc.center) {スレッド2};
-    \node[accentbox,minimum width=14mm] (t3) at ([xshift=20mm,yshift=1mm]proc.center) {スレッド3};
-    \node[box,minimum width=53mm,minimum height=6mm] at ([yshift=-10mm]proc.center) {共有：コード・ヒープ・開いているファイル};
-  \end{tikzpicture}
+  \inlineimage{generated/03-diagram-02.png}
   \caption{マルチプロセスとマルチスレッドの共有範囲。実際の共有対象はOSと処理系の仕様に依存します。}
   \label{fig:process-thread-sharing}
 \end{figure}
@@ -115,24 +88,7 @@
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[x=7mm,y=5mm,every node/.append style={font=\scriptsize}]
-    \node[anchor=east] at (0,3) {並行};
-    \node[anchor=east] at (0,0) {並列};
-    \node[anchor=west,font=\tiny] at (0,4.2) {一つのCPUコア：時間を分けて切り替える};
-    \node[anchor=west,font=\tiny] at (0,1.2) {二つのCPUコア：同じ時間帯に実行する};
-    \foreach \x/\w/\c in {0/2/MutedBlue,2/2/PaleGray,4/2/MutedBlue,6/2/PaleGray} {
-      \fill[\c] (\x,2.2) rectangle ++(\w,0.7);
-    }
-    \node[white,font=\tiny] at (1,2.55) {仕事A};
-    \node[white,font=\tiny] at (3,2.55) {仕事B};
-    \node[white,font=\tiny] at (5,2.55) {仕事A};
-    \node[white,font=\tiny] at (7,2.55) {仕事B};
-    \fill[MutedBlue] (0,-0.1) rectangle (8,0.6);
-    \fill[PaleGray] (0,-1.0) rectangle (8,-0.3);
-    \node[white,font=\tiny] at (4,0.25) {コア1：仕事A};
-    \node[white,font=\tiny] at (4,-0.65) {コア2：仕事B};
-    \draw[-{Latex[length=2mm]},draw=DeepNavy] (0,-1.6) -- (8.5,-1.6) node[right]{時間};
-  \end{tikzpicture}
+  \inlineimage{generated/03-diagram-03.png}
   \caption{並行と並列の違い。並行な設計が、実行時には逐次または並列に動きます。}
   \label{fig:concurrency-parallelism}
 \end{figure}
@@ -142,7 +98,7 @@
 
 \source{\href{https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf}{OSTEP, “Concurrency: An Introduction”}、\href{https://pubs.opengroup.org/onlinepubs/9799919799/functions/V2_chap02.html}{POSIX.1-2024, General Information}}
 
-\takeaway{並行なプログラムが常に並列に動くとは限りません。実行時のコア数とスケジューリングによって、逐次実行と並列実行のどちらにもなります。}
+\takeaway{並行なプログラムの動き方は、実行環境によって変わります。実行時のコア数とスケジューリングによって、逐次実行と並列実行のどちらにもなります。}
 
 
 \section{システムコール}
@@ -155,14 +111,7 @@ CPUは、アプリに許す操作を制限した\term{利用者モード}を備�
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
-        \node[box,minimum width=58mm] (user) {利用者モード：アプリ／ライブラリ};
-        \node[accentbox,minimum width=58mm,below=of user] (gate) {システムコール境界};
-        \node[box,minimum width=58mm,below=of gate] (kernel) {カーネル：検査・処理・結果返却};
-        \draw[flow] (user) -- node[right,font=\scriptsize]{番号・引数} (gate);
-        \draw[flow] (gate) -- (kernel);
-        \draw[softflow] (kernel.west) to[bend right=30] node[left,font=\scriptsize]{戻り値} (user.west);
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-04.png}
 \par
 \endgroup
 \medskip
@@ -190,16 +139,7 @@ OSとCPUは、各プロセスに固有の仮想アドレス空間を見せ、実
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=0.9mm,y=0.9mm,every node/.append style={font=\scriptsize}]
-        \node[box,minimum width=22mm] (va) at (10,22) {仮想アドレス};
-        \node[accentbox,minimum width=22mm] (mmu) at (40,22) {MMU};
-        \node[box,minimum width=22mm] (pa) at (70,22) {物理アドレス};
-        \node[box,minimum width=26mm] (pt) at (40,3) {ページ表};
-        \draw[flow] (va) -- (mmu);
-        \draw[flow] (mmu) -- (pa);
-        \draw[softflow] (pt) -- (mmu);
-        \node[font=\scriptsize,align=center] at (40,-9) {未登録・権限違反なら\\ページフォルト};
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-05.png}
 \par
 \endgroup
 \medskip
@@ -215,7 +155,7 @@ OSとCPUは、各プロセスに固有の仮想アドレス空間を見せ、実
 \par
 \endgroup
   \vspace{3mm}
-  \takeaway{仮想アドレスは物理メモリ上の位置そのものではなく、変換に使う名前です。}
+  \takeaway{仮想アドレスは、物理メモリ上の位置へ変換するための名前です。}
 \par
 \endgroup
 
@@ -228,18 +168,7 @@ OSとCPUは、各プロセスに固有の仮想アドレス空間を見せ、実
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=1mm,y=1mm,every node/.append style={font=\scriptsize}]
-        \draw[draw=MutedBlue] (0,0) rectangle (35,52);
-        \fill[PaleBlue] (0,0) rectangle (35,10);
-        \fill[CardWhite] (0,10) rectangle (35,21);
-        \fill[PaleBlue] (0,21) rectangle (35,36);
-        \fill[CardWhite] (0,36) rectangle (35,52);
-        \draw[RuleGray] (0,10)--(35,10) (0,21)--(35,21) (0,36)--(35,36);
-        \node at (17.5,5) {コード／静的データ};
-        \node at (17.5,15.5) {ヒープ $\uparrow$};
-        \node[color=PaleGray] at (17.5,28.5) {未割り当て領域};
-        \node at (17.5,44) {$\downarrow$ スタック};
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-06.png}
 \par
 \endgroup
 \medskip
@@ -252,7 +181,7 @@ OSとCPUは、各プロセスに固有の仮想アドレス空間を見せ、実
 
         言語が提供する実行時の支援処理を\term{ランタイム}といいます。ヒープの空きを管理して場所を割り当てる仕組みを\term{アロケータ}といいます。ヒープ上の値をいつ解放するかは、言語と処理系によってプログラマまたはランタイムが管理します。
 
-      {\scriptsize 図は概念例です。領域の順序・成長方向・配置はOSと処理系、および機械語の呼び出し方などを定めるApplication Binary Interface（ABI）という約束に依存します。}
+      図はメモリ配置の一例です。配置や成長方向はOSと処理系によって変わります。機械語で関数を呼び出す方法などを定める約束を、Application Binary Interface（ABI）と呼びます。ABIも配置に影響します。
 \par
 \endgroup
   \source{Stanford CS107, “Stack and Heap”}
@@ -289,18 +218,7 @@ OSとCPUは、各プロセスに固有の仮想アドレス空間を見せ、実
 
 \begin{figure}[htbp]
   \centering
-  \begin{tikzpicture}[node distance=9mm and 13mm,every node/.append style={font=\scriptsize}]
-    \node[accentbox] (root) {ルート\\実行中の変数};
-    \node[box,right=of root] (a) {値A};
-    \node[box,right=of a] (b) {値B};
-    \node[box,below=of a] (c) {値C};
-    \node[box,draw=PaleGray,dashed,below=of b] (d) {値D};
-    \draw[flow] (root) -- (a);
-    \draw[flow] (a) -- (b);
-    \draw[flow] (a) -- (c);
-    \node[align=center,text=MutedBlue,font=\tiny,above=2mm of b] {到達可能\\保持する};
-    \node[align=center,text=PaleGray,font=\tiny,right=2mm of d] {到達不能\\回収候補};
-  \end{tikzpicture}
+  \inlineimage{generated/03-diagram-07.png}
   \caption{追跡型GCにおける到達可能性。値Dはルートからたどれないため回収候補です。}
   \label{fig:gc-reachability}
 \end{figure}
@@ -348,7 +266,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
         プログラムを実行する前に、式や関数の型が規則どおり組み合わさるか主に検査する方式が\term{静的型付け}です。検査を通った後も、配列の範囲外アクセスや0除算など、実際の値によって決まるエラーは残ります。
 
 \paragraph{動的型付け}
-        実行中の値が型を持ち、操作しようとした時点でその操作が可能か主に検査する方式が\term{動的型付け}です。型が存在しないという意味ではありません。
+        実行中の値が型を持ち、操作しようとした時点でその操作が可能か主に検査する方式が\term{動的型付け}です。値が持つ型を、実行時に確かめます。
 
 \par
 \endgroup
@@ -403,15 +321,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=8mm,y=8mm,every node/.append style={font=\scriptsize}]
-        \foreach \x in {0,...,7}{\draw[draw=RuleGray,fill=CardWhite] (\x,0) rectangle ++(1,1);}
-        \fill[PaleBlue] (0,0) rectangle ++(1,1);
-        \fill[MutedBlue!25] (4,0) rectangle ++(4,1);
-        \node at (0.5,0.5) {A};
-        \node[color=PaleGray] at (2.5,0.5) {padding};
-        \node at (5.5,0.5) {B};
-        \foreach \x in {0,...,7}{\node[below,font=\tiny] at (\x+0.5,0) {\x};}
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-08.png}
       \vspace{2mm}
 \paragraph{なぜ隙間が生じるか}
         4バイトの値を4の倍数のアドレスから置く、といった区切りが\term{アラインメント境界}です。値の開始位置をこの境界へ合わせるため、構造体のフィールド間や末尾に未使用のバイトが入る場合があります。メモリ配置で生じるこの隙間を\term{メモリ・パディング}といいます。本章で単に\term{パディング}と書く場合も、このメモリ配置上の隙間を指します。第7章で系列の長さをそろえる系列パディングとは別の概念です。
@@ -451,13 +361,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=5mm,every node/.append style={font=\scriptsize}]
-        \node[box] (s1) {slice変数 s\\先頭・長さ・容量};
-        \node[box,below=of s1] (s2) {コピー t\\先頭・長さ・容量};
-        \node[accentbox,right=12mm of $(s1)!0.5!(s2)$] (arr) {共有する\\元配列};
-        \draw[flow] (s1) -- (arr);
-        \draw[flow] (s2) -- (arr);
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-09.png}
       \vspace{3mm}
 \paragraph{記述子を持つ値}
         別のデータがある場所や長さなどをまとめた小さな値を\term{記述子}と呼びます。スライスやマップの記述子をコピーしても、内部のデータ構造を共有する場合があります。何が複製され、何が共有されるかを型ごとに確認します。
@@ -476,16 +380,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=5mm,y=4mm,every node/.append style={font=\scriptsize}]
-        \draw[->,draw=PaleGray] (0,0)--(8.5,0) node[right] {$n$};
-        \draw[->,draw=PaleGray] (0,0)--(0,7) node[above] {操作回数};
-        \draw[draw=DeepNavy,line width=.7pt] plot[smooth] coordinates {(0,1)(2,1)(4,1)(6,1)(8,1)};
-        \node[right] at (8,1) {$O(1)$};
-        \draw[draw=MutedBlue,line width=.7pt] plot[smooth] coordinates {(0,0)(2,1.4)(4,2.8)(6,4.2)(8,5.6)};
-        \node[right] at (8,5.6) {$O(n)$};
-        \draw[draw=PaleGray,line width=.7pt] plot[smooth] coordinates {(0,0)(2,.35)(4,1.4)(6,3.15)(8,5.6)};
-        \node[above left] at (7.7,5.3) {$O(n^2)$};
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-10.png}
 \par
 \endgroup
 \medskip
@@ -523,7 +418,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \begingroup
 \paragraph{線形探索の例}
         先頭から一つずつ順番に比較する方法が\term{線形探索}です。最初で見つかる場合、最後で見つかる場合、存在しない場合で比較回数が変わります。
-        \begin{tabularx}{\linewidth}{@{}lY@{}}
+        \begin{tabularx}{\linewidth}{@{}p{28mm}Y@{}}
           \toprule
           条件 & 比較回数\\
           \midrule
@@ -534,13 +429,16 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
         \end{tabularx}
 
 \paragraph{平均計算量の前提}
-        最も少ない操作で終わる場合を\term{最良計算量}といいます。最も多く必要な場合を\term{最悪計算量}といいます。入力ごとの起こりやすさを加味した平均を\term{平均計算量}といいます。どの入力がどの確率で現れるかを示さない「平均」は再現できません。
+        最も少ない操作で終わる場合を\term{最良計算量}といいます。最も多く必要な場合を\term{最悪計算量}といいます。入力ごとの起こりやすさを加味した平均を\term{平均計算量}といいます。平均を比較するときは、各入力が現れる確率の仮定をそろえます。
 
 \par
 \endgroup
   \source{MIT 6.006, “Asymptotic Complexity”}
 \par
 \endgroup
+
+
+\sectionimage{generated/03-linear-search.png}{31を線形探索で探す例。添字は0から数えます。}{fig:03-linear-search}
 
 
 \section{配列}
@@ -551,15 +449,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=9mm,y=9mm,every node/.append style={font=\scriptsize}]
-        \foreach \x/\v in {0/18,1/7,2/31,3/4,4/12,5/9}{
-          \draw[draw=RuleGray,fill=CardWhite] (\x,0) rectangle ++(1,1);
-          \node at (\x+.5,.5) {\v};
-          \node[below,font=\tiny] at (\x+.5,0) {[\x]};
-        }
-        \draw[flow] (2.5,-1.4)--(2.5,-.1);
-        \node[below,font=\scriptsize] at (2.5,-1.5) {base $+ 2\times$要素幅};
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-11.png}
       \vspace{4mm}
 \paragraph{ランダムアクセス}
         配列の先頭位置を\term{基準位置}とすると、要素の位置は「基準位置＋添字$\times$一要素のバイト数」で求められます。途中を順番に読まず、指定した位置へ直接アクセスできる性質が\term{ランダムアクセス}です。ここでrandomは「無作為」ではなく「どの位置でも直接」という意味です。各メモリアクセスを一定時間とみなすRAMモデルでは、読み書きを$O(1)$と扱います。
@@ -588,20 +478,7 @@ GCが扱う主な対象はメモリです。ファイル、ソケット、デー
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[x=9mm,y=8mm,every node/.append style={font=\scriptsize}]
-        \draw[draw=MutedBlue,fill=PaleBlue] (0,3) rectangle (3,4);
-        \draw[RuleGray] (1,3)--(1,4) (2,3)--(2,4);
-        \node at (.5,3.5) {ptr}; \node at (1.5,3.5) {len}; \node at (2.5,3.5) {cap};
-        \foreach \x/\v in {0/a,1/b,2/c,3/d,4/e,5/f}{
-          \draw[draw=RuleGray,fill=CardWhite] (\x,0) rectangle ++(1,1);
-          \node at (\x+.5,.5) {\v};
-        }
-        \draw[flow] (.5,3)--(1.5,1);
-        \draw[draw=MutedBlue,line width=.7pt] (1,1.25)--(4,1.25);
-        \node[above] at (2.5,1.25) {len = 3};
-        \draw[draw=PaleGray,line width=.7pt] (1,-.35)--(6,-.35);
-        \node[below] at (3.5,-.35) {cap = 5};
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-12.png}
 \par
 \endgroup
 \medskip
@@ -640,13 +517,20 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
         \code{s = append(s, x)}のように書きます。再確保の有無と容量の増やし方は、コードから固定値として仮定しません。
 
 \paragraph{償却$O(1)$}
-        長さを実行中に増減できる配列を\term{動的配列}といいます。容量を一定の倍率で増やす動的配列では、ときどき起きる大きなコピーの費用を多数回の末尾追加へ均すと、一回当たり$O(1)$になります。この考え方が\term{償却計算量}です。すべての一回が必ず一定時間という意味ではありません。
+        長さを実行中に増減できる配列を\term{動的配列}といいます。容量を一定の倍率で増やす動的配列では、ときどき起きる大きなコピーの費用を多数回の末尾追加へ均すと、一回当たり$O(1)$になります。この考え方が\term{償却計算量}です。一回の追加に大きなコピーが必要な場合も、操作全体で費用をならして評価します。
 
 \par
 \endgroup
   \source{Go specification, built-in \code{append}; MIT 6.006, “Dynamic Arrays”}
 \par
 \endgroup
+
+
+図\ref{fig:03-append}では、値1と2を持つスライスへ3を追加します。
+空きがある場合は元配列を使います。
+空きが足りない場合は新しい配列へコピーします。
+新しい容量は実装によって変わります。
+\sectionimage{generated/03-append.png}{容量の違いによるappendの動作}{fig:03-append}
 
 
 \section{マップ}
@@ -659,14 +543,7 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\scriptsize}]
-        \node[box] (key) {キー ``cat''};
-        \node[accentbox,right=of key] (hash) {ハッシュ関数};
-        \node[box,right=of hash] (idx) {候補 2};
-        \draw[flow] (key)--(hash); \draw[flow] (hash)--(idx);
-        \node[box,below=8mm of hash,minimum width=46mm] (slots) {0：\quad 1：\quad 2：cat／値\quad 3：dog／値};
-        \draw[flow] (idx)--(slots);
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-13.png}
       \vspace{2mm}
 \paragraph{衝突}
         ハッシュ関数の出力範囲は有限なので、異なるキーが同じ候補へ対応することがあります。これを\term{衝突}といいます。実装は元のキーを比較し、別の空き場所を探すか、同じ候補へ複数の組を持つことで区別します。
@@ -692,7 +569,7 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 \section{データ構造の選択}
 \label{sec:03-runtime-data-17}
 
-配列、スライス、マップのどれかが常に優れているわけではありません。要求の中で頻繁に行う操作、順序の必要性、更新方法、共有範囲を先に見て、その仕事に合う形を選びます。データの置き方は、その後の処理の流れを決めます。
+配列、スライス、マップには、それぞれ得意な操作があります。要求の中で頻繁に行う操作、順序の必要性、更新方法、共有範囲を先に見て、その仕事に合う形を選びます。データの置き方は、その後の処理の流れを決めます。
 
 比較のため、各要素が次の要素への参照を持ち、鎖のようにつながる\term{連結リスト}も表へ加えます。途中の要素が分かっていれば参照をつなぎ替えて挿入できますが、$i$番目へ行くには先頭から参照をたどります。
 
@@ -701,16 +578,28 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 
 \begingroup
   \noindent
-  \begin{tabularx}{\textwidth}{@{}lYYYY@{}}
+  \begin{tabularx}{\textwidth}{@{}p{38mm}p{34mm}Y@{}}
     \toprule
-    構造 & 添字／キー検索 & 末尾追加 & 途中挿入 & 主な注意点\\
+    構造 & 検索の目安 & 操作と前提\\
     \midrule
-    固定長配列 & $O(1)$ & 対象外 & $O(n)$ & 長さが型に含まれる\\
-    動的配列／スライス & $O(1)$ & 償却$O(1)$ & $O(n)$ & 再確保と元配列共有\\
-    ハッシュマップ & 平均$O(1)$ & 平均$O(1)$ & 対象外 & 衝突・順序なし\\
-    連結リスト & $O(n)$ & 位置次第 & 位置取得後$O(1)$ & ポインタ追跡\\
+    配列／スライス & $O(1)$ & 添字から位置を直接求めます。\\
+    ハッシュマップ & 平均$O(1)$ & キーを使います。分散と負荷率の条件があります。\\
+    連結リスト & $O(n)$ & 添字の位置まで先頭から参照をたどります。\\
     \bottomrule
   \end{tabularx}
+  \par\medskip
+  \begin{tabularx}{\textwidth}{@{}p{38mm}p{34mm}Y@{}}
+    \toprule
+    追加する操作 & 計算量の目安 & 操作と前提\\
+    \midrule
+    動的配列の末尾 & 償却$O(1)$ & 容量を一定倍率で増やす実装です。\\
+    配列の途中 & $O(n)$ & 空き領域を用意し、順序を保つため後ろをずらします。\\
+    マップへキー追加 & 平均$O(1)$ & 分散と負荷率の条件があります。\\
+    連結リストの途中 & $O(1)$ & 挿入直前の節点を取得済みとします。\\
+    \bottomrule
+  \end{tabularx}
+  \par\smallskip
+  固定長配列の要素数は作成時に決まります。要素数を増やす処理には、別の配列やスライスを使います。
   \vspace{2mm}
 \begingroup
 \paragraph{要件から選ぶ}
@@ -737,12 +626,7 @@ Goでスライスの末尾へ要素を加える組み込み関数が\code{append
 \begingroup
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=6mm,every node/.append style={font=\scriptsize}]
-        \node[box] (x) {名前 x};
-        \node[box,below=of x] (y) {名前 y};
-        \node[accentbox,right=13mm of $(x)!0.5!(y)$] (obj) {オブジェクト\\型：list\\値：[1, 2]};
-        \draw[flow] (x)--(obj); \draw[flow] (y)--(obj);
-      \end{tikzpicture}
+      \inlineimage{generated/03-diagram-14.png}
       \vspace{4mm}
 \paragraph{共有と可変性}
         作成後に内部の値を変更できる性質を\term{可変}といいます。作成後に変更できない性質を\term{不変}といいます。\code{y = x}は同じオブジェクトへの束縛を作ります。可変な並びであるリストを\code{y.append(3)}で変更すると、\code{x}からも変更後の値が見えます。

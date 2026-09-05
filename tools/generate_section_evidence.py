@@ -25,6 +25,14 @@ CHAPTERS = [
 ]
 
 SOURCES = {
+    "RFC1812": ("RFC 1812 — IPv4 Router Requirements", "標準仕様", "https://www.rfc-editor.org/rfc/rfc1812.html"),
+    "RFC4632": ("RFC 4632 — CIDR", "Best Current Practice", "https://www.rfc-editor.org/rfc/rfc4632.html"),
+    "RFC8767": ("RFC 8767 — Serving Stale DNS Data", "標準仕様", "https://www.rfc-editor.org/rfc/rfc8767.html"),
+    "RFC5681": ("RFC 5681 — TCP Congestion Control", "標準仕様", "https://www.rfc-editor.org/rfc/rfc5681.html"),
+    "CURL": ("curl manual — write-out timing", "公式文書", "https://curl.se/docs/manpage.html"),
+    "BPE": ("Neural Machine Translation of Rare Words with Subword Units", "原著論文", "https://aclanthology.org/P16-1162/"),
+    "ADAM": ("Adam: A Method for Stochastic Optimization", "原著論文", "https://arxiv.org/abs/1412.6980"),
+    "NUCLEUS": ("The Curious Case of Neural Text Degeneration", "原著論文", "https://arxiv.org/abs/1904.09751"),
     "REPO": ("本書のスコープと学習設計", "一次資料", "https://github.com/tsuji-tomonori/cs-doc"),
     "MIT6004": ("MIT 6.004 Computation Structures", "大学公式教材", "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/"),
     "IEEE754": ("IEEE 754-2019", "国際標準", "https://standards.ieee.org/ieee/754/6210/"),
@@ -81,9 +89,9 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["UNICODE", "IEEE754"]
         return ["MIT6004"]
     if chapter == "2":
-        if re.search(r"命令セット|機械語|高級言語|実行方式", title):
+        if re.search(r"命令セット|機械語", title):
             return ["RISCV"]
-        if re.search(r"コンパイル|字句解析|構文解析|抽象構文木|AST|式を木|プロセスへ", title):
+        if re.search(r"高級言語|実行方式|コンパイル|字句解析|構文解析|抽象構文木|AST|式を木|プロセスへ", title):
             return ["LLVM"]
         return ["MIT6006"]
     if chapter == "3":
@@ -108,15 +116,19 @@ def source_ids(chapter: str, title: str) -> list[str]:
         return ["PARNAS"]
     if chapter == "5":
         if "DNS" in title:
-            return ["RFC1034"]
+            return ["RFC1034", "RFC8767"]
         if re.search(r"IPアドレス|CIDR", title):
-            return ["RFC8200"]
+            return ["RFC4632", "RFC8200"]
         if re.search(r"ルーティング|網の網|経路制御|耐障害", title):
-            return ["RFC4271"]
+            return ["RFC1812", "RFC4271"]
         if re.search(r"OSI|階層化", title):
             return ["X200"]
         return ["RFC1122"]
     if chapter == "6":
+        if "curl" in title or "通信時間" in title:
+            return ["CURL"]
+        if "輻輳制御" in title:
+            return ["RFC5681"]
         if "ポート" in title:
             return ["RFC6335"]
         if re.search(r"TCP|フロー制御|輻輳制御", title):
@@ -133,6 +145,12 @@ def source_ids(chapter: str, title: str) -> list[str]:
             return ["RFC9111"]
         return ["RFC9110"]
     if chapter == "7":
+        if "トークン化" in title:
+            return ["BPE", "CS224N"]
+        if "文章生成" in title:
+            return ["NUCLEUS", "CS224N"]
+        if "最適化" in title:
+            return ["ADAM", "CS229"]
         if re.search(r"Attention|Query|Key|Value|位置情報|Transformer", title):
             return ["TRANSFORMER"]
         if re.search(r"トークン|プロンプト|コンテキスト|文章生成|次トークン", title):
@@ -216,7 +234,7 @@ def main() -> int:
     lines = [
         "# 節ごとの根拠対応表",
         "",
-        "第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。本文の流れを重くしないため、根拠の追跡情報をここへ集約しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。",
+        "第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。この一覧は参照先を探すための索引です。リンクの登録は、個々の主張の照合完了を意味しません。今回の照合内容は reports/pdf-review.md に記録しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。",
         "",
         "| 節 | 区分 | 節名 | 主要根拠 | 資料種別 | 照合観点 |",
         "| --- | --- | --- | --- | --- | --- |",

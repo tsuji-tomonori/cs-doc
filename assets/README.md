@@ -1,5 +1,19 @@
 # 生成画像の記録
 
+## 2026年9月5日の改訂
+
+本文中の57点のTeX図を、Codex組み込みimagegenで生成したPNGへ置き換えました。
+探索、配列拡張、通信、学習などの動作を追う図も12点追加しました。
+使用画像は `generated/`、生成指示は `image-prompts/` に保存します。
+`diagram-manifest.json` は旧図と置換先の対応記録です。
+既存の15点の概念図と表紙もimagegen由来です。概念図のうち8点を今回再生成しました。
+今回作成した77点の採用画像とプロンプト、ハッシュ値は `image-prompts/generation-record.json` に記録しています。
+
+参考資料は、ローカルの `rag-guide/assets/image-prompts/README.md` と図版です。
+16:9、オフホワイトの背景、ネイビーの文字、青の矢印、意味ごとにまとめた配置を参考にしました。
+工程図は入力、途中状態、出力を追える構成とし、数値は教材用の例として示します。
+生成後は、計算値、矢印、用語、縮小時の文字を確認します。確認結果は `reports/pdf-review.md` に記録します。
+
 ## 共通方針
 
 章扉と本文挿絵は、2026年8月27日に Codex 組み込みの image-gen 2.0 で再制作しました。
@@ -22,19 +36,19 @@
 | --- | --- |
 | `ch00-overview.png` | 一つの要求を追うと、情報工学の全体がつながる |
 | `ch01-signals.png` | 電気の連続変化を二値へ区切ると、論理と計算が作れる |
-| `ch02-code.png` | ソースコードは段階的な変換を経て、CPUが実行できる命令になる |
-| `ch03-runtime.png` | OSは実行単位とメモリを分離し、資源を安全に共有する |
-| `ch03-data-structures.png` | データ構造は、速くしたい操作から選ぶ |
+| `ch02-code.png` | コンパイラは、コードを実行用の命令へ変換する |
+| `ch03-runtime.png` | OSとランタイムは、異なる範囲を管理する |
+| `ch03-data-structures.png` | データ構造は、使う操作から選ぶ |
 | `ch04-design.png` | 境界を明確にすると、変更を小さく閉じ込められる |
-| `ch04-change-safety.png` | 変更は小さく作り、複数の検査を通して安全に反映する |
-| `ch05-internet.png` | 異なる管理主体の網をつなぎ、複数経路で到達可能にする |
+| `ch04-change-safety.png` | 変更は小さく分け、段階ごとに確かめる |
+| `ch05-internet.png` | ネットワークをつなぎ、名前から宛先を調べる |
 | `ch06-delivery.png` | Web配信は、接続・保護・転送・処理を層として重ねる |
 | `ch07-language-model.png` | 言語モデルは、文字列を確率へ変換し、次のトークンを選ぶ |
 | `ch07-training-inference.png` | 学習はパラメータを変え、推論は固定したパラメータを使う |
-| `ch07-attention-generation.png` | 生成は、文脈を参照して次の一語を選ぶ反復で進む |
-| `ch08-browser.png` | 文書とスタイルを配置・描画し、画面を組み立てる |
+| `ch07-attention-generation.png` | 次のトークンを選び、入力の列へ追加する |
+| `ch08-browser.png` | 文書とスタイルから、画面を組み立てる |
 | `ch09-observability.png` | 境界ごとに観測すると、障害箇所を段階的に絞り込める |
-| `ch09-evidence-correlation.png` | 時刻をそろえると、三つの証拠が同じ障害を指す |
+| `ch09-evidence-correlation.png` | 同じ要求と時刻で、観測結果を照らし合わせる |
 
 ## 生成プロンプトの骨格
 
@@ -57,3 +71,7 @@ Constraints: exact specified Japanese text; labels inside their semantic blocks;
 
 `cover-progression.png` は2026年7月28日に生成した表紙用概念イラストです。
 トランジスタ、CPU、ソース構造、ネットワーク、言語モデルへの進行を、文字なしの横長線画で表しています。
+
+### 2026-09-05 概念図の再確認
+
+8点の概念図を再生成しました。OSとランタイムの担当範囲、DNSの階層、DOMとCSSOMの合流を描き分けています。トークンの説明を本文に合わせ、測定していない数値や効果の保証を取り除きました。

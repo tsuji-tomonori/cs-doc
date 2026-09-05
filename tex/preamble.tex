@@ -41,15 +41,15 @@
 \usepackage{etoolbox}
 \usepackage{float}
 \usepackage{placeins}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,automata,calc,fit,matrix,positioning,shapes.geometric}
+
+
 
 % 配色
 \usepackage{xcolor}
 \definecolor{OffWhite}{HTML}{F7F6F1}
 \definecolor{DeepNavy}{HTML}{2B3A4A}
 \definecolor{MutedBlue}{HTML}{5E7E96}
-\definecolor{PaleGray}{HTML}{9AA4AD}
+\definecolor{PaleGray}{HTML}{596775}
 \definecolor{PaleBlue}{HTML}{E8EFF3}
 \definecolor{CardWhite}{HTML}{FFFFFF}
 \definecolor{RuleGray}{HTML}{D7DEE3}
@@ -163,12 +163,7 @@
   pdfkeywords={情報工学, 物理, コンピュータ, プログラミング, ネットワーク, 機械学習}
 ]{hyperref}
 
-% TikZ共通スタイル
-\tikzset{
-  box/.style={draw=RuleGray,fill=CardWhite,rounded corners=1mm,minimum height=8mm,inner sep=2mm,align=center,text=DeepNavy},
-  accentbox/.style={box,draw=MutedBlue,fill=PaleBlue},
-  flow/.style={-{Latex[length=2mm]},draw=MutedBlue,line width=0.65pt,line cap=round,shorten <=1pt,shorten >=1pt},
-  softflow/.style={-{Latex[length=2mm]},draw=PaleGray,line width=0.65pt,line cap=round,shorten <=1pt,shorten >=1pt},
-  flowlabel/.style={fill=CardWhite,fill opacity=0.96,text opacity=1,inner xsep=1mm,inner ysep=0.4mm,font=\sffamily\scriptsize,text=DeepNavy},
-  node/.style={circle,draw=MutedBlue,fill=CardWhite,minimum size=6mm,inner sep=0pt}
-}
+
+% 表の本文は縮小せず、行間と左右の余白を確保します。
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{5pt}

@@ -1,6 +1,6 @@
 # 節ごとの根拠対応表
 
-第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。本文の流れを重くしないため、根拠の追跡情報をここへ集約しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。
+第1〜9章と「はじめに」の各節について、内容を照合する第一候補の公式仕様、標準、原著論文、大学公式教材を示します。この一覧は参照先を探すための索引です。リンクの登録は、個々の主張の照合完了を意味しません。今回の照合内容は reports/pdf-review.md に記録しています。複数資料を示す節では、保証範囲が異なるため両方を確認します。
 
 | 節 | 区分 | 節名 | 主要根拠 | 資料種別 | 照合観点 |
 | --- | --- | --- | --- | --- | --- |
@@ -31,9 +31,9 @@
 | 1.20. | 第1章 | 手を動かす：数の表現 | [MIT 6.004 Computation Structures](https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/) | 大学公式教材 | 定義・保証範囲・因果関係 |
 | 2.1. | 第2章 | 命令セット | [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual) | 公式仕様 | 定義・保証範囲・因果関係 |
 | 2.2. | 第2章 | 機械語とアセンブリ言語 | [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual) | 公式仕様 | 定義・保証範囲・因果関係 |
-| 2.3. | 第2章 | 高級言語 | [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual) | 公式仕様 | 定義・保証範囲・因果関係 |
+| 2.3. | 第2章 | 高級言語 | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
 | 2.4. | 第2章 | コンパイル | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
-| 2.5. | 第2章 | 実行方式 | [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual) | 公式仕様 | 定義・保証範囲・因果関係 |
+| 2.5. | 第2章 | 実行方式 | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
 | 2.6. | 第2章 | 字句解析 | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
 | 2.7. | 第2章 | 構文解析 | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
 | 2.8. | 第2章 | 抽象構文木 | [LLVM Tutorial: My First Language Frontend](https://llvm.org/docs/tutorial/) | 公式文書 | 定義・保証範囲・因果関係 |
@@ -96,20 +96,20 @@
 | 5.5. | 第5章 | プロトコル | [RFC 1122 — Requirements for Internet Hosts](https://www.rfc-editor.org/rfc/rfc1122.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 5.6. | 第5章 | 階層化とカプセル化 | [ITU-T X.200 OSI Basic Reference Model](https://www.itu.int/rec/T-REC-X.200/en) | 国際標準 | 定義・保証範囲・因果関係 |
 | 5.7. | 第5章 | OSIとTCP/IP | [ITU-T X.200 OSI Basic Reference Model](https://www.itu.int/rec/T-REC-X.200/en) | 国際標準 | 定義・保証範囲・因果関係 |
-| 5.8. | 第5章 | IPアドレスとCIDR | [RFC 8200 — IPv6](https://www.rfc-editor.org/rfc/rfc8200.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 5.9. | 第5章 | ルーティング | [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 5.10. | 第5章 | 網の網 | [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 5.11. | 第5章 | 経路制御の自律性 | [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 5.12. | 第5章 | 中央のない網の耐障害性 | [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.8. | 第5章 | IPアドレスとCIDR | [RFC 4632 — CIDR](https://www.rfc-editor.org/rfc/rfc4632.html) / [RFC 8200 — IPv6](https://www.rfc-editor.org/rfc/rfc8200.html) | Best Current Practice / インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.9. | 第5章 | ルーティング | [RFC 1812 — IPv4 Router Requirements](https://www.rfc-editor.org/rfc/rfc1812.html) / [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | 標準仕様 / インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.10. | 第5章 | 網の網 | [RFC 1812 — IPv4 Router Requirements](https://www.rfc-editor.org/rfc/rfc1812.html) / [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | 標準仕様 / インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.11. | 第5章 | 経路制御の自律性 | [RFC 1812 — IPv4 Router Requirements](https://www.rfc-editor.org/rfc/rfc1812.html) / [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | 標準仕様 / インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.12. | 第5章 | 中央のない網の耐障害性 | [RFC 1812 — IPv4 Router Requirements](https://www.rfc-editor.org/rfc/rfc1812.html) / [RFC 4271 — BGP-4](https://www.rfc-editor.org/rfc/rfc4271.html) | 標準仕様 / インターネット標準 | 定義・保証範囲・因果関係 |
 | 5.13. | 第5章 | エンドツーエンド原則 | [RFC 1122 — Requirements for Internet Hosts](https://www.rfc-editor.org/rfc/rfc1122.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 5.14. | 第5章 | DNS | [RFC 1034 — Domain Names](https://www.rfc-editor.org/rfc/rfc1034.html) | インターネット標準 | 定義・保証範囲・因果関係 |
+| 5.14. | 第5章 | DNS | [RFC 1034 — Domain Names](https://www.rfc-editor.org/rfc/rfc1034.html) / [RFC 8767 — Serving Stale DNS Data](https://www.rfc-editor.org/rfc/rfc8767.html) | インターネット標準 / 標準仕様 | 定義・保証範囲・因果関係 |
 | 5.15. | 第5章 | 手を動かす：経路を観測する | [RFC 1122 — Requirements for Internet Hosts](https://www.rfc-editor.org/rfc/rfc1122.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 5.16. | 第5章 | 網から接続へ | [RFC 1122 — Requirements for Internet Hosts](https://www.rfc-editor.org/rfc/rfc1122.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 5.17. | 第5章 | 旅をたどり直す | [RFC 1122 — Requirements for Internet Hosts](https://www.rfc-editor.org/rfc/rfc1122.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 6.1. | 第6章 | ポート番号 | [RFC 6335 — Service Names and Port Numbers](https://www.rfc-editor.org/rfc/rfc6335.html) | Best Current Practice | 定義・保証範囲・因果関係 |
 | 6.2. | 第6章 | TCP接続 | [RFC 9293 — TCP](https://www.rfc-editor.org/rfc/rfc9293.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 6.3. | 第6章 | TCPのデータ転送 | [RFC 9293 — TCP](https://www.rfc-editor.org/rfc/rfc9293.html) | インターネット標準 | 定義・保証範囲・因果関係 |
-| 6.4. | 第6章 | フロー制御と輻輳制御 | [RFC 9293 — TCP](https://www.rfc-editor.org/rfc/rfc9293.html) | インターネット標準 | 定義・保証範囲・因果関係 |
+| 6.4. | 第6章 | フロー制御と輻輳制御 | [RFC 5681 — TCP Congestion Control](https://www.rfc-editor.org/rfc/rfc5681.html) | 標準仕様 | 定義・保証範囲・因果関係 |
 | 6.5. | 第6章 | UDP | [RFC 768 — UDP](https://www.rfc-editor.org/rfc/rfc768.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 6.6. | 第6章 | QUIC | [RFC 9000 — QUIC](https://www.rfc-editor.org/rfc/rfc9000.html) | インターネット標準 | 定義・保証範囲・因果関係 |
 | 6.7. | 第6章 | HTTP | [RFC 9110 — HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html) | インターネット標準 | 定義・保証範囲・因果関係 |
@@ -148,10 +148,10 @@
 | 7.24. | 第7章 | Self-Attention | [Attention Is All You Need](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html) | 原著論文 | 定義・保証範囲・因果関係 |
 | 7.25. | 第7章 | 位置情報 | [Attention Is All You Need](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html) | 原著論文 | 定義・保証範囲・因果関係 |
 | 7.26. | 第7章 | Transformerの構成 | [Attention Is All You Need](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html) | 原著論文 | 定義・保証範囲・因果関係 |
-| 7.27. | 第7章 | トークン化 | [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 大学公式教材 | 定義・保証範囲・因果関係 |
+| 7.27. | 第7章 | トークン化 | [Neural Machine Translation of Rare Words with Subword Units](https://aclanthology.org/P16-1162/) / [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 原著論文 / 大学公式教材 | 定義・保証範囲・因果関係 |
 | 7.28. | 第7章 | 次トークン予測 | [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 大学公式教材 | 定義・保証範囲・因果関係 |
 | 7.29. | 第7章 | プロンプトとコンテキスト | [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 大学公式教材 | 定義・保証範囲・因果関係 |
-| 7.30. | 第7章 | 文章生成 | [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 大学公式教材 | 定義・保証範囲・因果関係 |
+| 7.30. | 第7章 | 文章生成 | [The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751) / [Stanford CS224N](https://web.stanford.edu/class/cs224n/) | 原著論文 / 大学公式教材 | 定義・保証範囲・因果関係 |
 | 7.31. | 第7章 | 評価 | [NIST AI 600-1 Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1) | 政府公式文書 | 定義・保証範囲・因果関係 |
 | 7.32. | 第7章 | データ漏洩と偏り | [NIST AI 600-1 Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1) | 政府公式文書 | 定義・保証範囲・因果関係 |
 | 7.33. | 第7章 | 分布変化とハルシネーション | [NIST AI 600-1 Generative AI Profile](https://doi.org/10.6028/NIST.AI.600-1) | 政府公式文書 | 定義・保証範囲・因果関係 |

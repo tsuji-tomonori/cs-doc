@@ -20,7 +20,7 @@
 \section{命令セット}
 \label{sec:02-language-01}
 
-前章のCPUは、命令らしいビット列なら何でも理解するわけではありません。どの並びを加算と読み、どのレジスタを使い、失敗時に何が起きるかについて、CPUとソフトウェアは共通の約束を持ちます。CPUが理解できる命令の種類と、その使い方をまとめた約束が\term{命令セット}です。
+CPUは、決められた形式のビット列を命令として解釈します。どの並びを加算と読み、どのレジスタを使い、失敗時に何が起きるかについて、CPUとソフトウェアは共通の約束を持ちます。CPUが理解できる命令の種類と、その使い方をまとめた約束が\term{命令セット}です。
 
 \begingroup
 \begingroup
@@ -36,16 +36,7 @@
 \medskip
 \begingroup
       \centering
-    \begin{tikzpicture}[x=0.8mm,y=0.8mm]
-        \draw[draw=MutedBlue,fill=PaleBlue] (0,0) rectangle (22,12);
-        \draw[draw=RuleGray,fill=CardWhite] (22,0) rectangle (40,12);
-        \draw[draw=RuleGray,fill=CardWhite] (40,0) rectangle (58,12);
-        \draw[draw=RuleGray,fill=CardWhite] (58,0) rectangle (76,12);
-        \node[font=\scriptsize] at (11,6) {opcode};
-        \node[font=\scriptsize] at (31,6) {$R_d$};
-        \node[font=\scriptsize] at (49,6) {$R_s$};
-        \node[font=\scriptsize] at (67,6) {即値};
-      \end{tikzpicture}
+    \inlineimage{generated/02-diagram-01.png}
       \vspace{4mm}
 \paragraph{ISAと実装}
         ISAという約束を、内部でどの回路構成によって実現するかを\term{マイクロアーキテクチャ}といいます。同じ命令セットを実行するCPUでも、前章で見たパイプラインやキャッシュ、複数の処理を同時に進める並列実行の方式は異なり得ます。
@@ -60,7 +51,7 @@
 \section{機械語とアセンブリ言語}
 \label{sec:02-language-02}
 
-命令セットという約束は、最終的にはメモリ上のビット列として表されます。しかし、人が長い0と1だけで送信処理を書くのは現実的ではありません。まず命令へ短い名前を付け、同じ動きを読める形にします。
+命令セットという約束は、最終的にはメモリ上のビット列として表されます。人が送信処理を書くときは、読みやすい表記が役立ちます。まず命令へ短い名前を付け、同じ動きを読める形にします。
 
 \begingroup
 \begingroup
@@ -92,7 +83,7 @@
 \section{高級言語}
 \label{sec:02-language-03}
 
-命令へ名前を付けても、開発者はレジスタの再利用や分岐先のアドレスを管理し続けなければなりません。AIアプリで表したいのは「入力を検証する」「注文を探す」という意図です。機械の個別の命令より、人が考える処理へ近い書き方を提供する言語が\term{高級言語}です。ここで「高級」は品質の優劣ではなく、物理的な回路から見て抽象化の段が高いという意味です。
+命令へ名前を付けても、開発者はレジスタの再利用や分岐先のアドレスを管理し続けなければなりません。AIアプリで表したいのは「入力を検証する」「注文を探す」という意図です。機械の個別の命令より、人が考える処理へ近い書き方を提供する言語が\term{高級言語}です。ここで「高級」は、物理的な回路から見て抽象化の段が高いという意味です。
 
 \begingroup
 \begingroup
@@ -131,17 +122,7 @@
 
 \begingroup
   \centering
-  \begin{tikzpicture}[node distance=4mm,every node/.append style={font=\small}]
-    \node[accentbox] (src) {ソース};
-    \node[box,right=of src] (lex) {トークン};
-    \node[box,right=of lex] (ast) {AST};
-    \node[box,right=of ast] (ir) {中間表現};
-    \node[box,right=of ir] (obj) {機械語};
-    \draw[flow] (src) -- (lex);
-    \draw[flow] (lex) -- (ast);
-    \draw[flow] (ast) -- (ir);
-    \draw[flow] (ir) -- (obj);
-  \end{tikzpicture}
+  \inlineimage{generated/02-diagram-02.png}
   \vspace{5mm}
 \begingroup
 \paragraph{コンパイル}
@@ -168,7 +149,7 @@
 \section{実行方式}
 \label{sec:02-language-05}
 
-ソースから命令へ至る道は一本とは限りません。事前に機械語へ変える処理もあれば、実行しながら解釈したり、途中の表現を仮想機械で動かしたりする処理もあります。違うのは物語の結末ではなく、どの時点で誰が翻訳するかです。
+ソースから命令へ至る方法には、いくつかの組み合わせがあります。事前に機械語へ変える処理もあれば、実行しながら解釈したり、途中の表現を仮想機械で動かしたりする処理もあります。違いは、翻訳する時点と、翻訳を担う仕組みにあります。
 
 \begingroup
 \begingroup
@@ -188,7 +169,7 @@
         同じ結果を保ちながら、実行時間や使用メモリなどを改善する変換を\term{最適化}といいます。JIT方式では、実際によく使われた型や経路などの実行時情報を最適化へ利用できます。
 
 \paragraph{分類より変換経路を見る}
-        「この言語はコンパイル型か」という分類だけでは、実際の実行方法を説明できません。
+        実際の実行方法は、コンパイルと解釈をどの段階で行うかで説明できます。
         どの表現を、いつ、何へ変換するかを確認します。
 
 \par
@@ -200,20 +181,12 @@
 \section{字句解析}
 \label{sec:02-language-06}
 
-翻訳の入口にあるのは、ただの文字列です。コンパイラは最初から「関数」や「加算式」を見るのではなく、文字の連なりを名前、数値、記号といった最小のまとまりへ切り分けます。この処理を\term{字句解析}といいます。「字句」は、文字から作られた意味のある最小の単位を指します。利用者の入力をアプリが解析するときにも似た境界が現れます。
+翻訳の入口にあるのは、ただの文字列です。コンパイラは、文字の連なりを名前、数値、記号といった最小のまとまりへ切り分けます。この処理を\term{字句解析}といいます。「字句」は、文字から作られた意味のある最小の単位を指します。利用者の入力をアプリが解析するときにも似た境界が現れます。
 
 \begingroup
 \noindent{\sffamily\bfseries\color{MutedBlue}入力例：\code{total = price * 110 / 100}}\par\medskip
   \centering
-  \begin{tikzpicture}[node distance=3mm,every node/.append style={font=\small}]
-    \node[accentbox] (t1) {識別子\\total};
-    \node[box,right=of t1] (t2) {演算子\\=};
-    \node[box,right=of t2] (t3) {識別子\\price};
-    \node[box,right=of t3] (t4) {演算子\\*};
-    \node[box,right=of t4] (t5) {整数\\110};
-    \node[box,right=of t5] (t6) {演算子\\/};
-    \node[box,right=of t6] (t7) {整数\\100};
-  \end{tikzpicture}
+  \inlineimage{generated/02-diagram-03.png}
   \vspace{6mm}
 \begingroup
 \paragraph{トークン}
@@ -289,14 +262,7 @@
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[level distance=11mm,sibling distance=25mm,every node/.append style={font=\small}]
-        \node[node] {$+$}
-          child {node[node] {1}}
-          child {node[node] {$*$}
-            child {node[node] {2}}
-            child {node[node] {3}}
-          };
-      \end{tikzpicture}
+      \inlineimage{generated/02-diagram-04.png}
       \vspace{4mm}
 \paragraph{式の構造}
         \code{1 + 2 * 3} では、乗算ノードが加算ノードの下へつながる子になるため、乗算を先に評価します。ここで\term{評価}とは、式の規則に従って最終的な値を求めることです。
@@ -327,16 +293,7 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[level distance=10mm,sibling distance=18mm,every node/.append style={font=\scriptsize}]
-        \node[accentbox] {根}
-          child {node[box] {節点}
-            child {node[box] {葉}}
-            child {node[box] {葉}}
-          }
-          child {node[box] {部分木}
-            child {node[box] {葉}}
-          };
-      \end{tikzpicture}
+      \inlineimage{generated/02-diagram-05.png}
 \par
 \endgroup
 \par
@@ -353,7 +310,7 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \paragraph{二つの構成要素}
         これ以上小さくせず、その場で答えを返して再帰を止める条件が\term{基底条件}です。
         問題を小さくして同じ関数を呼ぶ部分が\term{再帰ステップ}です。
-        どちらかが欠けると停止や正しさを説明できません。
+        基底条件と再帰ステップをそろえ、問題が小さくなることを確認します。
 
 \paragraph{コールスタック}
         関数を呼び出した順に途中状態を積み、最後に呼んだ関数から先に完了させる記憶領域が\term{コールスタック}です。関数へ渡した値である引数、その呼び出しの中だけで使う局所変数、完了後に戻る命令位置を、一回の呼び出しごとのまとまりとして保持します。このまとまりを\term{スタックフレーム}といいます。
@@ -364,13 +321,7 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \medskip
 \begingroup
       \centering
-      \begin{tikzpicture}[node distance=1.5mm,every node/.append style={minimum width=38mm,font=\small}]
-        \node[accentbox] (f1) {eval(1)};
-        \node[box,above=of f1] (f2) {eval(2 * 3)};
-        \node[box,above=of f2] (f3) {eval(2)};
-        \node[box,above=of f3] (f4) {eval(3)};
-        \node[font=\scriptsize,below=of f1] {呼び出し順に積み、完了順に戻ります};
-      \end{tikzpicture}
+      \inlineimage{generated/02-diagram-06.png}
 \par
 \endgroup
 \par
@@ -380,7 +331,8 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \section{深さ優先探索}
 \label{sec:02-language-11}
 
-再帰が木を歩けると分かっても、訪問順はまだ一通りではありません。データ構造の要素を規則に沿って順番に調べることを\term{探索}といいます。一本の枝を行けるところまで奥へ進み、行き止まりで一つ戻る方法が\term{深さ優先探索}です。英語のDepth-First Searchを略して\term{DFS}と呼びます。式の値を求めるには親の演算より先に子の結果が必要なので、この順序が合います。
+入力から結果を求めるための、有限の手順を定めたものが\term{アルゴリズム}です。
+木を訪問する順序は、処理の目的に合わせて選びます。データ構造の要素を規則に沿って順番に調べることを\term{探索}といいます。一本の枝を行けるところまで奥へ進み、行き止まりで一つ戻る方法が\term{深さ優先探索}です。英語のDepth-First Searchを略して\term{DFS}と呼びます。式の値を求めるには親の演算より先に子の結果が必要なので、この順序が合います。
 
 \begingroup
 \begingroup
@@ -418,15 +370,7 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 
 \begingroup
   \centering
-  \begin{tikzpicture}[level distance=12mm,sibling distance=27mm,every node/.append style={font=\small}]
-    \node[accentbox] {$+=7$}
-      child {node[box] {$1$} edge from parent node[left,font=\scriptsize] {1}}
-      child {node[box] {$*=6$}
-        child {node[box] {$2$} edge from parent node[left,font=\scriptsize] {2}}
-        child {node[box] {$3$} edge from parent node[right,font=\scriptsize] {3}}
-        edge from parent node[right,font=\scriptsize] {4}
-      };
-  \end{tikzpicture}
+  \inlineimage{generated/02-diagram-07.png}
   \vspace{4mm}
 \begingroup
 \paragraph{評価順}
@@ -449,13 +393,13 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \section{幅優先探索}
 \label{sec:02-language-13}
 
-深さ優先がいつも目的に合うとは限りません。最も浅い位置を探したいときや、始点から同じ距離にある候補を順番に調べたいときは、近い節点から層状に進む方が自然です。この方法が\term{幅優先探索}です。英語のBreadth-First Searchを略して\term{BFS}と呼びます。途中状態を保つ道具もスタックからキューへ変わります。
+始点からの近さを優先したい場合もあります。最も浅い位置を探したいときや、始点から同じ距離にある候補を順番に調べたいときは、近い節点から層状に進む方が自然です。この方法が\term{幅優先探索}です。英語のBreadth-First Searchを略して\term{BFS}と呼びます。途中状態を保つ道具もスタックからキューへ変わります。
 
 \begingroup
 \begingroup
 \paragraph{キューによる探索}
         入れた順に値を並べ、最初に入れた値から取り出すデータ構造が\term{キュー}です。待ち行列と同じ「先入れ先出し」の規則です。
-        始点をキューへ入れ、先頭を取り出して、辺で直接つながった未訪問の節点を末尾へ入れます。この操作をキューが空になるまで繰り返します。
+        始点をキューへ入れ、登録済みとして記録します。先頭を取り出し、隣の節点を調べます。未登録の節点は末尾へ入れ、その場で登録済みにします。この操作をキューが空になるまで繰り返します。
 
 \paragraph{性質}
         辺を通る費用や距離を\term{重み}といいます。すべての辺の重みが同じグラフでは、BFSは始点から通る辺の数が最も少ない\term{最短経路}を求められます。同じ距離の節点をすべて調べてから次の距離へ進むためです。
@@ -487,6 +431,15 @@ ASTを理解するには、個々の演算より先に、\term{木構造}とい�
 \endgroup
 
 
+図\ref{fig:02-dfs-bfs}では、子を左から調べます。
+DFSの前順はA、B、D、E、Cの順です。
+BFSはAを取り出した後、BとCをキューへ入れます。
+Bを取り出すと、Cの後ろへDとEを追加します。
+登録時に印を付けると、同じ節点を重ねてキューへ入れることを防げます。
+\sectionimage{generated/02-dfs-bfs.png}{同じ木をたどるDFSとBFS。キューの先頭は左側です。}{fig:02-dfs-bfs}
+
+
+\FloatBarrier
 \section{手を動かす：式を木にする}
 \label{sec:02-language-14}
 
@@ -537,7 +490,7 @@ func Eval(n *Node) int {
 
 これでCPUが読めるファイルは用意できました。しかし、ファイルは自分でCPU時間を取り、入力文を置くメモリを確保できません。次章ではOSがこの命令列へ実行の場を与え、保存されたプログラムが動いているプロセスになる瞬間を追います。
 
-\takeaway{言語処理とは、人の意図を一度に機械語へ落とす魔法ではなく、意味を確かめながら表現を少しずつ変える連鎖です。}
+\takeaway{言語処理は、意味を確かめながら表現を少しずつ変え、機械が実行する命令へつなぐ処理です。}
 
 
 \section{旅をたどり直す}

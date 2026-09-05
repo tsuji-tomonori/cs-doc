@@ -22,6 +22,7 @@ CHAPTERS = [
     "09-practice.tex",
     "90-appendix-environment.tex",
     "91-appendix-answers.tex",
+    "92-supplementary-glossary.tex",
 ]
 PROHIBITED = {
     "full_width_digit": re.compile(r"[０-９]"),
@@ -56,7 +57,7 @@ def strip_non_prose(text: str) -> str:
     text = re.sub(r"\\\[.*?\\\]", "", text, flags=re.DOTALL)
     text = re.sub(
         r"(?m)^\s*\\(?:chapter|section|subsection|label|input|source|"
-        r"chapterimage|sectionimage|begin|end|takeaway)\b.*$",
+        r"chapterimage|sectionimage|inlineimage|begin|end|takeaway)\b.*$",
         "",
         text,
     )

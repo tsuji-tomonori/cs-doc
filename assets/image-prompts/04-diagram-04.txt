@@ -1,0 +1,12 @@
+Use case: scientific-educational. Generate one finished Japanese textbook diagram. Landscape 16:9, target1920x1080. Match rag-guide: continuous offwhite #F7F6F1 to edges, navy #2B3A4A text, muted blue #5E7E96 arrows, pale blue semantic panels, Noto Sans JP style. A clear concise Japanese title at top, 3-5 meaningful blocks, large readable labels at least equivalent 34px on1920 canvas; generous margins. Use diagrams rather than prose-heavy cards, each connector has correct direction and endpoints. No page number, watermark, shadow, decorative icons, surrounding page frame, tiny footnotes, or TeX commands. Preserve scientific content below, but simplify layout and Japanese text; this is a redraw, not literal rendering of TeX. Labels in affirmative Japanese when meaning permits. Add a short key sentence only if it helps. Explanatory numeric examples are explicitly labelled 例.
+Topic: クラス図
+Original diagram's semantic specification:
+\begin{tikzpicture}[every node/.append style={font=\scriptsize},node distance=13mm]
+        \node[box,align=left] (order) {\textbf{Order}\\\rule{24mm}{.3pt}\\id: OrderID\\items: []Item\\\rule{24mm}{.3pt}\\Total(): Money};
+        \node[box,align=left,right=of order] (item) {\textbf{Item}\\\rule{23mm}{.3pt}\\qty: int\\price: Money\\\rule{23mm}{.3pt}\\Subtotal(): Money};
+        \node[box,align=left,below=10mm of order] (repo) {\textbf{\textless\textless interface\textgreater\textgreater}\\OrderRepository\\\rule{29mm}{.3pt}\\Save(Order): error};
+        \draw[draw=MutedBlue] (order)--node[above,font=\tiny]{1\quad contains\quad 1..*}(item);
+        \draw[flow] (order)--(repo);
+      \end{tikzpicture}
+MANDATORY scientific corrections and layout guidance:
+Simplify UML class example: Order with id and Total(); Item with qty price and Subtotal(). Solid association with 1 at Order end and 1..* at Item end. Separate interface OrderRepository Save(Order), avoid invented Order dependency. Label 関連は注文と明細の対応, title クラス図は構造と関係を示す. Use exact UML association multiplicity.

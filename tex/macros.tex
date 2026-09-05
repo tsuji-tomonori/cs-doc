@@ -58,3 +58,9 @@
 }
 
 \newcommand{\ChapterRef}[1]{第\ref{#1}章}
+
+% 本文内の工程図。画像中の文字を本文幅で表示します。
+\newcommand{\inlineimage}[1]{%
+  \par\smallskip
+  \noindent\includegraphics[width=\linewidth]{assets/#1}\par\smallskip
+}
