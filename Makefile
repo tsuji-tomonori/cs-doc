@@ -1,4 +1,5 @@
 LATEXMK ?= latexmk
+PYTHON ?= python3
 MAIN := main.tex
 BUILD_DIR := build
 PDF := $(BUILD_DIR)/main.pdf
@@ -8,9 +9,12 @@ SITE_DIR := site
 TEXMFVAR := $(CURDIR)/$(BUILD_DIR)/texmf-var
 TEXMFCACHE := $(CURDIR)/$(BUILD_DIR)/texmf-cache
 
-.PHONY: all pdf verify site clean
+.PHONY: all pdf verify verify-examples site clean
 
 all: pdf
+
+verify-examples:
+	$(PYTHON) tools/check_examples.py
 
 pdf:
 	mkdir -p $(BUILD_DIR)

@@ -18,3 +18,7 @@
 
 # Rendered inspection images
 /tmp/
+
+# Local Python environment and bytecode
+/.venv/
+__pycache__/
