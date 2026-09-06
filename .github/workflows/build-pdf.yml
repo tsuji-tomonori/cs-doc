@@ -1,4 +1,4 @@
-name: PDFをビルドしてPagesへ公開
+name: 本文Web版とPDFをビルドしてPagesへ公開
 
 on:
   push:
@@ -63,13 +63,37 @@ jobs:
             texlive-latex-extra \
             texlive-fonts-recommended \
             fonts-noto-cjk \
-            poppler-utils
+            poppler-utils \
+            pandoc
+
+      - name: Node.jsを導入
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Web版の依存ライブラリを導入
+        run: npm ci --prefix site
 
       - name: PDFと公開ページを生成
         run: make site
 
       - name: 組版結果を検証
         run: make verify
+
+      - name: Web本文・計算・リンク・検索を検証
+        working-directory: site
+        run: |
+          npm test
+          npm run test:site
+
+      - name: PR確認用Web版を保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: interactive-textbook-${{ github.sha }}
+          path: site/dist
+          if-no-files-found: error
 
       - name: PR確認用PDFを保存
         uses: actions/upload-artifact@v4
@@ -86,7 +110,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
-          path: site
+          path: site/dist
 
   deploy:
     name: GitHub Pagesへ公開

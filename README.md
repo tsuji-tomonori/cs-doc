@@ -7,11 +7,13 @@
 
 ## 公開版
 
+- [本文Web版を読む](https://tsuji-tomonori.github.io/cs-doc/)
 - [PDFを読む](https://tsuji-tomonori.github.io/cs-doc/information-engineering-basics.pdf)
-- [閲覧ページを開く](https://tsuji-tomonori.github.io/cs-doc/)
+
+Web版はAstro + Starlightで、章一覧、ページ内目次、全文検索、用語索引を備えます。PDFと同じLaTeX原稿から、本文、数式（MathML）、表、コード、出典をHTMLへ生成します。第1〜9章には20個の操作教材を配置し、数値やスイッチの変更、状態の逐次実行で仕組みを確認できます。
 
 PDFはA4縦で、「はじめに」、第1〜9章、付録、参考文献、索引を収録します。
-`main`ブランチへのpush時に、GitHub ActionsがLuaLaTeXで再生成し、GitHub Pagesへ公開します。
+`main`ブランチへのpush時に、GitHub ActionsがPDFとWeb版を再生成し、同じGitHub Pagesへ公開します。
 Pull Requestでは組版・品質検証とPython・Go演習の検証を実行します。
 Pagesへの公開は、両方の検証が成功した後に進みます。
 
@@ -40,27 +42,35 @@ Pagesへの公開は、両方の検証が成功した後に進みます。
 
 ## ローカルビルド
 
-LuaLaTeX、latexmk、Noto CJKフォント、Popplerが必要です。
+LuaLaTeX、latexmk、Noto CJKフォント、Poppler、Pandoc 3.1.3以降、Node.js 24が必要です。
 
 Ubuntuでは、次のパッケージ構成でビルドできます。
 
 ```bash
 sudo apt-get install latexmk texlive-luatex texlive-lang-japanese \
-  texlive-latex-extra texlive-fonts-recommended fonts-noto-cjk poppler-utils
+  texlive-latex-extra texlive-fonts-recommended fonts-noto-cjk poppler-utils pandoc
 ```
 
 ```bash
+npm ci --prefix site
 make pdf
 make verify
 make site
+cd site
+npm test
+npm run test:site
 ```
 
 主な生成物は次のとおりです。
 
 - `build/information-engineering-basics.pdf`：配布用PDF
-- `site/information-engineering-basics.pdf`：GitHub Pages用PDF
+- `site/dist/`：GitHub Pages用Web版とPDF
 
 `make verify`は、組版警告、A4判定、ページ数、本文量、外部リンク、書体埋め込み、カタログの186節と600用語、文体規則を検査します。
+
+Web版の開発は `npm --prefix site run dev`、Web版だけのビルドは `make web`、PDFを含む公開用の生成は `make site` です。開発サーバーの起動中にTeXを変更した場合は `npm --prefix site run prepare:book` で本文を再生成します。
+
+本文の正本は `chapters/` です。生成JSONとビルド成果物はコミットしません。操作教材の構成と検証は[Web版の保守方法](docs/interactive-web.md)を参照してください。
 
 ## 演習の検証
 
@@ -89,7 +99,8 @@ NumPyの版は`tools/requirements-examples.txt`で固定します。コードや
 - `assets/`：画像と生成記録
 - `docs/coverage.md`：改訂カタログと本文の対応
 - `docs/writing-guide.md`：です・ます調と用語定義の執筆規約
-- `site/`：公開ページ
+- `site/`：Astro + Starlight、操作教材、本文変換と検証
+- `skills/`：教材レビュー・日本語技術文書の執筆スキル
 - `.github/workflows/build-pdf.yml`：ビルド、検証、Pages公開
 - `.workspace/`：執筆時の目次、参照資料一覧、デザイン規定
 
@@ -103,7 +114,7 @@ NumPyの版は`tools/requirements-examples.txt`で固定します。コードや
 生成条件とプロンプトは[画像記録](assets/README.md)に残しています。
 本文の構成図、回路図、グラフもimagegenで生成しています。
 改訂内容と確認結果は[ファクトチェック記録](reports/fact-check.md)に記録しています。
-執筆・レビュー時は[cs-textbook-reviewスキル](skills/cs-textbook-review/SKILL.md)を使います。
+執筆・レビュー時は[cs-textbook-reviewスキル](skills/cs-textbook-review/SKILL.md)を使います。文体の規範は[日本語技術文書スキル](skills/japanese-tech-writing-desumasu/SKILL.md)にあります。
 
 ## 参考資料
 

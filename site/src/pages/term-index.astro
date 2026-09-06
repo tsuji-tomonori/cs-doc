@@ -1,0 +1,15 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import book from '../data/book.json';
+const base=import.meta.env.BASE_URL.replace(/\/$/,'');
+const terms=new Map<string,{title:string;url:string}[]>();
+for(const page of book)for(const term of page.terms){
+ if(!term.text||term.text==='要点')continue;
+ const entries=terms.get(term.text)||[],url=`${base}/guide/${page.slug}/#${term.anchor}`;
+ if(!entries.some(x=>x.url===url))entries.push({title:page.title,url});terms.set(term.text,entries);
+}
+---
+<StarlightPage frontmatter={{title:'用語索引',description:'本文中の用語から該当する説明へ移動できます。',tableOfContents:false,prev:false,next:false}}>
+ <p>用語から本文の説明へ戻れます。上部の検索では、用語以外の文章も探せます。</p>
+ <dl class="term-index">{[...terms.entries()].sort(([a],[b])=>a.localeCompare(b,'ja')).map(([term,entries])=><div><dt>{term}</dt><dd>{entries.map(entry=><a href={entry.url}>{entry.title}</a>)}</dd></div>)}</dl>
+</StarlightPage>

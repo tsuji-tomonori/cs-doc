@@ -22,3 +22,11 @@
 # Local Python environment and bytecode
 /.venv/
 __pycache__/
+
+# Generated Astro site
+/site/node_modules/
+/site/.astro/
+/site/dist/
+/site/src/data/book.json
+/site/public/book-assets/
+/site/public/information-engineering-basics.pdf
