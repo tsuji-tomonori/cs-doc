@@ -5,7 +5,7 @@ const {kind}=Astro.props;
 const lab=labs[kind as keyof typeof labs];
 if(!lab)throw new Error(`Unknown lab ${kind}`);
 ---
-<cs-lab class="lab" data-kind={kind} aria-labelledby={`lab-${kind}`}>
+<cs-lab class="lab not-content" data-kind={kind} aria-labelledby={`lab-${kind}`}>
  <div class="lab-header"><span class="lab-eyebrow">動かして確かめる</span><h3 id={`lab-${kind}`}>{lab.title}</h3><p>{lab.intro}</p></div>
  <div class="lab-controls" set:html={controls(kind)} />
  <p class="lab-error" role="alert" hidden></p>
