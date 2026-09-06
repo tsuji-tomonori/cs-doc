@@ -1,0 +1,18 @@
+---
+import {labs,defaults,controls,result} from '../lib/labs.mjs';
+interface Props {kind:string;}
+const {kind}=Astro.props;
+const lab=labs[kind as keyof typeof labs];
+if(!lab)throw new Error(`Unknown lab ${kind}`);
+---
+<cs-lab class="lab" data-kind={kind} aria-labelledby={`lab-${kind}`}>
+ <div class="lab-header"><span class="lab-eyebrow">動かして確かめる</span><h3 id={`lab-${kind}`}>{lab.title}</h3><p>{lab.intro}</p></div>
+ <div class="lab-controls" set:html={controls(kind)} />
+ <p class="lab-error" role="alert" hidden></p>
+ {'actions' in lab && <div class="lab-actions"><button type="button" data-action="next">次へ</button><button type="button" data-action="reset">最初から</button></div>}
+ {kind==='mos'&&<button type="button" data-action="motion" aria-pressed="false">アニメーションを一時停止</button>}
+ <div class="lab-result" aria-live="polite" aria-atomic="true" set:html={result(kind,defaults(kind))} />
+ <p class="lab-note">{lab.note}</p>
+ <noscript><p>初期値の結果を表示しています。値を変えるにはJavaScriptを有効にしてください。</p></noscript>
+</cs-lab>
+<script>import '../lib/lab-element';</script>

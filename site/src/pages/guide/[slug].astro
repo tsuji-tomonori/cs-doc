@@ -1,0 +1,26 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import book from '../../data/book.json';
+import Lab from '../../components/Lab.astro';
+export function getStaticPaths(){return book.map((chapter,index)=>({params:{slug:chapter.slug},props:{chapter,index}}));}
+const {chapter,index}=Astro.props;
+const base=import.meta.env.BASE_URL.replace(/\/$/,'');
+---
+<StarlightPage headings={chapter.headings} frontmatter={{title:chapter.title,description:`情報工学入門・${chapter.title}。本文と操作教材で仕組みを学びます。`,editUrl:`https://github.com/tsuji-tomonori/cs-doc/edit/main/${chapter.source}`,prev:false,next:false}}>
+ <div class="chapter-meta"><a href={`${base}/information-engineering-basics.pdf`}>PDFでも読む</a><span>物理からアプリまで</span></div>
+ <article class="book-body" data-pagefind-body>
+  {chapter.parts.map(part=>part.lab?<Lab kind={part.lab}/>:<Fragment set:html={part.html}/>)}
+ </article>
+ <nav class="chapter-nav" aria-label="前後の章">
+  {index>0&&<a href={`${base}/guide/${book[index-1].slug}/`}>前へ：{book[index-1].title}</a>}
+  {index < book.length - 1 && <a href={`${base}/guide/${book[index+1].slug}/`}>次へ：{book[index+1].title}</a>}
+ </nav>
+</StarlightPage>
+<script>
+ function revealAnchor(){
+  const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  const details=target?.closest('details');
+  if(details){details.open=true;target?.scrollIntoView();}
+ }
+ window.addEventListener('hashchange',revealAnchor);revealAnchor();
+</script>

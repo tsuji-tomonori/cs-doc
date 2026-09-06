@@ -1,0 +1,20 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import book from '../data/book.json';
+const base=import.meta.env.BASE_URL.replace(/\/$/,'');
+---
+<StarlightPage frontmatter={{title:'情報工学入門',description:'物理からアプリまで、読みながら動かして学ぶ情報工学。',tableOfContents:false,prev:false,next:false}}>
+ <div class="reading-intro"><p class="kicker">物理からアプリまで</p>
+ <p>「注文番号1234はいつ届きますか」。一つの送信を、電気信号からCPU、ネットワーク、AI、画面まで追います。</p>
+ <p>本文を読み、途中の実験で数値やスイッチを変えてみてください。結果だけでなく、途中の状態と変わる理由を確かめられます。</p>
+ <a class="read-button" href={`${base}/guide/00-introduction/`}>はじめにを読む</a><a class="pdf-link" href={`${base}/information-engineering-basics.pdf`}>PDFを開く</a></div>
+ <h2>まず動かしてみる</h2>
+ <div class="experiment-links">
+  <a href={`${base}/guide/01-digital-computer/#lab-binary`}><strong>01 / ビットから数へ</strong><span>各桁を切り替えて重みと合計を見る</span></a>
+  <a href={`${base}/guide/01-digital-computer/#lab-mos`}><strong>02 / 電圧からスイッチへ</strong><span>NMOSの通り道とCMOSの充放電を見る</span></a>
+  <a href={`${base}/guide/07-language-model/#lab-softmax`}><strong>03 / スコアから確率へ</strong><span>温度を変えて候補の分布を見る</span></a>
+ </div>
+ <h2>章を選ぶ</h2>
+ <ol class="chapter-list">{book.map(chapter=><li><a href={`${base}/guide/${chapter.slug}/`}>{chapter.title}</a><span>{chapter.headings.filter(h=>h.depth===2).length}節</span></li>)}</ol>
+ <p><a href={`${base}/term-index/`}>用語から調べる</a> ／ 上部の検索から本文の言葉を探せます。</p>
+</StarlightPage>

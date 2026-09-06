@@ -9,7 +9,7 @@ SITE_DIR := site
 TEXMFVAR := $(CURDIR)/$(BUILD_DIR)/texmf-var
 TEXMFCACHE := $(CURDIR)/$(BUILD_DIR)/texmf-cache
 
-.PHONY: all pdf verify verify-examples site clean
+.PHONY: all pdf verify verify-examples site web clean
 
 all: pdf
 
@@ -46,9 +46,11 @@ verify: pdf
 	  "$$(pdftotext $(PUBLIC_PDF) - | wc -m)" \
 	  "$$(pdfinfo -url $(PUBLIC_PDF) | awk 'NR > 1 {print $$3}' | sort -u | wc -l)"
 
+web:
+	cd $(SITE_DIR) && npm run build
+
 site: pdf
-	mkdir -p $(SITE_DIR)
-	cp $(PUBLIC_PDF) $(SITE_DIR)/information-engineering-basics.pdf
+	cd $(SITE_DIR) && npm run build
 
 clean:
 	TEXMFVAR=$(TEXMFVAR) TEXMFCACHE=$(TEXMFCACHE) $(LATEXMK) -C -outdir=$(BUILD_DIR) $(MAIN)
